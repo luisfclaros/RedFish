@@ -59,7 +59,8 @@ image: mysql:8.4
 database: redfish
 user: myuser
 password: secret
-port: 3306
+local port: 3307
+container port: 3306
 ```
 
 Spring Boot usa Docker Compose Support para levantar el servicio de MySQL cuando
@@ -147,13 +148,13 @@ BUILD SUCCESSFUL
 Validacion runtime con Docker:
 
 ```text
-Pendiente de ejecutar cuando Docker Desktop tenga el daemon activo.
+Aplicacion iniciada correctamente con `./gradlew.bat bootRun`.
+Spring Boot se conecto a MySQL en `jdbc:mysql://127.0.0.1:3307/redfish`.
 ```
 
-Durante la preparacion de la HU se intento consultar Docker, pero el daemon no
-estaba disponible en el entorno local. Una vez Docker Desktop este activo, se
-debe ejecutar `./gradlew.bat bootRun` y validar las peticiones con la coleccion
-Postman.
+Durante la preparacion de la HU se detecto que el puerto local `3306` estaba
+ocupado, por lo que MySQL se publica en `localhost:3307` y se mantiene el puerto
+interno `3306` dentro del contenedor.
 
 ---
 
@@ -168,7 +169,7 @@ Postman.
 | Contrato inicial de API | Documentado |
 | Coleccion Postman | Creada |
 | Pruebas automatizadas | Aprobadas |
-| Validacion runtime con Docker | Pendiente por daemon Docker no disponible |
+| Validacion runtime con Docker | Aprobada |
 | Validacion QA | Pendiente en rama `hu-008-qa` |
 
 ---
