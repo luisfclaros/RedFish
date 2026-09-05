@@ -1,5 +1,7 @@
 # Backlog inicial del MVP de RedFish
 
+Link de jira: [Jira](https://corhuila-team-wloxo9pj.atlassian.net/jira/software/projects/SCRUM/summary)
+
 Este backlog es preliminar y sera refinado despues del analisis de dominio, la
 identificacion de bounded contexts y la validacion arquitectonica de las
 siguientes sesiones.
@@ -8,7 +10,7 @@ siguientes sesiones.
 |---|---|---|---|
 | HU-001 | Definir RedFish y sus fundamentos de sistemas distribuidos. | Obligatoria | Completada en Week 1 Sesion 1. |
 | HU-002 | Establecer estandares de ingenieria y flujo de trabajo. | Obligatoria | Entregable actual de Week 1 Sesion 2. |
-| HU-003 | Identificar bounded contexts del dominio RedFish. | Obligatoria | Requerida antes de definir limites finales de modulos. |
+| HU-003 | Identificar bounded contexts del dominio RedFish. | Obligatoria | Entregable de Week 2 Sesion 1. |
 | HU-004 | Seleccionar y documentar la arquitectura. | Obligatoria | ADR-001 sera validado y actualizado. |
 | HU-005 | Modelar el dominio inicial. | Obligatoria | Entidades, Value Objects, agregados e invariantes. |
 | HU-006 | Definir propiedad de datos y contratos. | Obligatoria | Requerida antes de tomar decisiones de integracion y persistencia. |
