@@ -2,7 +2,7 @@
 
 ## Estado
 
-Propuesto
+Aceptado
 
 ## Fecha
 
@@ -24,7 +24,7 @@ forma ordenada.
 
 ## Decision
 
-La arquitectura propuesta para RedFish es un **Monolito Modular**.
+La arquitectura seleccionada para RedFish es un **Monolito Modular**.
 
 La aplicacion se desplegara inicialmente como una sola unidad, mientras su
 logica interna se organiza en modulos con responsabilidades delimitadas. Los
@@ -127,9 +127,18 @@ Antes de que este ADR pase a estado **Aceptado**, Week 2 debe validar:
 ## Avance de validacion
 
 En `HU-003` se documentan los bounded contexts iniciales, el mapa de contexto y
-la propiedad preliminar de datos. Este avance respalda la propuesta de monolito
-modular, pero el ADR mantiene estado **Propuesto** hasta completar la validacion
-arquitectonica restante.
+la propiedad preliminar de datos. Este avance respalda la decision de monolito
+modular.
 
-Si el analisis de Week 2 contradice esta propuesta, la decision debera revisarse
-antes de aceptarse.
+En `HU-004` se formaliza la decision arquitectonica y se documenta el stack
+tecnologico inicial:
+
+- Spring Boot para backend.
+- Java como lenguaje principal del backend.
+- JavaScript para capa cliente o scripts de apoyo.
+- MySQL como base de datos relacional inicial.
+
+Con esta validacion, el ADR pasa a estado **Aceptado**.
+
+Si analisis futuros contradicen esta decision, el ADR debera revisarse mediante
+una nueva decision arquitectonica.
