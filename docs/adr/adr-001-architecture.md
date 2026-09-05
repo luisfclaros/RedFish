@@ -124,5 +124,12 @@ Antes de que este ADR pase a estado **Aceptado**, Week 2 debe validar:
 - necesidades de escalabilidad independiente;
 - propiedad de datos por modulo.
 
+## Avance de validacion
+
+En `HU-003` se documentan los bounded contexts iniciales, el mapa de contexto y
+la propiedad preliminar de datos. Este avance respalda la propuesta de monolito
+modular, pero el ADR mantiene estado **Propuesto** hasta completar la validacion
+arquitectonica restante.
+
 Si el analisis de Week 2 contradice esta propuesta, la decision debera revisarse
 antes de aceptarse.

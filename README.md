@@ -198,10 +198,13 @@ La documentación técnica y de calidad del proyecto se organizará progresivame
 ```text
 docs/
 ├── adr/
+├── domain/
 ├── backlog.md
-└── week-01/
-    ├── session-01/
-    └── session-02/
+├── Week-01/
+│   ├── session-01/
+│   └── session-02/
+└── Week-02/
+    └── session-01/
 
 ```
 
