@@ -7,12 +7,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.springframework.stereotype.Repository;
-
 import com.RedFish.RedFish.inventory.application.port.ProductRepositoryPort;
 import com.RedFish.RedFish.inventory.domain.model.Product;
 
-@Repository
 public class InMemoryProductRepository implements ProductRepositoryPort {
 
 	private final ConcurrentMap<Long, Product> products = new ConcurrentHashMap<>();

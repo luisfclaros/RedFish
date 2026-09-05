@@ -1,0 +1,81 @@
+{
+  "info": {
+    "name": "RedFish API",
+    "description": "Initial API contract for HU-008. Requires the Spring Boot backend running at http://localhost:8080 and MySQL through Docker Compose.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ],
+  "item": [
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"PROD-001\",\n  \"name\": \"Tilapia Roja\",\n  \"unitOfMeasure\": \"kg\",\n  \"type\": \"PRODUCT\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Product By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
