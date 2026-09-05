@@ -10,7 +10,7 @@ siguientes sesiones.
 | HU-002 | Establecer estandares de ingenieria y flujo de trabajo. | Obligatoria | Entregable actual de Week 1 Sesion 2. |
 | HU-003 | Identificar bounded contexts del dominio RedFish. | Obligatoria | Entregable de Week 2 Sesion 1. |
 | HU-004 | Seleccionar y documentar la arquitectura. | Obligatoria | Entregable de Week 2 Sesion 2. |
-| HU-005 | Modelar el dominio inicial. | Obligatoria | Entidades, Value Objects, agregados e invariantes. |
+| HU-005 | Modelar el dominio inicial. | Obligatoria | Entregable de Week 3 Sesion 1. |
 | HU-006 | Definir propiedad de datos y contratos. | Obligatoria | Requerida antes de tomar decisiones de integracion y persistencia. |
 | HU-007 | Construir el walking skeleton. | Obligatoria | Primer recorrido ejecutable minimo de la aplicacion. |
 | HU-008 | Definir el contrato inicial de la API del MVP. | Obligatoria | Rutas, solicitudes y respuestas esperadas. |
