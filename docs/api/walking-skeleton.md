@@ -55,7 +55,8 @@ GET /api/products/1
 | Interfaces | `ProductController`, `ProductRequest`, `ProductResponse` |
 | Aplicacion | `CreateProductService`, `ListProductsService`, `GetProductService` |
 | Puerto | `ProductRepositoryPort` |
-| Infraestructura | `InMemoryProductRepository` |
+| Infraestructura en HU-007 | `InMemoryProductRepository` |
+| Infraestructura desde HU-008 | `JpaProductRepository`, `ProductJpaEntity`, MySQL |
 | Dominio | `Product`, `ProductType` |
 
 ---
@@ -66,14 +67,21 @@ GET /api/products/1
 - El nombre es obligatorio.
 - La unidad de medida es obligatoria.
 - El tipo de producto es obligatorio.
-- No se permiten codigos de producto duplicados en memoria.
+- No se permiten codigos de producto duplicados.
+
+---
+
+## Evolucion del flujo
+
+En `HU-007`, el walking skeleton uso persistencia en memoria para validar el
+primer recorrido ejecutable.
+
+En `HU-008`, el mismo contrato REST evoluciona hacia persistencia real con MySQL
+y JPA.
 
 ---
 
 ## Limitaciones actuales
 
-- Los datos se pierden al reiniciar la aplicacion.
-- No existe persistencia MySQL todavia.
 - No se implementa autenticacion real.
-- No se documenta aun una coleccion Postman formal.
 - Los endpoints pertenecen solo al modulo Inventario.

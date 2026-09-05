@@ -205,6 +205,7 @@ La documentación técnica y de calidad del proyecto se organizará progresivame
 docs/
 ├── adr/
 ├── architecture/
+├── api/
 ├── domain/
 ├── backlog.md
 ├── Week-01/
@@ -217,7 +218,8 @@ docs/
 │   ├── session-01/
 │   └── session-02/
 └── Week-04/
-    └── session-01/
+    ├── session-01/
+    └── session-02/
 
 ```
 
