@@ -12,7 +12,7 @@ siguientes sesiones.
 | HU-004 | Seleccionar y documentar la arquitectura. | Obligatoria | Entregable de Week 2 Sesion 2. |
 | HU-005 | Modelar el dominio inicial. | Obligatoria | Entregable de Week 3 Sesion 1. |
 | HU-006 | Definir propiedad de datos y contratos. | Obligatoria | Entregable de Week 3 Sesion 2. |
-| HU-007 | Construir el walking skeleton. | Obligatoria | Primer recorrido ejecutable minimo de la aplicacion. |
+| HU-007 | Construir el walking skeleton. | Obligatoria | Entregable de Week 4 Sesion 1. |
 | HU-008 | Definir el contrato inicial de la API del MVP. | Obligatoria | Rutas, solicitudes y respuestas esperadas. |
 | HU-009 | Contenerizar la aplicacion y la base de datos. | Obligatoria | Entorno de ejecucion de la aplicacion y PostgreSQL. |
 | HU-010 | Validar y liberar el MVP 1. | Obligatoria | Validacion QA y version candidata a liberacion. |
