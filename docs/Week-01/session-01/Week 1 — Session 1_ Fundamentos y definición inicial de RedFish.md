@@ -1,12 +1,12 @@
-# Week 1 — Session 1
+# Semana 1 - Sesion 1
 
 ## Fundamentos de Sistemas Distribuidos y definición inicial de RedFish
 
 **Proyecto:** RedFish  
 **Responsable:** LUIS FERNANDO CLAROS RAMOS  
 **Asignatura:** Sistemas Distribuidos  
-**Week:** 1  
-**Session:** 1
+**Semana:** 1  
+**Sesion:** 1
 
 ---
 
@@ -177,4 +177,4 @@ Estas decisiones deberán justificarse cuando el contenido correspondiente sea e
 
 ## 11. Próximo paso
 
-En Week 1 — Session 2 se estudiarán y aplicarán fundamentos profesionales de ingeniería de software, incluyendo prácticas de trabajo, estrategia Git, backlog, testing, documentación y decisiones arquitectónicas mediante ADR.
+En Semana 1 - Sesion 2 se estudiaran y aplicaran fundamentos profesionales de ingenieria de software, incluyendo practicas de trabajo, estrategia Git, backlog, testing, documentacion y decisiones arquitectonicas mediante ADR.

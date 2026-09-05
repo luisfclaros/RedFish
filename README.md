@@ -110,6 +110,28 @@ Todo cambio candidato a incorporarse a `main` deberá ser validado previamente e
 
 Ramas utilizadas para desarrollar funcionalidades o cambios específicos antes de su integración en `Develop`.
 
+### Ramas hijas por HU
+
+A partir de **Semana 1 - Sesión 2**, cada historia de usuario deberá mantener trazabilidad mediante ramas hijas en los ambientes de desarrollo y QA.
+
+Ejemplo para `HU-002`:
+
+```text
+Develop
+└── hu-002-dev
+      └── Pull Request → Develop
+
+Qa
+└── hu-002-qa
+      └── Pull Request → Qa
+
+Qa
+└── Pull Request → main
+
+```
+
+Las ramas de ambiente (`Develop` y `Qa`) no deben usarse para desarrollar cambios directamente. La rama `main` recibe cambios promovidos desde `Qa` mediante Pull Request directo.
+
 ---
 
 # 🧪 Aseguramiento de Calidad
@@ -175,11 +197,12 @@ La documentación técnica y de calidad del proyecto se organizará progresivame
 
 ```text
 docs/
-├── architecture/
 ├── adr/
-└── qa/
-    └── week-01/
-        └── session-01/
+├── backlog.md
+└── week-01/
+    ├── session-01/
+    └── session-02/
+
 ```
 
 La estructura podrá evolucionar de acuerdo con las necesidades del proyecto.
