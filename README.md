@@ -1,232 +1,213 @@
-# 🐟 RedFish | Rama de Desarrollo
+# 🐟 RedFish
 
-> 🚧 **Esta es la rama principal de desarrollo activo del proyecto RedFish.**
+Sistema de información orientado a la gestión de los procesos operativos de empresas piscícolas.
 
-## 📌 Acerca de `develop`
-
-La rama **`develop`** es utilizada como el entorno principal para la integración de nuevas funcionalidades y cambios en el proyecto.
-
-En esta rama se realiza el desarrollo continuo de los módulos que conforman el sistema **RedFish – Gestión de Producción, Inventario y Despachos para Piscícolas**.
-
-Los cambios implementados en las diferentes funcionalidades son integrados y evaluados en esta rama antes de ser preparados para pruebas y posteriormente incorporados a la versión estable del sistema.
+RedFish busca centralizar información relacionada con producción, alimentación, inventario, pedidos, despachos, vehículos y usuarios, reduciendo la dispersión de datos y facilitando el control de las operaciones.
 
 ---
 
-# 🎯 Propósito de la Rama
+## 🎯 Problema
 
-La rama `develop` tiene como objetivo centralizar el desarrollo de las nuevas funcionalidades del sistema.
+Los procesos operativos de una empresa piscícola pueden involucrar información distribuida entre diferentes registros, herramientas o responsables.
 
-En esta rama se integrarán los avances relacionados con:
+Esta dispersión puede dificultar el seguimiento de producción, alimentación, existencias, pedidos y despachos, además de incrementar la posibilidad de inconsistencias o pérdida de información.
 
-* 🐟 Gestión de producción.
-* 🌾 Control de alimentación.
-* 📦 Gestión de inventario.
-* 🛒 Gestión de pedidos.
-* 🚚 Gestión de despachos.
-* 🚛 Gestión de vehículos.
-* 👥 Gestión de usuarios.
-* 📊 Dashboard del sistema.
+RedFish busca proporcionar una plataforma centralizada desde la cual estos procesos puedan gestionarse de manera organizada.
+
+---
+
+## 🎯 Objetivo General
+
+Diseñar e implementar un sistema de información para apoyar la gestión de los procesos de producción, alimentación, inventario, pedidos y despachos de una empresa piscícola, manteniendo una separación clara de responsabilidades entre los diferentes módulos del dominio.
+
+---
+
+# 🧩 Módulos del Sistema
+
+RedFish estará organizado inicialmente alrededor de los siguientes módulos funcionales:
+
+| Módulo          | Responsabilidad general                                         |
+| --------------- | --------------------------------------------------------------- |
+| 🐟 Producción   | Gestión de información asociada a los procesos productivos.     |
+| 🌾 Alimentación | Registro y seguimiento de la alimentación suministrada.         |
+| 📦 Inventario   | Gestión de productos, insumos, entradas, salidas y existencias. |
+| 🛒 Pedidos      | Registro y seguimiento de pedidos realizados por clientes.      |
+| 🚚 Despachos    | Preparación y seguimiento de la salida de pedidos.              |
+| 🚛 Vehículos    | Administración de los vehículos utilizados para los despachos.  |
+| 👥 Usuarios     | Gestión de usuarios, autenticación, roles y permisos.           |
+
+Los límites, responsabilidades y relaciones entre estos módulos serán refinados progresivamente durante el desarrollo del proyecto.
+
+---
+
+# 🏗️ Arquitectura
+
+RedFish tendrá como arquitectura objetivo un **Monolito Modular**.
+
+La aplicación se desplegará inicialmente como una única unidad, pero su lógica será organizada mediante módulos con responsabilidades claramente delimitadas.
+
+```text
+                   ┌──────────────────────┐
+                   │       RedFish        │
+                   │   Monolito Modular   │
+                   │                      │
+                   │ ┌──────────────────┐ │
+                   │ │    Producción    │ │
+                   │ ├──────────────────┤ │
+                   │ │   Alimentación   │ │
+                   │ ├──────────────────┤ │
+                   │ │    Inventario    │ │
+                   │ ├──────────────────┤ │
+                   │ │     Pedidos      │ │
+                   │ ├──────────────────┤ │
+                   │ │    Despachos     │ │
+                   │ ├──────────────────┤ │
+                   │ │    Vehículos     │ │
+                   │ ├──────────────────┤ │
+                   │ │     Usuarios     │ │
+                   │ └──────────────────┘ │
+                   └──────────────────────┘
+```
+
+El diseño interno de los módulos y las decisiones arquitectónicas adicionales serán documentados progresivamente a medida que avance el proyecto.
 
 ---
 
 # 🌿 Estrategia de Ramas
 
-El proyecto utiliza una estrategia de desarrollo basada en diferentes ramas para mantener un flujo de trabajo organizado.
+El proyecto utiliza las siguientes ramas principales:
 
 ```text
+feature/*
+    │
+    ▼
+Develop
+    │
+    ▼
+Qa
+    │
+    ▼
 main
- │
- └── qa
-      │
-      └── develop
-           │
-           ├── feature/produccion
-           ├── feature/alimentacion
-           ├── feature/inventario
-           ├── feature/pedidos
-           ├── feature/despachos
-           └── feature/vehiculos
 ```
 
-## 🔵 `main`
+### `main`
 
 Representa la versión estable del proyecto.
 
-Solo contiene funcionalidades que han sido desarrolladas, integradas y validadas.
+Solo debe contener cambios que hayan superado el proceso de validación correspondiente.
+
+### `Develop`
+
+Rama utilizada para integrar los cambios y nuevas funcionalidades que se encuentran en desarrollo.
+
+### `Qa`
+
+Rama destinada a pruebas, revisión y aseguramiento de calidad.
+
+Todo cambio candidato a incorporarse a `main` deberá ser validado previamente en esta rama.
+
+### `feature/*`
+
+Ramas utilizadas para desarrollar funcionalidades o cambios específicos antes de su integración en `Develop`.
 
 ---
 
-## 🟢 `develop`
+# 🧪 Aseguramiento de Calidad
 
-Representa la rama principal de desarrollo.
+Cada entregable será evaluado mediante criterios de aceptación definidos previamente.
 
-Aquí se integran las nuevas funcionalidades antes de ser enviadas al entorno de pruebas.
-
----
-
-## 🟡 `qa`
-
-Representa la rama destinada a la validación y pruebas del sistema.
-
-Las funcionalidades desarrolladas en `develop` deberán ser evaluadas antes de ser incorporadas a la rama `main`.
-
----
-
-## 🟣 `feature/*`
-
-Las nuevas funcionalidades deberán desarrollarse en ramas independientes.
-
-Ejemplo:
+El proceso general será:
 
 ```text
-feature/produccion
-feature/inventario
-feature/pedidos
-feature/despachos
+Desarrollo
+    │
+    ▼
+Integración en Develop
+    │
+    ▼
+Validación en Qa
+    │
+    ├── FAIL ──► Corrección
+    │
+    └── PASS
+         │
+         ▼
+        main
 ```
 
-Una vez finalizada una funcionalidad, esta podrá integrarse en la rama `develop`.
+La documentación de QA podrá incluir:
 
----
-
-# 🏗️ Arquitectura del Proyecto
-
-RedFish será desarrollado utilizando el patrón arquitectónico **Modelo-Vista-Controlador (MVC)**.
-
-La arquitectura permitirá separar las responsabilidades del sistema en tres componentes principales:
-
-* **Modelo:** Gestión de datos y entidades del sistema.
-* **Vista:** Interfaces e interacción con los usuarios.
-* **Controlador:** Procesamiento de solicitudes y coordinación entre la Vista y el Modelo.
-
-```text
-Usuario
-   │
-   ▼
-Vista
-   │
-   ▼
-Controlador
-   │
-   ▼
-Modelo
-   │
-   ▼
-Base de Datos
-```
-
----
-
-# ⚙️ Estado Actual del Desarrollo
-
-🚧 **Proyecto en desarrollo activo**
-
-Actualmente, esta rama es utilizada para la implementación progresiva de:
-
-* Análisis de requerimientos.
-* Diseño del sistema.
-* Diseño del modelo de datos.
-* Desarrollo del mockup.
-* Implementación de módulos.
-* Integración de funcionalidades.
-
-> ⚠️ Los cambios presentes en esta rama pueden estar en proceso de desarrollo y no representan necesariamente una versión estable del sistema.
-
----
-
-# 📋 Flujo de Trabajo Recomendado
-
-Para desarrollar una nueva funcionalidad:
-
-### 1️⃣ Actualizar la rama `develop`
-
-```bash
-git checkout develop
-git pull origin develop
-```
-
-### 2️⃣ Crear una nueva rama
-
-```bash
-git checkout -b feature/nombre-funcionalidad
-```
-
-Ejemplo:
-
-```bash
-git checkout -b feature/inventario
-```
-
-### 3️⃣ Realizar el desarrollo
-
-Implementar los cambios correspondientes a la funcionalidad.
-
-### 4️⃣ Registrar los cambios
-
-```bash
-git add .
-git commit -m "feat: implementar modulo de inventario"
-```
-
-### 5️⃣ Subir la rama
-
-```bash
-git push origin feature/inventario
-```
-
-### 6️⃣ Integrar en `develop`
-
-Una vez validada la funcionalidad, se realizará la integración correspondiente mediante un Pull Request.
+* Criterios de aceptación.
+* Casos de prueba.
+* Registro de defectos.
+* Evidencias.
+* Informe de validación.
 
 ---
 
 # 📝 Convención de Commits
 
-El proyecto utilizará una estructura de commits basada en **Conventional Commits**.
+El proyecto utiliza una convención basada en Conventional Commits.
 
-| Prefijo     | Descripción                              |
-| ----------- | ---------------------------------------- |
-| `feat:`     | Nueva funcionalidad                      |
-| `fix:`      | Corrección de errores                    |
-| `docs:`     | Cambios en documentación                 |
-| `style:`    | Cambios de estilos                       |
-| `refactor:` | Reestructuración del código              |
-| `test:`     | Implementación o modificación de pruebas |
-| `chore:`    | Configuración o tareas generales         |
+| Prefijo     | Uso                           |
+| ----------- | ----------------------------- |
+| `feat:`     | Nueva funcionalidad           |
+| `fix:`      | Corrección                    |
+| `docs:`     | Documentación                 |
+| `test:`     | Pruebas                       |
+| `refactor:` | Refactorización               |
+| `chore:`    | Configuración o mantenimiento |
 
-### Ejemplos
+Ejemplos:
 
 ```text
-feat: implementar registro de producción
-
-feat: agregar control de inventario
-
-fix: corregir validación de existencias
-
-docs: actualizar requerimientos funcionales
-
-refactor: reorganizar estructura MVC
+docs: definir arquitectura inicial de RedFish
+docs: agregar criterios de aceptación week 1
+test: documentar validación de arquitectura
+fix: corregir inconsistencias del README
 ```
 
 ---
 
-# 🚀 RedFish
+# 📚 Documentación
 
-**Sistema de Gestión de Producción, Inventario y Despachos para Piscícolas.**
+La documentación técnica y de calidad del proyecto se organizará progresivamente dentro del repositorio.
 
-Esta rama representa el entorno principal de desarrollo e integración de las nuevas funcionalidades del proyecto.
+```text
+docs/
+├── architecture/
+├── adr/
+└── qa/
+    └── week-01/
+        └── session-01/
+```
 
-> 🐟 **RedFish | Tecnología para centralizar y optimizar la gestión de las operaciones piscícolas.**
+La estructura podrá evolucionar de acuerdo con las necesidades del proyecto.
 
 ---
 
-## ⚠️ Importante
+# 🔗 Recursos Relacionados
 
-Esta rama puede contener funcionalidades en desarrollo, cambios experimentales o componentes pendientes de validación.
+### Mesa de trabajo
 
-Para consultar la versión estable del sistema, se debe utilizar la rama:
+Jira del proyecto RedFish.
 
-```text
-main
-```
+### Base de Datos
 
+Repositorio destinado al diseño y documentación de la base de datos de RedFish.
+
+---
+
+# 🚧 Estado del Proyecto
+
+RedFish se encuentra actualmente en etapa de definición y construcción progresiva.
+
+Las decisiones arquitectónicas, requisitos y módulos serán refinados y documentados durante las diferentes sesiones de desarrollo.
+
+---
+
+# 👨‍💻 Autor
+
+**LUIS FERNANDO CLAROS RAMOS**
+
+Proyecto académico — Sistemas Distribuidos.
