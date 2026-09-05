@@ -17,7 +17,6 @@ import com.RedFish.RedFish.orders.domain.model.OrderItem;
 import com.RedFish.RedFish.orders.domain.model.OrderStatus;
 import com.RedFish.RedFish.production.domain.model.FeedingRecord;
 import com.RedFish.RedFish.production.domain.model.Pond;
-import com.RedFish.RedFish.vehicles.domain.model.Vehicle;
 
 class DomainModelTests {
 
@@ -53,11 +52,9 @@ class DomainModelTests {
 	}
 
 	@Test
-	void inactiveVehicleCannotBeAssignedToDispatch() {
-		Vehicle vehicle = new Vehicle(1L, "ABC123", "Chevrolet", "NPR", new BigDecimal("1200.00"), false, null);
-
-		assertThatThrownBy(() -> new Dispatch(1L, 20L, vehicle, LocalDate.now(), "Bodega principal"))
-			.isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("inactive vehicles");
+	void dispatchRequiresVehicleId() {
+		assertThatThrownBy(() -> new Dispatch(1L, 20L, null, LocalDate.now(), "Bodega principal"))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessageContaining("vehicle id");
 	}
 }
