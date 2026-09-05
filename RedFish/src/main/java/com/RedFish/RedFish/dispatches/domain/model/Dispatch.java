@@ -5,8 +5,6 @@ import static com.RedFish.RedFish.shared.domain.DomainValidation.requireText;
 
 import java.time.LocalDate;
 
-import com.RedFish.RedFish.vehicles.domain.model.Vehicle;
-
 public class Dispatch {
 
 	private final Long id;
@@ -18,11 +16,10 @@ public class Dispatch {
 	private final String deliveryAddress;
 	private String receivedBy;
 
-	public Dispatch(Long id, Long orderId, Vehicle vehicle, LocalDate dispatchDate, String deliveryAddress) {
-		requireNonNull(vehicle, "vehicle").ensureCanBeAssigned();
+	public Dispatch(Long id, Long orderId, Long vehicleId, LocalDate dispatchDate, String deliveryAddress) {
 		this.id = id;
 		this.orderId = requireNonNull(orderId, "order id");
-		this.vehicleId = vehicle.id();
+		this.vehicleId = requireNonNull(vehicleId, "vehicle id");
 		this.dispatchDate = requireNonNull(dispatchDate, "dispatch date");
 		this.deliveryAddress = requireText(deliveryAddress, "delivery address");
 		this.status = DispatchStatus.SCHEDULED;
