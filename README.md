@@ -71,6 +71,12 @@ La aplicación se desplegará inicialmente como una única unidad, pero su lógi
 
 El diseño interno de los módulos y las decisiones arquitectónicas adicionales serán documentados progresivamente a medida que avance el proyecto.
 
+Stack tecnologico inicial:
+
+- **Backend:** Spring Boot con Java.
+- **Cliente / apoyo:** JavaScript.
+- **Base de datos:** MySQL.
+
 ---
 
 # 🌿 Estrategia de Ramas
@@ -198,13 +204,15 @@ La documentación técnica y de calidad del proyecto se organizará progresivame
 ```text
 docs/
 ├── adr/
+├── architecture/
 ├── domain/
 ├── backlog.md
 ├── Week-01/
 │   ├── session-01/
 │   └── session-02/
 └── Week-02/
-    └── session-01/
+    ├── session-01/
+    └── session-02/
 
 ```
 
