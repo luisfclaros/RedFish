@@ -214,7 +214,8 @@ docs/
 │   ├── session-01/
 │   └── session-02/
 └── Week-03/
-    └── session-01/
+    ├── session-01/
+    └── session-02/
 
 ```
 
