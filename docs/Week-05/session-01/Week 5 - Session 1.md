@@ -212,7 +212,7 @@ clientes
 | Entidad `Cliente` persistida | Implementada |
 | Endpoints de clientes | Implementados |
 | Documentacion PostgreSQL/PostgREST | Corregida hacia MySQL/Spring Boot |
-| Pruebas automatizadas | Pendientes de ejecucion |
+| Pruebas automatizadas | Aprobadas |
 | Validacion QA | Pendiente en rama `hu-009-qa` |
 
 ---
