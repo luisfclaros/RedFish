@@ -15,7 +15,7 @@ siguientes sesiones.
 | HU-007 | Construir el walking skeleton. | Obligatoria | Entregable de Week 4 Sesion 1. |
 | HU-008 | Definir el contrato inicial de la API del MVP. | Obligatoria | Entregable de Week 4 Sesion 2. |
 | HU-009 | Contenerizar la aplicacion y la base de datos. | Obligatoria | Entorno de ejecucion de Spring Boot y MySQL. |
-| HU-010 | Validar y liberar el MVP 1. | Obligatoria | Validacion QA y version candidata a liberacion. |
+| HU-010 | Validar y liberar el MVP 1. | Obligatoria | Cierre del MVP 1 y version candidata a liberacion. |
 
 ## Reglas del backlog
 
