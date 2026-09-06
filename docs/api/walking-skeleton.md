@@ -84,4 +84,5 @@ y JPA.
 ## Limitaciones actuales
 
 - No se implementa autenticacion real.
-- Los endpoints pertenecen solo al modulo Inventario.
+- Desde `HU-009`, tambien existe un recurso inicial de clientes en el modulo
+  Pedidos.

@@ -2,9 +2,9 @@ spring:
   application:
     name: RedFish
   datasource:
-    url: jdbc:mysql://localhost:3307/redfish
-    username: myuser
-    password: secret
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/redfish}
+    username: ${SPRING_DATASOURCE_USERNAME:myuser}
+    password: ${SPRING_DATASOURCE_PASSWORD:secret}
   jpa:
     hibernate:
       ddl-auto: update
