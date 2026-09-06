@@ -1,5 +1,7 @@
 # 🐟 RedFish
 
+### Mesa De Trabajo : [Jira](https://corhuila-team-wloxo9pj.atlassian.net/jira/software/projects/RED/boards/2?filter=&groupBy=none)
+
 Sistema de información orientado a la gestión de los procesos operativos de empresas piscícolas.
 
 RedFish busca centralizar información relacionada con producción, alimentación, inventario, pedidos, despachos, vehículos y usuarios, reduciendo la dispersión de datos y facilitando el control de las operaciones.
@@ -221,7 +223,9 @@ docs/
     ├── session-01/
     └── session-02/
 └── Week-05/
-    └── session-01/
+    ├── session-01/
+    └── session-02/
+├── release/
 
 ```
 
