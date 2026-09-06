@@ -1,7 +1,5 @@
 # 🐟 RedFish
 
-### Mesa De Trabajo : [Jira](https://corhuila-team-wloxo9pj.atlassian.net/jira/software/projects/RED/boards/2?filter=&groupBy=none)
-### Repositorio BD : [BD](https://github.com/luisfclaros/BaseDeDatosRedFish.git)
 
 Sistema de información orientado a la gestión de los procesos operativos de empresas piscícolas.
 
@@ -238,11 +236,11 @@ La estructura podrá evolucionar de acuerdo con las necesidades del proyecto.
 
 ### Mesa de trabajo
 
-Jira del proyecto RedFish.
+Jira del proyecto [RedFish](https://corhuila-team-wloxo9pj.atlassian.net/jira/software/projects/RED/boards/2?filter=&groupBy=none).
 
 ### Base de Datos
 
-Repositorio destinado al diseño y documentación de la base de datos de RedFish.
+Repositorio destinado al diseño y documentación de la base de datos de [RedFish](https://github.com/luisfclaros/BaseDeDatosRedFish.git).
 
 ---
 
