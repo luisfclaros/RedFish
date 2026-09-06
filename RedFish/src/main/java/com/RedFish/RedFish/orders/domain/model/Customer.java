@@ -34,6 +34,18 @@ public class Customer {
 		return name;
 	}
 
+	public String phone() {
+		return phone;
+	}
+
+	public String address() {
+		return address;
+	}
+
+	public String email() {
+		return email;
+	}
+
 	public boolean active() {
 		return active;
 	}

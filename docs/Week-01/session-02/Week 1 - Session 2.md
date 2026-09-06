@@ -167,7 +167,7 @@ Se usaran principalmente para:
 Se usaran para:
 
 - repositorios;
-- integracion con PostgreSQL;
+- integracion con MySQL;
 - adaptadores de infraestructura;
 - limites con infraestructura externa.
 
