@@ -1,0 +1,16 @@
+services:
+  app:
+    ports:
+      - '${APP_PORT:?Define APP_PORT in the production environment}:8080'
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: ${APP_MEMORY_LIMIT:-1G}
+
+  mysql:
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: ${MYSQL_MEMORY_LIMIT:-1G}
