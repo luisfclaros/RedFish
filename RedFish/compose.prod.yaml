@@ -9,6 +9,8 @@ services:
           memory: ${APP_MEMORY_LIMIT:-1G}
 
   mysql:
+    ports:
+      - '${MYSQL_PORT:-3309}:3306'
     restart: always
     deploy:
       resources:

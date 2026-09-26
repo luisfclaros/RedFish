@@ -228,6 +228,9 @@ docs/
 ├── Week-06/
 │   ├── session-01/
 │   └── session-02/
+├── Week-07/
+│   ├── session-01/
+│   └── session-02/
 ├── configuration/
 └── release/
 
@@ -259,6 +262,18 @@ docker compose --env-file .env.qa -f compose.yaml -f compose.qa.yaml up -d
 # Produccion: usa la misma imagen aprobada en QA
 docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml up -d
 ```
+
+Puertos locales:
+
+| Ambiente | API | MySQL |
+|---|---:|---:|
+| Develop | `8080` | `3307` |
+| QA | `8081` | `3308` |
+| Produccion local | `8082` | `3309` |
+
+Los puertos de MySQL de QA y produccion se publican para inspeccion local. En
+un despliegue productivo real la base de datos debe permanecer en una red
+privada.
 
 La matriz completa se encuentra en
 `docs/configuration/environment-matrix.md`.
