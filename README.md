@@ -219,17 +219,34 @@ docs/
 ├── Week-03/
 │   ├── session-01/
 │   └── session-02/
-└── Week-04/
-    ├── session-01/
-    └── session-02/
-└── Week-05/
-    ├── session-01/
-    └── session-02/
-├── release/
+├── Week-04/
+│   ├── session-01/
+│   └── session-02/
+├── Week-05/
+│   ├── session-01/
+│   └── session-02/
+├── Week-06/
+│   └── session-01/
+└── release/
 
 ```
 
 La estructura podrá evolucionar de acuerdo con las necesidades del proyecto.
+
+---
+
+# Ejecucion con Docker Compose
+
+El backend y MySQL pueden iniciarse como un sistema completo:
+
+```powershell
+cd D:\descargas\pago\RedFish\RedFish
+Copy-Item .env.example .env
+docker compose up --build
+```
+
+El archivo `.env` contiene la configuracion local y no se almacena en Git.
+Los valores requeridos y su formato se documentan en `.env.example`.
 
 ---
 
