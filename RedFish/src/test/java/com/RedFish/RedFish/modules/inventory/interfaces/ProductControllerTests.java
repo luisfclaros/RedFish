@@ -27,7 +27,8 @@ class ProductControllerTests {
 	@BeforeEach
 	void setUp() {
 		InMemoryProductRepository repository = new InMemoryProductRepository();
-		ProductController controller = new ProductController(new CreateProductService(repository),
+		ProductController controller = new ProductController(new CreateProductService(repository, event -> {
+		}),
 				new ListProductsService(repository), new GetProductService(repository));
 		mockMvc = MockMvcBuilders.standaloneSetup(controller)
 			.setControllerAdvice(new RestExceptionHandler())
