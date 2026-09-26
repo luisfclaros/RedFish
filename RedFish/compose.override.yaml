@@ -1,0 +1,10 @@
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - '${APP_PORT:-8080}:8080'
+
+  mysql:
+    ports:
+      - '${MYSQL_PORT:-3307}:3306'
