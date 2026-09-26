@@ -226,7 +226,9 @@ docs/
 │   ├── session-01/
 │   └── session-02/
 ├── Week-06/
-│   └── session-01/
+│   ├── session-01/
+│   └── session-02/
+├── configuration/
 └── release/
 
 ```
@@ -247,6 +249,19 @@ docker compose up --build
 
 El archivo `.env` contiene la configuracion local y no se almacena en Git.
 Los valores requeridos y su formato se documentan en `.env.example`.
+
+Configuraciones alternativas:
+
+```powershell
+# QA: usa una imagen existente, no la reconstruye
+docker compose --env-file .env.qa -f compose.yaml -f compose.qa.yaml up -d
+
+# Produccion: usa la misma imagen aprobada en QA
+docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml up -d
+```
+
+La matriz completa se encuentra en
+`docs/configuration/environment-matrix.md`.
 
 ---
 

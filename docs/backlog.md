@@ -17,6 +17,7 @@ siguientes sesiones.
 | HU-009 | Contenerizar la aplicacion y la base de datos. | Obligatoria | Entorno de ejecucion de Spring Boot y MySQL. |
 | HU-010 | Validar y liberar el MVP 1. | Obligatoria | Cierre del MVP 1 y version candidata a liberacion. |
 | HU-011 | Orquestar RedFish y MySQL con Docker Compose. | Obligatoria | Entregable de Week 6 Sesion 1 para iniciar el sistema completo con un comando. |
+| HU-012 | Definir ambientes y estrategia de configuracion del MVP 2. | Obligatoria | Entregable de Week 6 Sesion 2 para promover una misma imagen entre Develop, Qa y main. |
 
 ## Reglas del backlog
 
