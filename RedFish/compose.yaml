@@ -1,29 +1,59 @@
+name: redfish
+
 services:
   app:
-    build: .
-    profiles:
-      - container
+    image: ${APP_IMAGE:-redfish-app:local}
+    build:
+      context: .
     environment:
-      - 'SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/redfish'
-      - 'SPRING_DATASOURCE_USERNAME=myuser'
-      - 'SPRING_DATASOURCE_PASSWORD=secret'
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:?Define MYSQL_DATABASE in .env}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:?Define MYSQL_USER in .env}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:?Define MYSQL_PASSWORD in .env}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO:-update}
+      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
     ports:
-      - '8080:8080'
+      - '${APP_PORT:-8080}:8080'
     depends_on:
       mysql:
         condition: service_healthy
+        restart: true
+    healthcheck:
+      test: ['CMD-SHELL', 'curl --fail --silent http://localhost:8080/actuator/health > /dev/null || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: 'on-failure:3'
+    networks:
+      - redfish-network
 
   mysql:
     image: 'mysql:8.4'
     environment:
-      - 'MYSQL_DATABASE=redfish'
-      - 'MYSQL_PASSWORD=secret'
-      - 'MYSQL_ROOT_PASSWORD=verysecret'
-      - 'MYSQL_USER=myuser'
+      MYSQL_DATABASE: ${MYSQL_DATABASE:?Define MYSQL_DATABASE in .env}
+      MYSQL_USER: ${MYSQL_USER:?Define MYSQL_USER in .env}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Define MYSQL_PASSWORD in .env}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Define MYSQL_ROOT_PASSWORD in .env}
     ports:
-      - '3307:3306'
+      - '${MYSQL_PORT:-3307}:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
     healthcheck:
-      test: ['CMD-SHELL', 'mysqladmin ping -h localhost -umyuser -psecret']
+      test: ['CMD-SHELL', 'mysqladmin ping -h 127.0.0.1 -u"$${MYSQL_USER}" -p"$${MYSQL_PASSWORD}" --silent']
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 20s
+    restart: unless-stopped
+    networks:
+      - redfish-network
+
+volumes:
+  mysql-data:
+    name: redfish-mysql-data
+
+networks:
+  redfish-network:
+    name: redfish-network
+    driver: bridge

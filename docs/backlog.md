@@ -16,6 +16,7 @@ siguientes sesiones.
 | HU-008 | Definir el contrato inicial de la API del MVP. | Obligatoria | Entregable de Week 4 Sesion 2. |
 | HU-009 | Contenerizar la aplicacion y la base de datos. | Obligatoria | Entorno de ejecucion de Spring Boot y MySQL. |
 | HU-010 | Validar y liberar el MVP 1. | Obligatoria | Cierre del MVP 1 y version candidata a liberacion. |
+| HU-011 | Orquestar RedFish y MySQL con Docker Compose. | Obligatoria | Entregable de Week 6 Sesion 1 para iniciar el sistema completo con un comando. |
 
 ## Reglas del backlog
 
