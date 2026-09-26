@@ -49,10 +49,10 @@ produccion.
 | `COMPOSE_PROJECT_NAME` | `redfish-develop` | `redfish-qa` | `redfish-prod` | No |
 | `SPRING_PROFILES_ACTIVE` | `develop` | `qa` | `prod` | No |
 | `APP_IMAGE` | Misma version promovida | Misma version promovida | Misma version promovida | No |
-| `APP_PORT` | `8080` | Definido por QA | Definido por despliegue | No |
+| `APP_PORT` | `8080` | `8081` | `8082` para validacion local | No |
 | `APP_MEMORY_LIMIT` | `768M` sugerido | `768M` sugerido | `1G` sugerido | No |
 | `MYSQL_IMAGE` | `mysql:8.4` | `mysql:8.4` | `mysql:8.4` | No |
-| `MYSQL_PORT` | `3307` | No se publica | No se publica | No |
+| `MYSQL_PORT` | `3307` | `3308` | `3309` para validacion local | No |
 | `MYSQL_VOLUME_NAME` | `redfish-develop-mysql-data` | `redfish-qa-mysql-data` | `redfish-prod-mysql-data` | No |
 | `NETWORK_NAME` | `redfish-develop-network` | `redfish-qa-network` | `redfish-prod-network` | No |
 | `MYSQL_DATABASE` | `redfish` | Base aislada de QA | Base de produccion | No |
@@ -71,8 +71,16 @@ posterior antes de un despliegue productivo real.
 
 ## 5. Archivos de entorno
 
-El repositorio contiene solamente `.env.example`. Los archivos reales se
-crean localmente y estan excluidos por `.gitignore`:
+El repositorio contiene ejemplos separados para los tres ambientes. Los
+archivos reales se crean localmente y estan excluidos por `.gitignore`:
+
+```text
+.env.example
+.env.qa.example
+.env.prod.example
+```
+
+Los archivos locales son:
 
 ```text
 .env
@@ -86,8 +94,17 @@ Preparacion de desarrollo:
 Copy-Item .env.example .env
 ```
 
-Para QA y produccion se utiliza la misma lista de variables, cambiando sus
-valores mediante el sistema de despliegue o un gestor de secretos.
+Preparacion local de QA y produccion:
+
+```powershell
+Copy-Item .env.qa.example .env.qa
+Copy-Item .env.prod.example .env.prod
+```
+
+Los puertos `3307`, `3308` y `3309` permiten inspeccionar cada base desde
+MySQL Workbench sin conflictos. La exposicion de MySQL en produccion es solo
+para la demostracion local; un despliegue productivo real no debe publicar el
+puerto de la base de datos y debe usar una red privada.
 
 ---
 
