@@ -278,6 +278,22 @@ privada.
 La matriz completa se encuentra en
 `docs/configuration/environment-matrix.md`.
 
+## API REST v1
+
+Los endpoints soportados utilizan rutas versionadas:
+
+```text
+/api/v1/products
+/api/v1/customers
+```
+
+El contrato OpenAPI se publica en `/openapi-v1.yaml` y Swagger UI permanece
+disponible en `/swagger-ui.html`. Las rutas originales sin `/v1` son aliases
+temporales deprecados.
+
+Las reglas de compatibilidad se documentan en
+`docs/api/versioning-policy.md`.
+
 ---
 
 # 🔗 Recursos Relacionados
