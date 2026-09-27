@@ -175,6 +175,24 @@ La documentación de QA podrá incluir:
 
 ---
 
+# Modelo Agile y DevOps
+
+El trabajo de RedFish se organiza mediante historias pequenas, criterios de
+aceptacion verificables, limites de trabajo en curso, Pull Requests y
+retroalimentacion automatizada.
+
+Las reglas de Scrum, responsabilidades, Definition of Ready, Definition of
+Done y metricas de flujo se encuentran en:
+
+```text
+docs/process/agile-devops.md
+```
+
+Una historia queda `Done` despues de superar QA y llegar a `Qa`. La promocion
+directa de `Qa` hacia `main` representa su liberacion.
+
+---
+
 # 📝 Convención de Commits
 
 El proyecto utiliza una convención basada en Conventional Commits.
@@ -209,6 +227,7 @@ docs/
 ├── architecture/
 ├── api/
 ├── domain/
+├── process/
 ├── backlog.md
 ├── Week-01/
 │   ├── session-01/
@@ -229,6 +248,9 @@ docs/
 │   ├── session-01/
 │   └── session-02/
 ├── Week-07/
+│   ├── session-01/
+│   └── session-02/
+├── Week-08/
 │   ├── session-01/
 │   └── session-02/
 ├── configuration/
