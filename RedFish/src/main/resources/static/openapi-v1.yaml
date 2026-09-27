@@ -1,0 +1,279 @@
+openapi: 3.1.0
+info:
+  title: RedFish API
+  version: 1.0.0
+  description: |
+    Contrato REST versionado del MVP 2 de RedFish. Las rutas sin `/v1` se
+    conservan temporalmente como aliases deprecados y no forman parte del
+    contrato vigente.
+servers:
+  - url: http://localhost:{port}
+    description: Ambiente local
+    variables:
+      port:
+        default: "8080"
+        enum:
+          - "8080"
+          - "8081"
+          - "8082"
+        description: Develop, QA o produccion local
+tags:
+  - name: Products
+    description: Operaciones del modulo Inventario
+  - name: Customers
+    description: Operaciones de clientes del modulo Pedidos
+paths:
+  /api/v1/products:
+    post:
+      tags: [Products]
+      operationId: createProductV1
+      summary: Crear un producto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductRequest"
+      responses:
+        "201":
+          description: Producto creado
+          headers:
+            Location:
+              description: Ruta versionada del producto creado
+              schema:
+                type: string
+                example: /api/v1/products/1
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+    get:
+      tags: [Products]
+      operationId: listProductsV1
+      summary: Listar productos
+      responses:
+        "200":
+          description: Productos registrados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProductResponse"
+  /api/v1/products/{id}:
+    get:
+      tags: [Products]
+      operationId: getProductByIdV1
+      summary: Consultar un producto por identificador
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "200":
+          description: Producto encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /api/v1/customers:
+    post:
+      tags: [Customers]
+      operationId: createCustomerV1
+      summary: Crear un cliente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerRequest"
+      responses:
+        "201":
+          description: Cliente creado
+          headers:
+            Location:
+              description: Ruta versionada del cliente creado
+              schema:
+                type: string
+                example: /api/v1/customers/1
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+    get:
+      tags: [Customers]
+      operationId: listCustomersV1
+      summary: Listar clientes
+      responses:
+        "200":
+          description: Clientes registrados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CustomerResponse"
+  /api/v1/customers/{id}:
+    get:
+      tags: [Customers]
+      operationId: getCustomerByIdV1
+      summary: Consultar un cliente por identificador
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "200":
+          description: Cliente encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+components:
+  parameters:
+    EntityId:
+      name: id
+      in: path
+      required: true
+      description: Identificador numerico del recurso
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+  responses:
+    BadRequest:
+      description: Solicitud invalida, recurso inexistente o regla de negocio incumplida
+      headers:
+        X-Trace-Id:
+          description: Identificador para correlacion y diagnostico
+          schema:
+            type: string
+            format: uuid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiErrorResponse"
+  schemas:
+    ProductRequest:
+      type: object
+      additionalProperties: false
+      required: [code, name, unitOfMeasure, type]
+      properties:
+        code:
+          type: string
+          minLength: 1
+          example: PROD-001
+        name:
+          type: string
+          minLength: 1
+          example: Tilapia Roja
+        unitOfMeasure:
+          type: string
+          minLength: 1
+          example: kg
+        type:
+          $ref: "#/components/schemas/ProductType"
+    ProductResponse:
+      type: object
+      additionalProperties: false
+      required: [id, code, name, unitOfMeasure, type, active]
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        code:
+          type: string
+          example: PROD-001
+        name:
+          type: string
+          example: Tilapia Roja
+        unitOfMeasure:
+          type: string
+          example: kg
+        type:
+          $ref: "#/components/schemas/ProductType"
+        active:
+          type: boolean
+          example: true
+    ProductType:
+      type: string
+      enum: [PRODUCT, INPUT]
+    CustomerRequest:
+      type: object
+      additionalProperties: false
+      required: [name, phone, address]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          example: Restaurante El Lago
+        phone:
+          type: string
+          minLength: 1
+          example: "3001234567"
+        address:
+          type: string
+          minLength: 1
+          example: "Calle 10 # 15-20"
+        email:
+          type: [string, "null"]
+          format: email
+          example: compras@ellago.com
+    CustomerResponse:
+      type: object
+      additionalProperties: false
+      required: [id, name, phone, address, email, active]
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Restaurante El Lago
+        phone:
+          type: string
+          example: "3001234567"
+        address:
+          type: string
+          example: "Calle 10 # 15-20"
+        email:
+          type: [string, "null"]
+          format: email
+          example: compras@ellago.com
+        active:
+          type: boolean
+          example: true
+    ApiErrorResponse:
+      type: object
+      additionalProperties: false
+      required: [error]
+      properties:
+        error:
+          $ref: "#/components/schemas/ApiError"
+    ApiError:
+      type: object
+      additionalProperties: false
+      required: [code, message, details, trace_id]
+      properties:
+        code:
+          type: string
+          example: VALIDATION_ERROR
+        message:
+          type: string
+          example: invalid request body
+        details:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            code: must not be blank
+        trace_id:
+          type: string
+          format: uuid
+          example: 9e289660-5f90-4c65-9f8f-939c91128295

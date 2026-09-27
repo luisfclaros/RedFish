@@ -19,6 +19,7 @@ import com.RedFish.RedFish.orders.application.service.ListCustomersService;
 import com.RedFish.RedFish.orders.infrastructure.persistence.inmemory.InMemoryCustomerRepository;
 import com.RedFish.RedFish.orders.interfaces.rest.CustomerController;
 import com.RedFish.RedFish.shared.interfaces.rest.RestExceptionHandler;
+import com.RedFish.RedFish.shared.interfaces.rest.LegacyApiDeprecationFilter;
 
 class CustomerControllerTests {
 
@@ -31,6 +32,7 @@ class CustomerControllerTests {
 				new ListCustomersService(repository), new GetCustomerService(repository));
 		mockMvc = MockMvcBuilders.standaloneSetup(controller)
 			.setControllerAdvice(new RestExceptionHandler())
+			.addFilters(new LegacyApiDeprecationFilter())
 			.build();
 	}
 
@@ -45,21 +47,21 @@ class CustomerControllerTests {
 				}
 				""";
 
-		mockMvc.perform(post("/api/customers")
+		mockMvc.perform(post("/api/v1/customers")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(requestBody))
 			.andExpect(status().isCreated())
-			.andExpect(header().string("Location", "/api/customers/1"))
+			.andExpect(header().string("Location", "/api/v1/customers/1"))
 			.andExpect(jsonPath("$.id").value(1))
 			.andExpect(jsonPath("$.name").value("Restaurante El Lago"))
 			.andExpect(jsonPath("$.email").value("compras@ellago.com"));
 
-		mockMvc.perform(get("/api/customers"))
+		mockMvc.perform(get("/api/v1/customers"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$", hasSize(1)))
 			.andExpect(jsonPath("$[0].name").value("Restaurante El Lago"));
 
-		mockMvc.perform(get("/api/customers/1"))
+		mockMvc.perform(get("/api/v1/customers/1"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.phone").value("3001234567"));
 	}
@@ -75,10 +77,24 @@ class CustomerControllerTests {
 				}
 				""";
 
-		mockMvc.perform(post("/api/customers")
+		mockMvc.perform(post("/api/v1/customers")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(requestBody))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.error").value("invalid request body"));
+			.andExpect(header().exists("X-Trace-Id"))
+			.andExpect(jsonPath("$.error.code").value("VALIDATION_ERROR"))
+			.andExpect(jsonPath("$.error.message").value("invalid request body"))
+			.andExpect(jsonPath("$.error.details.name").exists())
+			.andExpect(jsonPath("$.error.details.email").exists())
+			.andExpect(jsonPath("$.error.trace_id").isNotEmpty());
+	}
+
+	@Test
+	void keepsLegacyCustomerRouteAvailable() throws Exception {
+		mockMvc.perform(get("/api/customers"))
+			.andExpect(status().isOk())
+			.andExpect(header().string("Deprecation", "true"))
+			.andExpect(header().exists("Sunset"))
+			.andExpect(header().string("Link", "</api/v1/customers>; rel=\"successor-version\""));
 	}
 }
