@@ -222,8 +222,10 @@ obtener un resultado exitoso no cumple la Definition of Done.
 | Defectos escapados | Defectos detectados despues de promover la HU. | Jira e informes QA | Por liberacion |
 
 La linea base disponible es un throughput de dos HU por semana durante Week 6
-y Week 7 (`HU-011` a `HU-014`). Aun no existe una velocidad historica en story
-points; se comenzara a medir despues de estimar el backlog de MVP 2 en HU-016.
+y Week 7 (`HU-011` a `HU-014`). HU-016 establece una hipotesis inicial de
+capacidad de `8-10` puntos por ciclo. No se considera velocidad historica hasta
+terminar el primer ciclo estimado y medir los puntos que realmente llegaron a
+`Qa`.
 
 Las metricas sirven para mejorar previsibilidad y flujo. No se utilizan para
 rankings individuales ni para convertir los puntos en una cuota.
