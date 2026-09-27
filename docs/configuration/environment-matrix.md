@@ -11,8 +11,10 @@ configuracion, pero no el codigo ni el contenido de la imagen promovida.
 ## 2. Principio de promocion
 
 ```text
-Construir una vez -> validar en Develop -> promover a Qa -> promover a main
-                          misma imagen       misma imagen
+Construir una vez -> validar en Develop -> promover cada HU a Qa
+                                               |
+                                               v
+                          al completar el MVP: promover Qa a main
 ```
 
 `APP_IMAGE` debe conservar exactamente la misma etiqueta inmutable o digest
@@ -34,11 +36,12 @@ referenciarse mediante una version inmutable. No se recomienda usar `latest`.
 El flujo del proyecto permanece:
 
 ```text
-hu-xxx-dev -> Develop -> hu-xxx-qa -> Qa -> main
+Por cada HU: hu-xxx-dev -> Develop -> hu-xxx-qa -> Qa
+Fin del MVP: Qa -> main
 ```
 
-`main` recibe un Pull Request directo desde `Qa`; no se crea una rama hija de
-produccion.
+`main` recibe un Pull Request directo desde `Qa` solamente cuando se completa
+el MVP; no se crea una rama hija de produccion.
 
 ---
 
