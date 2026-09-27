@@ -22,6 +22,14 @@ siguientes sesiones.
 | HU-014 | Versionar y verificar los contratos de integracion. | Obligatoria | Entregable de Week 7 Sesion 2 con OpenAPI, compatibilidad y pruebas de contrato. |
 | HU-015 | Formalizar el modelo Agile y DevOps de RedFish. | Obligatoria | Entregable de Week 8 Sesion 1 con roles, DoR, DoD, WIP, metricas, PR y CI. |
 | HU-016 | Planificar y comprometer el alcance del MVP 2. | Obligatoria | Entregable de Week 8 Sesion 2 con story map, estimaciones, dependencias y linea de liberacion. |
+| HU-017 | Propuesta: versionar el esquema de base de datos. | Por confirmar | Hipotesis de HU-016; debe ajustarse a la guia oficial correspondiente. |
+| HU-018 | Propuesta: gestionar existencias y movimientos de inventario. | Por confirmar | Hipotesis de HU-016; debe ajustarse a la guia oficial correspondiente. |
+| HU-019 | Propuesta: crear y consultar pedidos persistentes. | Por confirmar | Hipotesis de HU-016; debe ajustarse a la guia oficial correspondiente. |
+| HU-020 | Propuesta: integrar pedidos con la reserva de inventario. | Por confirmar | Hipotesis de HU-016; debe ajustarse a la guia oficial correspondiente. |
+| HU-021 | Propuesta: hacer idempotente la creacion de pedidos. | Por confirmar | Hipotesis de HU-016; debe ajustarse a la guia oficial correspondiente. |
+| HU-022 | Propuesta: validar el incremento integrado. | Por confirmar | No se considera automaticamente la ultima HU ni autoriza por si sola `Qa -> main`. |
+| HU-023 | Propuesta: construir el cliente web inicial. | Por confirmar | Alcance y prioridad pendientes de la guia oficial. |
+| HU-024 | Alcance pendiente de guia oficial. | Por definir | Forma parte del MVP 2; su contenido se refinara cuando la guia sea habilitada. |
 
 ## Reglas del backlog
 
@@ -33,3 +41,7 @@ siguientes sesiones.
   identificado en RedFish.
 - Las correcciones encontradas en QA deben conservar trazabilidad dentro del
   flujo Git.
+- Las guias academicas oficiales de cada semana prevalecen sobre las propuestas
+  creadas durante HU-016.
+- El MVP 2 no se promueve de `Qa` a `main` antes de HU-024 ni antes de confirmar
+  y aprobar su ultima HU oficial.
