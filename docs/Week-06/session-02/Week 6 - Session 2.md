@@ -129,11 +129,10 @@ La guia academica se adapta al flujo definido para RedFish:
 ```text
 hu-012-dev -> Develop
 hu-012-qa  -> Qa
-Qa         -> main
 ```
 
-No se crea `hu-012-main`. `main` recibe directamente el Pull Request de `Qa`
-despues de la validacion.
+No se crea `hu-012-main`. Cada HU termina en `Qa`; `main` recibe directamente
+un Pull Request de `Qa` solo despues de validar la ultima HU del MVP 2.
 
 ---
 
