@@ -36,6 +36,9 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
 	testImplementation 'org.testcontainers:testcontainers-junit-jupiter'
 	testImplementation 'org.testcontainers:testcontainers-mysql'
+	testImplementation 'au.com.dius.pact.consumer:junit5:4.7.0'
+	testImplementation 'au.com.dius.pact.provider:spring7:4.7.0'
+	testImplementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 	testCompileOnly 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testAnnotationProcessor 'org.projectlombok:lombok'
@@ -43,4 +46,7 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	systemProperty 'pact.rootDir', layout.buildDirectory.dir('pacts').get().asFile
+	systemProperty 'pact.writer.overwrite', 'true'
+	systemProperty 'pact_do_not_track', 'true'
 }

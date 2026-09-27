@@ -19,7 +19,7 @@ import com.RedFish.RedFish.inventory.domain.model.Product;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping({ "/api/v1/products", "/api/products" })
 public class ProductController {
 
 	private final CreateProductService createProductService;
@@ -37,7 +37,7 @@ public class ProductController {
 	public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest request) {
 		Product product = createProductService.create(
 				new Product(null, request.code(), request.name(), request.unitOfMeasure(), request.type(), true));
-		return ResponseEntity.created(URI.create("/api/products/" + product.id()))
+		return ResponseEntity.created(URI.create("/api/v1/products/" + product.id()))
 			.body(ProductResponse.from(product));
 	}
 

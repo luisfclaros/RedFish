@@ -19,7 +19,7 @@ import com.RedFish.RedFish.orders.domain.model.Customer;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/customers")
+@RequestMapping({ "/api/v1/customers", "/api/customers" })
 public class CustomerController {
 
 	private final CreateCustomerService createCustomerService;
@@ -37,7 +37,7 @@ public class CustomerController {
 	public ResponseEntity<CustomerResponse> create(@Valid @RequestBody CustomerRequest request) {
 		Customer customer = createCustomerService.create(new Customer(null, request.name(), request.phone(),
 				request.address(), request.email(), true));
-		return ResponseEntity.created(URI.create("/api/customers/" + customer.id()))
+		return ResponseEntity.created(URI.create("/api/v1/customers/" + customer.id()))
 			.body(CustomerResponse.from(customer));
 	}
 

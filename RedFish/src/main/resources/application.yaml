@@ -33,3 +33,7 @@ management:
       probes:
         enabled: true
       show-details: never
+
+springdoc:
+  swagger-ui:
+    url: /openapi-v1.yaml
