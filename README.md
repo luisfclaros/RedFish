@@ -235,6 +235,7 @@ docs/
 ├── architecture/
 ├── api/
 ├── domain/
+├── planning/
 ├── process/
 ├── backlog.md
 ├── Week-01/
