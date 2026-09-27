@@ -20,6 +20,8 @@ siguientes sesiones.
 | HU-012 | Definir ambientes y estrategia de configuracion del MVP 2. | Obligatoria | Entregable de Week 6 Sesion 2 para promover una misma imagen entre Develop, Qa y main. |
 | HU-013 | Definir comunicacion entre modulos y procesamiento idempotente. | Obligatoria | Entregable de Week 7 Sesion 1 con REST externo, eventos internos y puertos MySQL diferenciados. |
 | HU-014 | Versionar y verificar los contratos de integracion. | Obligatoria | Entregable de Week 7 Sesion 2 con OpenAPI, compatibilidad y pruebas de contrato. |
+| HU-015 | Formalizar el modelo Agile y DevOps de RedFish. | Obligatoria | Entregable de Week 8 Sesion 1 con roles, DoR, DoD, WIP, metricas, PR y CI. |
+| HU-016 | Planificar y comprometer el alcance del MVP 2. | Obligatoria | Entregable de Week 8 Sesion 2 con story map, estimaciones, dependencias y linea de liberacion. |
 
 ## Reglas del backlog
 

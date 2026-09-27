@@ -245,13 +245,19 @@ Qa
 └── hu-002-qa
       └── Pull Request -> Qa
 
+```
+
+El flujo anterior se repite para cada HU. La liberacion ocurre solo despues de
+aprobar la ultima HU del MVP:
+
+```text
 Qa
-└── Pull Request -> main
+└── Pull Request de liberacion -> main
 ```
 
 Las ramas `Develop` y `Qa` no deben usarse para desarrollar cambios
 directamente. `main` representa la version estable y recibe cambios promovidos
-desde `Qa` mediante Pull Request directo.
+desde `Qa` mediante un unico Pull Request al finalizar el MVP.
 
 ---
 

@@ -133,12 +133,19 @@ Qa
 └── hu-002-qa
       └── Pull Request → Qa
 
-Qa
-└── Pull Request → main
-
 ```
 
-Las ramas de ambiente (`Develop` y `Qa`) no deben usarse para desarrollar cambios directamente. La rama `main` recibe cambios promovidos desde `Qa` mediante Pull Request directo.
+El ciclo anterior se repite para cada HU del MVP. Solamente cuando la ultima
+HU del MVP haya sido aprobada en `Qa` se realiza la liberacion:
+
+```text
+Qa
+└── Pull Request de liberacion → main
+```
+
+Las ramas de ambiente (`Develop` y `Qa`) no deben usarse para desarrollar
+cambios directamente. La rama `main` recibe un Pull Request directo desde `Qa`
+solo al finalizar el MVP completo, no despues de cada historia.
 
 ---
 
@@ -172,6 +179,25 @@ La documentación de QA podrá incluir:
 * Registro de defectos.
 * Evidencias.
 * Informe de validación.
+
+---
+
+# Modelo Agile y DevOps
+
+El trabajo de RedFish se organiza mediante historias pequenas, criterios de
+aceptacion verificables, limites de trabajo en curso, Pull Requests y
+retroalimentacion automatizada.
+
+Las reglas de Scrum, responsabilidades, Definition of Ready, Definition of
+Done y metricas de flujo se encuentran en:
+
+```text
+docs/process/agile-devops.md
+```
+
+Una historia queda `Done` despues de superar QA y llegar a `Qa`. Las historias
+se acumulan en esa rama hasta completar el MVP; entonces un unico Pull Request
+directo de `Qa` hacia `main` representa la liberacion.
 
 ---
 
@@ -209,6 +235,7 @@ docs/
 ├── architecture/
 ├── api/
 ├── domain/
+├── process/
 ├── backlog.md
 ├── Week-01/
 │   ├── session-01/
@@ -229,6 +256,9 @@ docs/
 │   ├── session-01/
 │   └── session-02/
 ├── Week-07/
+│   ├── session-01/
+│   └── session-02/
+├── Week-08/
 │   ├── session-01/
 │   └── session-02/
 ├── configuration/
@@ -277,6 +307,22 @@ privada.
 
 La matriz completa se encuentra en
 `docs/configuration/environment-matrix.md`.
+
+## API REST v1
+
+Los endpoints soportados utilizan rutas versionadas:
+
+```text
+/api/v1/products
+/api/v1/customers
+```
+
+El contrato OpenAPI se publica en `/openapi-v1.yaml` y Swagger UI permanece
+disponible en `/swagger-ui.html`. Las rutas originales sin `/v1` son aliases
+temporales deprecados.
+
+Las reglas de compatibilidad se documentan en
+`docs/api/versioning-policy.md`.
 
 ---
 

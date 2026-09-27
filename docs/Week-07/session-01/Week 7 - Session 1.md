@@ -158,16 +158,18 @@ sha256:81846e8d0dcded7882b4216318d8ec76c89dbda1c675c16e8b26012580774598
 ## 8. Flujo Git
 
 ```text
-hu-013-dev -> Develop -> hu-013-qa -> Qa -> main
+hu-013-dev -> Develop
+hu-013-qa  -> Qa
 ```
 
-`main` recibe directamente el Pull Request aprobado desde `Qa`.
+HU-013 termina en `Qa`. La promocion `Qa -> main` se realizara una sola vez,
+despues de aprobar la ultima HU del MVP 2.
 
 ---
 
 ## 9. Resultado
 
-HU-013 fue validada en `hu-013-qa` y queda aprobada para promoverse a `Qa`.
+HU-013 fue validada en `hu-013-qa` y queda aprobada en `Qa`.
 
 ---
 
