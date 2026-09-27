@@ -125,8 +125,10 @@ y evidencia QA, y fue promovida a `Qa`.
 hu-xxx-dev -> Develop -> hu-xxx-qa -> Qa
 ```
 
-El Pull Request directo de `Qa` hacia `main` convierte el incremento aprobado
-en una version `Released`.
+Cada HU termina en `Qa` y permanece alli mientras avanzan las siguientes
+historias. Solamente despues de aprobar la ultima HU del MVP se crea el Pull
+Request directo de `Qa` hacia `main`, que convierte el conjunto completo en
+una version `Released`.
 
 ---
 
@@ -228,10 +230,16 @@ registraran posteriormente en `hu-015-qa`.
 ## 14. Flujo Git
 
 ```text
-hu-015-dev -> Develop -> hu-015-qa -> Qa -> main
+hu-015-dev -> Develop
+hu-015-qa  -> Qa
 ```
 
-`main` recibe directamente el Pull Request aprobado desde `Qa`.
+El mismo ciclo se repetira para las siguientes HU. Cuando la ultima HU del MVP
+2 quede aprobada en `Qa`, se ejecutara una sola liberacion:
+
+```text
+Qa -> main
+```
 
 ---
 

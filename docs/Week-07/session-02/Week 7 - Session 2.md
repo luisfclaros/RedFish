@@ -278,10 +278,12 @@ de esta imagen corresponde a las siguientes etapas del flujo Git.
 ## 11. Flujo Git
 
 ```text
-hu-014-dev -> Develop -> hu-014-qa -> Qa -> main
+hu-014-dev -> Develop
+hu-014-qa  -> Qa
 ```
 
-`main` recibe directamente el Pull Request aprobado desde `Qa`.
+HU-014 termina en `Qa`. La promocion `Qa -> main` se realizara una sola vez,
+despues de aprobar la ultima HU del MVP 2.
 
 ---
 

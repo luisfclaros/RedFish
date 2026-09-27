@@ -133,12 +133,19 @@ Qa
 └── hu-002-qa
       └── Pull Request → Qa
 
-Qa
-└── Pull Request → main
-
 ```
 
-Las ramas de ambiente (`Develop` y `Qa`) no deben usarse para desarrollar cambios directamente. La rama `main` recibe cambios promovidos desde `Qa` mediante Pull Request directo.
+El ciclo anterior se repite para cada HU del MVP. Solamente cuando la ultima
+HU del MVP haya sido aprobada en `Qa` se realiza la liberacion:
+
+```text
+Qa
+└── Pull Request de liberacion → main
+```
+
+Las ramas de ambiente (`Develop` y `Qa`) no deben usarse para desarrollar
+cambios directamente. La rama `main` recibe un Pull Request directo desde `Qa`
+solo al finalizar el MVP completo, no despues de cada historia.
 
 ---
 
@@ -188,8 +195,9 @@ Done y metricas de flujo se encuentran en:
 docs/process/agile-devops.md
 ```
 
-Una historia queda `Done` despues de superar QA y llegar a `Qa`. La promocion
-directa de `Qa` hacia `main` representa su liberacion.
+Una historia queda `Done` despues de superar QA y llegar a `Qa`. Las historias
+se acumulan en esa rama hasta completar el MVP; entonces un unico Pull Request
+directo de `Qa` hacia `main` representa la liberacion.
 
 ---
 

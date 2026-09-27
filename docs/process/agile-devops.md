@@ -61,18 +61,23 @@ hu-xxx-dev -> Pull Request -> Develop
 hu-xxx-qa -> evidencia QA -> Pull Request -> Qa
         |
         v
-Revision del incremento
+Siguiente HU del MVP
         |
         v
-Qa -> Pull Request -> main
+Ultima HU aprobada en Qa
+        |
+        v
+Qa -> Pull Request de liberacion -> main
         |
         v
 Retrospectiva y mejora del proceso
 ```
 
 `Develop` integra cambios terminados por desarrollo. `Qa` contiene historias
-que superaron validacion. `main` representa una liberacion aprobada. No se crea
-una rama hija de `main`.
+que superaron validacion. El ciclo de desarrollo y QA se repite para cada HU y
+termina en `Qa`. `main` representa la liberacion del MVP completo y solo recibe
+el Pull Request de `Qa` despues de aprobar la ultima HU. No se crea una rama
+hija de `main`.
 
 ---
 
@@ -154,7 +159,9 @@ Una historia se considera `Done` cuando:
 - QA registra resultados, defectos y limitaciones conocidas;
 - los cambios fueron promovidos mediante Pull Request hasta `Qa`.
 
-La promocion directa de `Qa` a `main` cambia el estado de `Done` a `Released`.
+Las historias aprobadas se acumulan en `Qa`. Despues de finalizar la ultima HU
+del MVP, la promocion directa de `Qa` a `main` cambia el conjunto completo de
+`Done` a `Released`.
 
 ---
 
