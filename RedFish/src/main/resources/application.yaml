@@ -12,3 +12,21 @@ spring:
       hibernate:
         format_sql: true
     show-sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: RedFish
+    description: Sistema de gestión para empresas piscícolas
