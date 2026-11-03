@@ -25,10 +25,16 @@ public class RestExceptionHandler {
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<ApiErrorResponse> handleIllegalArgument(IllegalArgumentException exception,
 			HttpServletRequest request) {
-		String code = exception.getMessage() != null && exception.getMessage().contains("not found")
-				? "RESOURCE_NOT_FOUND"
-				: "BUSINESS_RULE_VIOLATION";
-		return response(HttpStatus.BAD_REQUEST, code, exception.getMessage(), Map.of(), request);
+		boolean resourceNotFound = exception.getMessage() != null && exception.getMessage().contains("not found");
+		HttpStatus status = resourceNotFound ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
+		String code = resourceNotFound ? "RESOURCE_NOT_FOUND" : "BUSINESS_RULE_VIOLATION";
+		return response(status, code, exception.getMessage(), Map.of(), request);
+	}
+
+	@ExceptionHandler(IllegalStateException.class)
+	public ResponseEntity<ApiErrorResponse> handleIllegalState(IllegalStateException exception,
+			HttpServletRequest request) {
+		return response(HttpStatus.CONFLICT, "BUSINESS_STATE_CONFLICT", exception.getMessage(), Map.of(), request);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
