@@ -94,7 +94,7 @@ class ProductControllerTests {
 	@Test
 	void returnsStandardErrorWhenProductDoesNotExist() throws Exception {
 		mockMvc.perform(get("/api/v1/products/999"))
-			.andExpect(status().isBadRequest())
+			.andExpect(status().isNotFound())
 			.andExpect(header().exists("X-Trace-Id"))
 			.andExpect(jsonPath("$.error.code").value("RESOURCE_NOT_FOUND"))
 			.andExpect(jsonPath("$.error.message").value("product not found"))
