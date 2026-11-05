@@ -54,7 +54,7 @@ class JpaPersistenceAdapterTests {
 
         assertThat(repository.save(product).code()).isEqualTo("INS-001");
         assertThat(repository.findAll()).extracting(Product::code).containsExactly("INS-001");
-        assertThat(repository.findById(12L)).contains(product);
+        assertThat(repository.findById(12L)).get().extracting(Product::code).isEqualTo("INS-001");
         assertThat(repository.existsByCode("INS-001")).isTrue();
 
         verify(springRepository).save(any(ProductJpaEntity.class));
@@ -95,7 +95,7 @@ class JpaPersistenceAdapterTests {
 
         assertThat(repository.save(customer).email()).isEqualTo("sur@example.com");
         assertThat(repository.findAll()).extracting(Customer::email).containsExactly("sur@example.com");
-        assertThat(repository.findById(22L)).contains(customer);
+        assertThat(repository.findById(22L)).get().extracting(Customer::email).isEqualTo("sur@example.com");
         assertThat(repository.existsByEmail("sur@example.com")).isTrue();
 
         verify(springRepository).save(any(CustomerJpaEntity.class));
