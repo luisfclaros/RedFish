@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@WebMvcTest(controllers = SecurityConfigurationTests.ProbeController.class)
-@Import(SecurityConfiguration.class)
+@WebMvcTest
+@Import({SecurityConfiguration.class, SecurityConfigurationTests.ProbeController.class})
 class SecurityConfigurationTests {
 
     @Autowired
