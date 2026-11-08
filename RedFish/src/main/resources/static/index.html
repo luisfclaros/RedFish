@@ -17,10 +17,24 @@ main{padding:28px;min-width:0}.top{display:flex;justify-content:space-between;al
 @media(max-width:1000px){.layout{grid-template-columns:210px 1fr}.cards{grid-template-columns:repeat(2,1fr)}.gridform{grid-template-columns:repeat(2,1fr)}}
 dialog{border:0;border-radius:14px;padding:24px;width:min(420px,calc(100% - 28px));box-shadow:0 20px 60px #09283d55;color:#17324d}dialog::backdrop{background:#0b2638aa}.auth-form{display:grid;gap:12px}.auth-form h2{margin:0}.auth-form p{margin:0;color:#6a8293;font-size:13px}.auth-form input{padding:11px;border:1px solid #d4e0e8;border-radius:8px;font:inherit}
 @media(max-width:700px){.layout{display:block}aside{padding:12px;gap:10px}.brand{padding:4px}nav{display:flex;overflow:auto}nav button{white-space:nowrap;padding:9px 11px}.foot{display:none}main{padding:16px}.top h1{font-size:21px}.cards{grid-template-columns:repeat(2,1fr)}.gridform,.two{grid-template-columns:1fr}}
+.landing{min-height:100vh;background:linear-gradient(135deg,#0b3045,#14536a);padding:48px 22px;display:grid;place-items:center;color:#17324d}.landing-inner{width:min(1080px,100%);text-align:center}.landing-brand{color:#fff;margin-bottom:34px}.landing-logo{width:66px;height:66px;border-radius:19px;background:#20a6a1;display:grid;place-items:center;margin:0 auto 14px;font-size:28px;font-weight:900}.landing-brand h1{font-size:36px;margin:0}.landing-brand p{color:#c2dce3;margin:9px 0 0}.landing-inner h2{color:#fff;font-size:22px;margin:0 0 22px}.profile-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}.profile-card{border:1px solid #dce8ed;border-radius:16px;background:#fff;padding:24px 18px;text-align:left;cursor:pointer;min-height:190px;box-shadow:0 12px 35px #071e2c35;transition:transform .15s,border-color .15s}.profile-card:hover{transform:translateY(-4px);border-color:#20a6a1}.profile-icon{width:44px;height:44px;border-radius:12px;background:#e2f4f2;color:#147d79;display:grid;place-items:center;font-size:22px;margin-bottom:18px}.profile-card strong{display:block;font-size:17px}.profile-card span{display:block;color:#6a8293;font-size:13px;line-height:1.5;margin-top:8px}.landing-foot{color:#b6d3dc;font-size:12px;margin-top:24px}.hidden{display:none!important}.user-chip{display:flex;align-items:center;gap:10px}.user-chip button{border:0;border-radius:8px;padding:8px 11px;cursor:pointer;background:#e7eff4;color:#294b61;font-weight:700}@media(max-width:850px){.profile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){.profile-grid{grid-template-columns:1fr}.landing{padding:28px 16px}.profile-card{min-height:0}}
 </style>
 </head>
 <body>
-<div class="layout">
+<section id="landing" class="landing">
+ <div class="landing-inner">
+  <div class="landing-brand"><div class="landing-logo">RF</div><h1>RedFish</h1><p>Sistema integral de gestión piscícola</p></div>
+  <h2>Selecciona tu área para ingresar</h2>
+  <div class="profile-grid">
+   <button class="profile-card" data-profile="PRODUCTION"><div class="profile-icon">♧</div><strong>Producción</strong><span>Estanques, alimentación y control de producción.</span></button>
+   <button class="profile-card" data-profile="OPERATIONS"><div class="profile-icon">▥</div><strong>Operaciones</strong><span>Inventario, vehículos y gestión de despachos.</span></button>
+   <button class="profile-card" data-profile="COMMERCIAL"><div class="profile-icon">♙</div><strong>Comercial</strong><span>Clientes, pedidos y seguimiento comercial.</span></button>
+   <button class="profile-card" data-profile="ADMIN"><div class="profile-icon">⚙</div><strong>Administración</strong><span>Administración general y control de usuarios.</span></button>
+  </div>
+  <div class="landing-foot">Acceso seguro · Cada área requiere su propia cuenta y contraseña</div>
+ </div>
+</section>
+<div class="layout hidden" id="app-layout">
 <aside>
   <div class="brand"><div class="logo">RF</div><div><strong>RedFish</strong><small>Gestión piscícola</small></div></div>
   <nav id="nav">
@@ -37,7 +51,7 @@ dialog{border:0;border-radius:14px;padding:24px;width:min(420px,calc(100% - 28px
   <div class="foot">RedFish · Aplicación de gestión<br>Backend Spring Boot · MySQL</div>
 </aside>
 <main>
-  <div class="top"><div><h1 id="title">Resumen general</h1><p>Control centralizado de la operación piscícola</p></div><span class="pill">● Sistema conectado</span></div>
+  <div class="top"><div><h1 id="title">Resumen general</h1><p>Control centralizado de la operación piscícola</p></div><div class="user-chip"><span class="pill" id="current-user">Sesión activa</span><button id="logout" type="button">Cerrar sesión</button></div></div>
   <div id="notice" class="notice"></div>
 
   <section class="view active" id="view-dashboard">
@@ -157,7 +171,7 @@ dialog{border:0;border-radius:14px;padding:24px;width:min(420px,calc(100% - 28px
     <div class="panel"><h2>Despachos programados</h2><div id="dispatches-table" class="tablewrap"></div></div>
   </section>
 </main>
-<dialog id="auth-dialog"><form id="auth-form" class="auth-form"><h2>Ingresar a RedFish</h2><p>Autentícate para consultar y modificar la información del sistema.</p><div class="field"><label>Usuario</label><input name="username" autocomplete="username" required></div><div class="field"><label>Contraseña</label><input name="password" type="password" autocomplete="current-password" required></div><div class="actions"><button class="btn" type="submit">Ingresar</button><button class="btn secondary" type="button" id="auth-cancel">Cancelar</button></div></form></dialog>
+<dialog id="auth-dialog"><form id="auth-form" class="auth-form"><h2 id="auth-title">Ingresar a RedFish</h2><p id="auth-description">Ingresa con las credenciales asignadas a tu área.</p><div class="field"><label>Usuario</label><input name="username" autocomplete="username" required></div><div class="field"><label>Contraseña</label><input name="password" type="password" autocomplete="current-password" required></div><div class="actions"><button class="btn" type="submit">Ingresar</button><button class="btn secondary" type="button" id="auth-cancel">Cancelar</button></div></form></dialog>
 </div>
 <script>
 const $=(s)=>document.querySelector(s);
@@ -166,17 +180,29 @@ document.querySelectorAll('input[type=date]').forEach(i=>i.value=today);
 const titles={dashboard:'Resumen general',products:'Productos',customers:'Clientes',vehicles:'Vehículos',ponds:'Estanques',feeding:'Alimentación',inventory:'Inventario',orders:'Pedidos',dispatches:'Despachos'};
 const endpoints={products:'/api/v1/products',customers:'/api/v1/customers',vehicles:'/api/v1/vehicles',ponds:'/api/v1/ponds',feeding:'/api/v1/feeding-records',inventory:'/api/v1/inventory',movements:'/api/v1/inventory/movements',orders:'/api/v1/orders',dispatches:'/api/v1/dispatches'};
 function notice(message,error=false){const n=$('#notice');n.textContent=message;n.className='notice show '+(error?'err':'ok');window.clearTimeout(notice.timer);notice.timer=window.setTimeout(()=>n.className='notice',6000)}
-let authHeader=null;
+let authHeader=null, currentProfile=null, currentUser=null;
+const profileNames={PRODUCTION:'Producción',OPERATIONS:'Operaciones',COMMERCIAL:'Comercial',ADMIN:'Administración'};
+const profileViews={PRODUCTION:['dashboard','products','ponds','feeding'],OPERATIONS:['dashboard','products','vehicles','inventory','dispatches'],COMMERCIAL:['dashboard','products','customers','orders'],ADMIN:['dashboard','products','customers','vehicles','ponds','feeding','inventory','orders','dispatches']};
 function requestCredentials(){
   return new Promise(resolve=>{
     const dialog=$('#auth-dialog'),form=$('#auth-form');let settled=false;
     const finish=value=>{if(settled)return;settled=true;dialog.close();resolve(value)};
-    form.onsubmit=e=>{e.preventDefault();const d=formData(form);authHeader='Basic '+btoa(unescape(encodeURIComponent(d.username+':'+d.password)));form.reset();finish(true)};
+    form.onsubmit=async e=>{e.preventDefault();const d=formData(form);const candidate='Basic '+btoa(unescape(encodeURIComponent(d.username+':'+d.password)));const submit=form.querySelector('button[type="submit"]');submit.disabled=true;try{const response=await fetch('/api/v1/auth/me',{headers:{Authorization:candidate}});if(!response.ok)throw new Error(response.status===401?'Usuario o contraseña incorrectos.':'No fue posible validar el acceso.');const user=await response.json();if(user.role!==currentProfile)throw new Error('Esta cuenta no pertenece al área de '+profileNames[currentProfile]+'. Selecciona el área correcta.');authHeader=candidate;currentUser=user;form.reset();finish(true)}catch(err){notice(err.message,true)}finally{submit.disabled=false}};
     $('#auth-cancel').onclick=()=>finish(false);
     dialog.addEventListener('cancel',e=>{e.preventDefault();finish(false)},{once:true});
     dialog.showModal();
   });
 }
+function enterProfile(role){
+ currentProfile=role;$('#auth-title').textContent='Acceso de '+profileNames[role];$('#auth-description').textContent='Ingresa el usuario y contraseña asignados a '+profileNames[role]+'.';requestCredentials().then(ok=>{if(!ok)return;$('#landing').classList.add('hidden');$('#app-layout').classList.remove('hidden');$('#current-user').textContent=currentUser.name+' · '+profileNames[currentProfile];applyProfile();refreshAll().catch(err=>notice(err.message,true));show('dashboard')});
+}
+function applyProfile(){
+ const allowed=new Set(profileViews[currentProfile]||[]);
+ document.querySelectorAll('nav [data-view]').forEach(b=>b.classList.toggle('hidden',!allowed.has(b.dataset.view)));
+ document.querySelectorAll('[data-go]').forEach(b=>b.classList.toggle('hidden',!allowed.has(b.dataset.go)));
+}
+document.querySelectorAll('[data-profile]').forEach(b=>b.addEventListener('click',()=>enterProfile(b.dataset.profile)));
+$('#logout').addEventListener('click',()=>{authHeader=null;currentUser=null;currentProfile=null;$('#app-layout').classList.add('hidden');$('#landing').classList.remove('hidden');document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$('#notice').className='notice';});
 function csrfCookie(){
   const entry=document.cookie.split('; ').find(value=>value.startsWith('XSRF-TOKEN='));
   return entry?decodeURIComponent(entry.substring('XSRF-TOKEN='.length)):null;
@@ -246,7 +272,7 @@ submit('#exit-form',endpoints.inventory+'/exits',x=>numberFields(x,['productId',
 submit('#order-form',endpoints.orders,x=>({customerId:Number(x.customerId),date:x.date,items:[{productId:Number(x.productId),productName:x.productName,quantity:Number(x.quantity),unitPrice:Number(x.unitPrice)}],observations:x.observations}),async()=>{await loadOrders();await loadInventory()});
 submit('#dispatch-form',endpoints.dispatches,x=>numberFields(x,['orderId','vehicleId']),async()=>{await loadDispatches();await loadOrders()});
 document.addEventListener('click',async e=>{const o=e.target.closest('[data-order-action]');if(o){if(o.dataset.orderAction==='schedule-dispatch'){const orderField=$('#dispatch-form [name="orderId"]');orderField.value=o.dataset.id;show('dispatches');orderField.focus();notice('Pedido '+o.dataset.id+' seleccionado. Completa el vehículo, la fecha y la dirección para programar el despacho.');return}try{await api('/api/v1/orders/'+o.dataset.id+'/'+o.dataset.orderAction,{method:'POST',body:'{}'});notice('Estado del pedido actualizado.');await loadOrders()}catch(err){notice(err.message,true)}}const d=e.target.closest('[data-dispatch-action]');if(d){try{let url='/api/v1/dispatches/'+d.dataset.id+'/'+d.dataset.dispatchAction,opts={method:'POST',body:'{}'};if(d.dataset.dispatchAction==='delivered')opts.body=JSON.stringify({deliveryDate:today,receivedBy:prompt('Nombre de quien recibe:')||''});await api(url,opts);notice('Estado del despacho actualizado.');await loadDispatches()}catch(err){notice(err.message,true)}}});
-refreshAll().catch(e=>notice(e.message,true));
+// La carga de datos se inicia únicamente después de autenticar el perfil seleccionado.
 </script>
 </body>
 </html>
