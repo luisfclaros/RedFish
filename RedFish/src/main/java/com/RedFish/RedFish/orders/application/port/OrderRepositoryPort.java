@@ -7,5 +7,5 @@ import com.RedFish.RedFish.orders.domain.model.Order;
 public interface OrderRepositoryPort {
     Order save(Order order);
     Optional<Order> findById(Long id);
-    List<Order> findAll();
+    default List<Order> findAll() { return List.of(); }
 }
