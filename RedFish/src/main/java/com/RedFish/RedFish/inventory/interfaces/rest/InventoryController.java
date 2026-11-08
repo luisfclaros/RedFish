@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import com.RedFish.RedFish.inventory.application.port.InventoryMovementPort;
 import com.RedFish.RedFish.inventory.application.port.InventoryMovementRepositoryPort;
 import com.RedFish.RedFish.inventory.application.service.ListInventoryService;
+import com.RedFish.RedFish.inventory.application.service.GetInventoryItemService;
 import com.RedFish.RedFish.inventory.application.service.RegisterInventoryStockService;
 import jakarta.validation.Valid;
 
@@ -15,12 +16,13 @@ import jakarta.validation.Valid;
 public class InventoryController {
     private final RegisterInventoryStockService registerStock;
     private final ListInventoryService list;
+    private final GetInventoryItemService get;
     private final InventoryMovementPort movementPort;
     private final InventoryMovementRepositoryPort movements;
 
     public InventoryController(RegisterInventoryStockService registerStock, ListInventoryService list,
-            InventoryMovementPort movementPort, InventoryMovementRepositoryPort movements) {
-        this.registerStock=registerStock; this.list=list; this.movementPort=movementPort; this.movements=movements;
+            GetInventoryItemService get, InventoryMovementPort movementPort, InventoryMovementRepositoryPort movements) {
+        this.registerStock=registerStock; this.list=list; this.get=get; this.movementPort=movementPort; this.movements=movements;
     }
 
     @PostMapping("/stock")
@@ -29,6 +31,9 @@ public class InventoryController {
         return ResponseEntity.created(URI.create("/api/v1/inventory/"+item.id()))
                 .body(InventoryItemResponse.from(item));
     }
+
+    @GetMapping("/{id}")
+    public InventoryItemResponse get(@PathVariable Long id) { return InventoryItemResponse.from(get.get(id)); }
 
     @GetMapping
     public List<InventoryItemResponse> list() {
