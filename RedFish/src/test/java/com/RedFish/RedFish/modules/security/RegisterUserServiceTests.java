@@ -34,6 +34,22 @@ class RegisterUserServiceTests {
     }
 
     @Test
+    void acceptsTheFourAreaRoles() {
+        AtomicReference<User> saved = new AtomicReference<>();
+        UserRepositoryPort repository = new UserRepositoryPort() {
+            @Override public Optional<User> findByUsername(String username) { return Optional.empty(); }
+            @Override public User save(User user) { saved.set(user); return user; }
+        };
+        var service = new RegisterUserService(repository, new BCryptPasswordEncoder());
+
+        for (String role : new String[] {"ADMIN", "PRODUCTION", "OPERATIONS", "COMMERCIAL"}) {
+            User user = service.register("Usuario " + role, "user_" + role.toLowerCase(),
+                    "ClaveSegura123", role);
+            assertThat(user.role().name()).isEqualTo(role);
+        }
+    }
+
+    @Test
     void rejectsShortPasswordsAndInvalidRoles() {
         UserRepositoryPort repository = new UserRepositoryPort() {
             @Override public Optional<User> findByUsername(String username) { return Optional.empty(); }
@@ -44,6 +60,6 @@ class RegisterUserServiceTests {
         assertThatThrownBy(() -> service.register("Operador", "operador", "123", "OPERATOR"))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("10 characters");
         assertThatThrownBy(() -> service.register("Operador", "operador", "ClaveSegura123", "ROOT"))
-                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("ADMIN or OPERATOR");
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("ADMIN, PRODUCTION, OPERATIONS or COMMERCIAL");
     }
 }
