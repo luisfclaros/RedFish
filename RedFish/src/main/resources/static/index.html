@@ -55,12 +55,12 @@ dialog{border:0;border-radius:14px;padding:24px;width:min(420px,calc(100% - 28px
   </section>
 
   <section class="view" id="view-products">
-    <div class="panel"><h2>Registrar producto o insumo</h2><form id="product-form" class="gridform">
+    <div class="panel"><h2 id="product-form-title">Registrar producto o insumo</h2><form id="product-form" class="gridform">
       <div class="field"><label>Código</label><input name="code" required maxlength="20"></div>
       <div class="field"><label>Nombre</label><input name="name" required maxlength="100"></div>
       <div class="field"><label>Unidad de medida</label><input name="unitOfMeasure" required value="kg" maxlength="20"></div>
       <div class="field"><label>Tipo</label><select name="type"><option value="PRODUCT">Producto</option><option value="INPUT">Insumo</option></select></div>
-      <div class="actions"><button class="btn">Guardar producto</button></div>
+      <div class="actions"><button class="btn" id="product-submit">Guardar producto</button><button class="btn secondary" type="button" id="cancel-product-edit" style="display:none">Cancelar edición</button></div>
     </form></div>
     <div class="panel"><h2>Productos registrados</h2><div id="products-table" class="tablewrap"></div></div>
   </section>
@@ -198,7 +198,7 @@ async function api(url,options={},retried=false){
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function table(target,headers,rows){const el=$(target);if(!rows.length){el.innerHTML='<div class="empty">No hay registros para mostrar.</div>';return}el.innerHTML='<table><thead><tr>'+headers.map(h=>'<th>'+esc(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(v=>'<td>'+v+'</td>').join('')+'</tr>').join('')+'</tbody></table>'}
 function val(v){return esc(v)}
-async function loadProducts(){const a=await api(endpoints.products);table('#products-table',['ID','Código','Nombre','Unidad','Tipo','Estado'],a.map(x=>[val(x.id),val(x.code),val(x.name),val(x.unitOfMeasure),val(x.type),x.active?'Activo':'Inactivo']));$('#count-products').textContent=a.length}
+async function loadProducts(){const a=await api(endpoints.products);table('#products-table',['ID','Código','Nombre','Unidad','Tipo','Estado','Acciones'],a.map(x=>[val(x.id),val(x.code),val(x.name),val(x.unitOfMeasure),val(x.type),x.active?'Activo':'Inactivo','<button class="btn small secondary" data-product-edit="'+x.id+'">Editar</button>']));$('#count-products').textContent=a.length}
 async function loadCustomers(){const a=await api(endpoints.customers);table('#customers-table',['ID','Nombre','Teléfono','Dirección','Correo','Estado'],a.map(x=>[val(x.id),val(x.name),val(x.phone),val(x.address),val(x.email),x.active?'Activo':'Inactivo']));$('#count-customers').textContent=a.length}
 async function loadVehicles(){const a=await api(endpoints.vehicles);table('#vehicles-table',['ID','Placa','Marca','Modelo','Capacidad','Estado'],a.map(x=>[val(x.id),val(x.plate),val(x.brand),val(x.model),val(x.loadCapacity)+' kg',x.active?'Activo':'Inactivo']));$('#count-vehicles').textContent=a.length}
 async function loadPonds(){const a=await api(endpoints.ponds);table('#ponds-table',['ID','Código','Nombre','Ubicación','Capacidad','Estado'],a.map(x=>[val(x.id),val(x.code),val(x.name),val(x.location),val(x.capacity),x.active?'Activo':'Inactivo']));$('#count-ponds').textContent=a.length}
@@ -214,8 +214,13 @@ $('#nav').addEventListener('click',e=>{const b=e.target.closest('[data-view]');i
 document.addEventListener('click',e=>{const go=e.target.closest('[data-go]');if(go)show(go.dataset.go)});
 function formData(form){return Object.fromEntries(new FormData(form).entries())}
 function numberFields(obj,keys){keys.forEach(k=>{if(obj[k]!==''&&obj[k]!==undefined)obj[k]=Number(obj[k])});return obj}
-async function submit(id,url,transform=x=>x,after)=>{const f=$(id);f.addEventListener('submit',async e=>{e.preventDefault();const b=f.querySelector('button[type=submit],button:not([type])');b.disabled=true;try{await api(url,{method:'POST',body:JSON.stringify(transform(formData(f)))});notice('Registro guardado correctamente.');f.reset();f.querySelectorAll('input[type=date]').forEach(i=>i.value=today);await after()}catch(err){notice(err.message,true)}finally{b.disabled=false}})}
-submit('#product-form',endpoints.products,x=>x,loadProducts);
+async function submit(id,url,transform=x=>x,after){const f=$(id);f.addEventListener('submit',async e=>{e.preventDefault();const b=f.querySelector('button[type=submit],button:not([type])');b.disabled=true;try{await api(url,{method:'POST',body:JSON.stringify(transform(formData(f)))});notice('Registro guardado correctamente.');f.reset();f.querySelectorAll('input[type=date]').forEach(i=>i.value=today);await after()}catch(err){notice(err.message,true)}finally{b.disabled=false}})}
+let editingProductId=null;
+const productForm=$('#product-form');
+function resetProductEditor(){editingProductId=null;productForm.reset();productForm.querySelector('[name="unitOfMeasure"]').value='kg';$('#product-form-title').textContent='Registrar producto o insumo';$('#product-submit').textContent='Guardar producto';$('#cancel-product-edit').style.display='none'}
+productForm.addEventListener('submit',async e=>{e.preventDefault();const button=$('#product-submit');button.disabled=true;try{const payload=formData(productForm);const editing=editingProductId!==null;await api(editing?endpoints.products+'/'+editingProductId:endpoints.products,{method:editing?'PUT':'POST',body:JSON.stringify(payload)});notice(editing?'Producto actualizado correctamente.':'Producto registrado correctamente.');resetProductEditor();await loadProducts()}catch(err){notice(err.message,true)}finally{button.disabled=false}});
+$('#cancel-product-edit').addEventListener('click',resetProductEditor);
+document.addEventListener('click',async e=>{const button=e.target.closest('[data-product-edit]');if(!button)return;try{const product=await api(endpoints.products+'/'+button.dataset.productEdit);editingProductId=product.id;productForm.elements.code.value=product.code;productForm.elements.name.value=product.name;productForm.elements.unitOfMeasure.value=product.unitOfMeasure;productForm.elements.type.value=product.type;$('#product-form-title').textContent='Editar producto #'+product.id;$('#product-submit').textContent='Guardar cambios';$('#cancel-product-edit').style.display='inline-block';productForm.scrollIntoView({behavior:'smooth',block:'center'})}catch(err){notice(err.message,true)}});
 submit('#customer-form',endpoints.customers,x=>x,loadCustomers);
 submit('#vehicle-form',endpoints.vehicles,x=>numberFields(x,['loadCapacity']),loadVehicles);
 submit('#pond-form',endpoints.ponds,x=>numberFields(x,['capacity']),loadPonds);
