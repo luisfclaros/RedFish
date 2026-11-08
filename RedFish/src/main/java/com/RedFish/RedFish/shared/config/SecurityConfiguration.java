@@ -41,7 +41,7 @@ public class SecurityConfiguration {
                 .requestMatchers("/api/v1/auth/me").hasAnyRole("ADMIN", "PRODUCTION", "OPERATIONS", "COMMERCIAL", "OPERATOR")
                 .requestMatchers("/api/v1/users/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/v1/products/**")
-                    .hasAnyRole("ADMIN", "PRODUCTION", "OPERATIONS", "COMMERCIAL")
+                    .hasAnyRole("ADMIN", "PRODUCTION", "OPERATIONS", "COMMERCIAL", "OPERATOR")
                 .requestMatchers(HttpMethod.GET, "/api/products/**")
                     .hasAnyRole("ADMIN", "PRODUCTION", "OPERATIONS", "COMMERCIAL", "OPERATOR")
                 .requestMatchers("/api/v1/products/**")
