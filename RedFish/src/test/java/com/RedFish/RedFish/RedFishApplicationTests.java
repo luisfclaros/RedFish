@@ -7,6 +7,12 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import org.springframework.context.annotation.Import;
 
 import com.RedFish.RedFish.inventory.application.port.ProductRepositoryPort;
@@ -35,8 +41,12 @@ import com.RedFish.RedFish.dispatches.application.service.UpdateDispatchStatusSe
 import com.RedFish.RedFish.dispatches.domain.model.DispatchStatus;
 
 @SpringBootTest
+@AutoConfigureMockMvc
 @Import(TestcontainersConfiguration.class)
 class RedFishApplicationTests {
+
+    @Autowired
+    private MockMvc mockMvc;
 
     @Autowired
     private ProductRepositoryPort productRepository;
@@ -73,6 +83,24 @@ class RedFishApplicationTests {
 
     @Autowired
     private UpdateDispatchStatusService updateDispatchStatusService;
+
+    @Test
+    void servesBrowserDashboardWithoutAuthentication() throws Exception {
+        mockMvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("RedFish")));
+    }
+
+    @Test
+    void protectsBusinessApiFromAnonymousRequests() throws Exception {
+        mockMvc.perform(get("/api/v1/products")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(username = "operator", roles = "OPERATOR")
+    void servesBusinessApiToAuthenticatedUsers() throws Exception {
+        mockMvc.perform(get("/api/v1/products")).andExpect(status().isOk());
+    }
 
     @Test
     void applicationContextLoadsWithMysqlInfrastructure() {
