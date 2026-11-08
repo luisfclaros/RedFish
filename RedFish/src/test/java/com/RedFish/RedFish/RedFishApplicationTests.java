@@ -24,6 +24,9 @@ import com.RedFish.RedFish.vehicles.application.port.VehicleRepositoryPort;
 import com.RedFish.RedFish.vehicles.domain.model.Vehicle;
 import com.RedFish.RedFish.production.application.port.PondRepositoryPort;
 import com.RedFish.RedFish.production.application.port.FeedingRecordRepositoryPort;
+import com.RedFish.RedFish.production.application.service.RegisterFeedingRecordService;
+import com.RedFish.RedFish.inventory.application.port.InventoryMovementRepositoryPort;
+import com.RedFish.RedFish.inventory.domain.model.MovementType;
 import com.RedFish.RedFish.production.domain.model.Pond;
 import com.RedFish.RedFish.production.domain.model.FeedingRecord;
 import java.time.LocalDate;
@@ -62,6 +65,12 @@ class RedFishApplicationTests {
 
     @Autowired
     private FeedingRecordRepositoryPort feedingRecordRepository;
+
+    @Autowired
+    private RegisterFeedingRecordService registerFeedingRecordService;
+
+    @Autowired
+    private InventoryMovementRepositoryPort inventoryMovementRepository;
 
     @Autowired
     private InventoryRepositoryPort inventoryRepository;
@@ -214,6 +223,26 @@ class RedFishApplicationTests {
         assertThat(inTransit.status()).isEqualTo(DispatchStatus.IN_TRANSIT);
         assertThat(orderRepository.findById(order.id())).get().extracting(Order::status)
                 .isEqualTo(com.RedFish.RedFish.orders.domain.model.OrderStatus.DISPATCHED);
+    }
+
+    @Test
+    void feedingConsumptionDecreasesInputStockAndRecordsMovement() {
+        Product food = productRepository.save(new Product(null, "FOOD-"+UUID.randomUUID().toString().substring(0, 6),
+                "Concentrado", "kg", ProductType.INPUT, true));
+        inventoryRepository.save(new InventoryItem(null, food.id(), new BigDecimal("15"), new BigDecimal("2")));
+        Pond pond = pondRepository.save(new Pond(null, "PF-"+UUID.randomUUID().toString().substring(0, 6),
+                "Estanque consumo", "Neiva", new BigDecimal("100"), true));
+
+        FeedingRecord record = registerFeedingRecordService.register(new FeedingRecord(null, pond.id(), food.id(),
+                LocalDate.now(), "Concentrado", new BigDecimal("3.5"), 1L, "Ración mañana"));
+
+        assertThat(record.id()).isNotNull();
+        assertThat(inventoryRepository.findByProductId(food.id())).get()
+                .extracting(InventoryItem::quantity).isEqualTo(new BigDecimal("11.500"));
+        assertThat(inventoryMovementRepository.findAll()).anySatisfy(movement -> {
+            assertThat(movement.type()).isEqualTo(MovementType.EXIT);
+            assertThat(movement.quantity()).isEqualTo(new BigDecimal("3.500"));
+        });
     }
 
     @Test
