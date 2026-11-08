@@ -1,0 +1,104 @@
+name: RedFish CI
+
+on:
+  pull_request:
+    branches: [Develop, Qa, main]
+    paths:
+      - "RedFish/**"
+      - ".github/workflows/**"
+  push:
+    branches: [Develop, Qa, main, "integration/**"]
+    paths:
+      - "RedFish/**"
+      - ".github/workflows/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: redfish-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build, tests and coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+          cache-dependency-path: RedFish/gradle/wrapper/gradle-wrapper.properties
+      - name: Make Gradle wrapper executable
+        working-directory: RedFish
+        run: chmod +x ./gradlew
+      - name: Compile and run automated tests
+        working-directory: RedFish
+        run: ./gradlew --no-daemon clean test
+      - name: Generate JaCoCo coverage report
+        if: always()
+        working-directory: RedFish
+        run: ./gradlew --no-daemon jacocoTestReport
+      - name: Upload test and coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: redfish-test-and-coverage-reports
+          path: |
+            RedFish/build/reports/tests/test/
+            RedFish/build/reports/jacoco/test/
+          if-no-files-found: warn
+          retention-days: 14
+
+  codeql:
+    name: Static analysis (CodeQL)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java-kotlin
+          build-mode: manual
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+      - name: Compile for CodeQL
+        working-directory: RedFish
+        run: |
+          chmod +x ./gradlew
+          ./gradlew --no-daemon classes
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+
+  security-scan:
+    name: Dependency, secret and configuration scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Scan repository with Trivy
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,misconfig,secret
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+          format: table
