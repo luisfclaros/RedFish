@@ -52,6 +52,8 @@ public class SecurityConfiguration {
                     .hasAnyRole("ADMIN", "PRODUCTION")
                 .requestMatchers("/api/v1/inventory/**", "/api/v1/vehicles/**", "/api/v1/dispatches/**")
                     .hasAnyRole("ADMIN", "OPERATIONS")
+                .requestMatchers(HttpMethod.GET, "/api/v1/orders/**")
+                    .hasAnyRole("ADMIN", "COMMERCIAL", "OPERATIONS")
                 .requestMatchers("/api/v1/customers/**", "/api/customers/**", "/api/v1/orders/**")
                     .hasAnyRole("ADMIN", "COMMERCIAL")
                 .anyRequest().authenticated())
