@@ -15,6 +15,7 @@ public class FeedingRecordJpaEntity {
     private Long id;
     @Column(nullable = false)
     private Long pondId;
+    private Long productId;
     @Column(nullable = false)
     private LocalDate date;
     @Column(nullable = false, length = 100)
@@ -28,18 +29,18 @@ public class FeedingRecordJpaEntity {
 
     protected FeedingRecordJpaEntity() {}
 
-    private FeedingRecordJpaEntity(Long id, Long pondId, LocalDate date, String foodType,
+    private FeedingRecordJpaEntity(Long id, Long pondId, Long productId, LocalDate date, String foodType,
             BigDecimal quantity, Long registeredBy, String observations) {
-        this.id=id; this.pondId=pondId; this.date=date; this.foodType=foodType;
+        this.id=id; this.pondId=pondId; this.productId=productId; this.date=date; this.foodType=foodType;
         this.quantity=quantity; this.registeredBy=registeredBy; this.observations=observations;
     }
 
     public static FeedingRecordJpaEntity fromDomain(FeedingRecord record) {
-        return new FeedingRecordJpaEntity(record.id(), record.pondId(), record.date(), record.foodType(),
+        return new FeedingRecordJpaEntity(record.id(), record.pondId(), record.productId(), record.date(), record.foodType(),
                 record.quantity(), record.registeredBy(), record.observations());
     }
 
     public FeedingRecord toDomain() {
-        return new FeedingRecord(id, pondId, date, foodType, quantity, registeredBy, observations);
+        return new FeedingRecord(id, pondId, productId, date, foodType, quantity, registeredBy, observations);
     }
 }
