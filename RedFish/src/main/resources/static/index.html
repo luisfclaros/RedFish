@@ -177,8 +177,17 @@ function requestCredentials(){
     dialog.showModal();
   });
 }
+function csrfCookie(){
+  const entry=document.cookie.split('; ').find(value=>value.startsWith('XSRF-TOKEN='));
+  return entry?decodeURIComponent(entry.substring('XSRF-TOKEN='.length)):null;
+}
 async function api(url,options={},retried=false){
+  const method=(options.method||'GET').toUpperCase();
   const headers={'Content-Type':'application/json',...(authHeader?{Authorization:authHeader}:{}),...(options.headers||{})};
+  if(!['GET','HEAD','OPTIONS','TRACE'].includes(method)){
+    const token=csrfCookie();
+    if(token)headers['X-XSRF-TOKEN']=token;
+  }
   const r=await fetch(url,{...options,headers});
   if(r.status===401&&!retried){if(!await requestCredentials())throw new Error('Autenticación cancelada');return api(url,options,true)}
   if(r.status===401&&retried)authHeader=null;
