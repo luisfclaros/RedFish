@@ -22,7 +22,7 @@ public class OrderJpaEntity {
     private OrderJpaEntity(Long id, Long customerId, LocalDate date, OrderStatus status, String observations,
             List<OrderItemEmbeddable> items) {
         this.id=id; this.customerId=customerId; this.date=date; this.status=status;
-        this.observations=observations; this.items=items;
+        this.observations=observations; this.items=new ArrayList<>(items);
     }
     public static OrderJpaEntity fromDomain(Order o) {
         return new OrderJpaEntity(o.id(), o.customerId(), o.date(), o.status(), o.observations(),
