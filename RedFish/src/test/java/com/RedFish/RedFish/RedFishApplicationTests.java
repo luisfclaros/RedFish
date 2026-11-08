@@ -237,6 +237,7 @@ class RedFishApplicationTests {
                 LocalDate.now(), "Concentrado", new BigDecimal("3.5"), 1L, "Ración mañana"));
 
         assertThat(record.id()).isNotNull();
+        assertThat(feedingRecordRepository.findById(record.id())).get().extracting(FeedingRecord::productId).isEqualTo(food.id());
         assertThat(inventoryRepository.findByProductId(food.id())).get()
                 .extracting(InventoryItem::quantity).isEqualTo(new BigDecimal("11.500"));
         assertThat(inventoryMovementRepository.findAll()).anySatisfy(movement -> {
