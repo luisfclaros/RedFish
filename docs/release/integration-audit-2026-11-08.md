@@ -19,7 +19,7 @@
 
 - Production: pond and feeding-record domain models plus an inventory port; no REST controller or persistence adapter found.
 - Dispatches: dispatch domain model, status transitions, scheduling service and repository/vehicle ports; no REST controller or persistence adapter found.
-- Vehicles: vehicle domain model and repository port; no REST controller or persistence adapter found.
+- Vehicles: a first REST/JPA vertical slice has now been added on the integration branch (create/list/get, unique plate check, MySQL entity/adapter, and vehicle-availability adapter for dispatch scheduling). This new slice is not yet validated by the latest CI run and does not yet include update/deactivate operations.
 - Security/users: user and role domain models and repository port; no user persistence, login endpoint, token/session flow or role enforcement found.
 - Orders: order/customer domain models and a create-order service/ports exist, but no order REST controller or order JPA persistence path found.
 - Reporting: product-created event consumer and persistence components exist; reporting HTTP endpoints/UI not found.
@@ -49,4 +49,4 @@
 
 ## Current acceptance status
 
-The repository is not yet a complete, fully integrated, browser-usable RedFish application. Only products and customers have confirmed REST/JPA paths from the source inspection. The remaining modules are partial foundations and require implementation and tests.
+The repository is not yet a complete, fully integrated, browser-usable RedFish application. Products and customers have existing REST/JPA paths. A vehicle create/list/get path has been added on the integration branch and awaits CI verification. Production/feeding, order management, dispatch persistence/API and user authentication remain partial foundations and require implementation and tests.
