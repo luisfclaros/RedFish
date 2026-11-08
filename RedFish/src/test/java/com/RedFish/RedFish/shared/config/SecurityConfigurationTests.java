@@ -88,7 +88,7 @@ class SecurityConfigurationTests {
                     }
                     """))
             .andExpect(status().isCreated())
-            .andExpect(header().string("Location", "/api/products/1"))
+            .andExpect(header().string("Location", "/api/v1/products/1"))
             .andExpect(jsonPath("$.code").value("PROD-SEC-01"));
     }
 }
