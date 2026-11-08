@@ -49,11 +49,6 @@ public class OrderController {
         return OrderResponse.from(update.markInPreparation(id));
     }
 
-    @PostMapping("/{id}/dispatched")
-    public OrderResponse markDispatched(@PathVariable Long id) {
-        return OrderResponse.from(update.markDispatched(id));
-    }
-
     @PostMapping("/{id}/cancel")
     public OrderResponse cancel(@PathVariable Long id) {
         return OrderResponse.from(update.cancel(id));
