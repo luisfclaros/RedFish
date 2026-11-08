@@ -16,6 +16,11 @@ import com.RedFish.RedFish.orders.application.port.CustomerRepositoryPort;
 import com.RedFish.RedFish.orders.domain.model.Customer;
 import com.RedFish.RedFish.vehicles.application.port.VehicleRepositoryPort;
 import com.RedFish.RedFish.vehicles.domain.model.Vehicle;
+import com.RedFish.RedFish.production.application.port.PondRepositoryPort;
+import com.RedFish.RedFish.production.application.port.FeedingRecordRepositoryPort;
+import com.RedFish.RedFish.production.domain.model.Pond;
+import com.RedFish.RedFish.production.domain.model.FeedingRecord;
+import java.time.LocalDate;
 import java.math.BigDecimal;
 
 @SpringBootTest
@@ -30,6 +35,12 @@ class RedFishApplicationTests {
 
     @Autowired
     private VehicleRepositoryPort vehicleRepository;
+
+    @Autowired
+    private PondRepositoryPort pondRepository;
+
+    @Autowired
+    private FeedingRecordRepositoryPort feedingRecordRepository;
 
     @Test
     void applicationContextLoadsWithMysqlInfrastructure() {
@@ -60,6 +71,28 @@ class RedFishApplicationTests {
         assertThat(saved.id()).isNotNull();
         assertThat(vehicleRepository.findById(saved.id())).get().extracting(Vehicle::plate).isEqualTo(plate);
         assertThat(vehicleRepository.existsByPlate(plate)).isTrue();
+    }
+
+    @Test
+    void persistsAndReadsPondFromMysql() {
+        String code = "P-" + UUID.randomUUID().toString().substring(0, 8);
+        Pond saved = pondRepository.save(new Pond(null, code, "Estanque de prueba", "Neiva",
+                new BigDecimal("120"), true));
+        assertThat(saved.id()).isNotNull();
+        assertThat(pondRepository.findById(saved.id())).get().extracting(Pond::code).isEqualTo(code);
+        assertThat(pondRepository.existsByCode(code)).isTrue();
+    }
+
+    @Test
+    void persistsAndReadsFeedingRecordFromMysql() {
+        String code = "F-" + UUID.randomUUID().toString().substring(0, 8);
+        Pond pond = pondRepository.save(new Pond(null, code, "Estanque alimento", "Neiva",
+                new BigDecimal("100"), true));
+        FeedingRecord saved = feedingRecordRepository.save(new FeedingRecord(null, pond.id(),
+                LocalDate.now(), "Concentrado", new BigDecimal("5.5"), 1L, "Turno mañana"));
+        assertThat(saved.id()).isNotNull();
+        assertThat(feedingRecordRepository.findByPondId(pond.id())).hasSize(1)
+                .first().extracting(FeedingRecord::foodType).isEqualTo("Concentrado");
     }
 
     @Test
