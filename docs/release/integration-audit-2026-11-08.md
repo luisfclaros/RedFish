@@ -13,8 +13,8 @@
 
 - Products and customers: existing REST create/list/get endpoints with JPA persistence.
 - Vehicles: create/list/get REST API, unique plate validation, JPA persistence, and vehicle-active validation before dispatch.
-- Production: ponds create/list/get and feeding-record create/list endpoints, with MySQL JPA persistence.
-- Inventory: initial stock registration, current-stock listing, stock entries/exits and movement history, with MySQL persistence.
+- Production: ponds create/list/get and feeding-record create/list/get endpoints, with MySQL JPA persistence. Each feeding record references an inventory input product; the service validates the product type, deducts stock and records the exit movement in the same transaction.
+- Inventory: initial stock registration, current-stock listing/get, stock entries/exits and movement history, with MySQL persistence.
 - Orders: create/list/get, line items and totals, lifecycle transitions, JPA persistence, and transactional stock reservation. Cancelling an order restores its reserved quantities.
 - Dispatches: schedule/list/get and lifecycle endpoints. Scheduling validates that the order is in preparation and the vehicle is active. Moving a dispatch into transit synchronizes the order to DISPATCHED.
 - Security: users stored in MySQL, BCrypt password hashes, HTTP Basic authentication, ADMIN/OPERATOR roles, and bootstrap administrator configured through environment variables.
@@ -30,7 +30,7 @@
 
 ## Important limitations still open
 
-- Feeding records currently track food type and quantity but do not automatically deduct an inventory product; the UI states this limitation. The data model must link a feeding record to an inventory product before consumption can be applied safely.
+- Feeding records now require an inventory product of type INSUMO and deduct the consumed quantity automatically. The user must register the initial stock first.
 - Vehicles and ponds currently support create/list/get; edit/deactivate workflows are not complete.
 - Users can be created by an ADMIN through the API, but there is no user-administration screen in the UI.
 - Reporting has event-consumer/persistence foundations but no dedicated reporting dashboard or endpoints.
@@ -39,15 +39,13 @@
 
 ## Validation status
 
-- An earlier CI run on the integration branch passed Gradle tests, Docker image build, CodeQL and Trivy before the later module additions.
-- The current integration branch has database-backed tests for MySQL persistence, stock reservation/restoration, dispatch/order lifecycle, dashboard delivery and authentication. The latest CI run must finish successfully before these new tests are considered verified.
-- A green contract-test run alone does not prove the full application is deployable; the full RedFish CI workflow and local Docker Compose smoke test are required.
+- The latest full CI workflow for commit `0329a871744c555dd01be0e0c0792cb11ee7bb0a` completed successfully: Gradle tests, Docker image build, JaCoCo report generation, CodeQL analysis and Trivy scan all passed.
+- The automated suite includes database-backed tests for MySQL persistence, feeding consumption, stock reservation/restoration, dispatch/order lifecycle, dashboard delivery and authentication.
+- The GitHub Docker image build passing does not replace the final local Docker Compose smoke test on the user's Windows computer.
 
 ## Release plan
 
-1. Finish and repair any failures from the latest CI run.
-2. Verify the current branch's database-backed tests and complete Docker image build.
-3. Review the API/UI workflows, especially authentication, stock movement, order cancellation and dispatch transitions.
-4. Prepare a clean release archive and exact Windows startup instructions.
-5. Have the user run the new copy on port 8080 and confirm it works before considering replacement of the old project.
-6. Do not merge this draft PR or delete the old project/database volume until the user has verified the new version.
+1. Review the API/UI workflows, especially authentication, stock movement, feeding consumption, order cancellation and dispatch transitions.
+2. Prepare a clean release archive and exact Windows startup instructions.
+3. Have the user run the new copy on port 8080 and confirm it works before considering replacement of the old project.
+4. Do not merge this draft PR or delete the old project/database volume until the user has verified the new version.
