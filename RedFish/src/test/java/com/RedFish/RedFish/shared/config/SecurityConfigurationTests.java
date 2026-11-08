@@ -114,6 +114,7 @@ class SecurityConfigurationTests {
     }
 
     @Test
+    @WithMockUser(username = "operator", roles = "OPERATOR")
     void issuesReadableCsrfCookieOnApiRequest() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get("/api/products"))
             .andReturn().getResponse();
