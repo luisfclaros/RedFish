@@ -7,6 +7,7 @@ import com.RedFish.RedFish.inventory.application.port.InventoryRepositoryPort;
 import com.RedFish.RedFish.inventory.application.port.ProductRepositoryPort;
 import com.RedFish.RedFish.inventory.domain.model.InventoryItem;
 import com.RedFish.RedFish.inventory.domain.model.Product;
+import com.RedFish.RedFish.inventory.domain.model.ProductType;
 import com.RedFish.RedFish.orders.application.port.InventoryReservationPort;
 import com.RedFish.RedFish.orders.domain.model.OrderItem;
 
@@ -25,6 +26,9 @@ public class InventoryReservationAdapter implements InventoryReservationPort {
             Product product=products.findById(line.productId())
                     .orElseThrow(() -> new IllegalArgumentException("product not found: " + line.productId()));
             product.ensureCanBeUsed();
+            if (product.type() != ProductType.PRODUCT) {
+                throw new IllegalArgumentException("orders can only contain saleable products");
+            }
             InventoryItem stock=inventory.findByProductId(line.productId())
                     .orElseThrow(() -> new IllegalStateException("inventory stock not registered for product: " + line.productId()));
             if (stock.quantity().compareTo(line.quantity()) < 0) {
