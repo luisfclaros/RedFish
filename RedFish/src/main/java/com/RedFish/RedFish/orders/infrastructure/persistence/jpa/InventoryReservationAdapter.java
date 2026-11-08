@@ -41,4 +41,14 @@ public class InventoryReservationAdapter implements InventoryReservationPort {
             inventory.save(stock);
         }
     }
+    @Override
+    @Transactional
+    public void release(List<OrderItem> items) {
+        for (OrderItem line : items) {
+            InventoryItem stock=inventory.findByProductId(line.productId())
+                    .orElseThrow(() -> new IllegalStateException("inventory stock not registered for product: " + line.productId()));
+            stock.increase(line.quantity());
+            inventory.save(stock);
+        }
+    }
 }
