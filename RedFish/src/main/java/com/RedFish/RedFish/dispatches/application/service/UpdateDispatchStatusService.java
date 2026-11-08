@@ -4,30 +4,35 @@ import java.time.LocalDate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.RedFish.RedFish.dispatches.application.port.DispatchRepositoryPort;
+import com.RedFish.RedFish.dispatches.application.port.OrderDispatchPort;
 import com.RedFish.RedFish.dispatches.domain.model.Dispatch;
 
 @Service
 public class UpdateDispatchStatusService {
     private final DispatchRepositoryPort repository;
-    public UpdateDispatchStatusService(DispatchRepositoryPort repository) { this.repository=repository; }
+    private final OrderDispatchPort orderDispatch;
+    public UpdateDispatchStatusService(DispatchRepositoryPort repository, OrderDispatchPort orderDispatch) {
+        this.repository=repository; this.orderDispatch=orderDispatch;
+    }
 
     @Transactional
     public Dispatch markInTransit(Long id) {
-        Dispatch dispatch = get(id);
+        Dispatch dispatch=get(id);
         dispatch.markInTransit();
+        orderDispatch.markOrderDispatched(dispatch.orderId());
         return repository.save(dispatch);
     }
 
     @Transactional
     public Dispatch markDelivered(Long id, LocalDate deliveryDate, String receivedBy) {
-        Dispatch dispatch = get(id);
+        Dispatch dispatch=get(id);
         dispatch.markDelivered(deliveryDate, receivedBy);
         return repository.save(dispatch);
     }
 
     @Transactional
     public Dispatch cancel(Long id) {
-        Dispatch dispatch = get(id);
+        Dispatch dispatch=get(id);
         dispatch.cancel();
         return repository.save(dispatch);
     }
