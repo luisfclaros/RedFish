@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.RedFish.RedFish.production.application.service.ListFeedingRecordsService;
+import com.RedFish.RedFish.production.application.service.GetFeedingRecordService;
 import com.RedFish.RedFish.production.application.service.RegisterFeedingRecordService;
 import com.RedFish.RedFish.production.domain.model.FeedingRecord;
 
@@ -17,9 +18,11 @@ import jakarta.validation.Valid;
 public class FeedingRecordController {
     private final RegisterFeedingRecordService register;
     private final ListFeedingRecordsService list;
+    private final GetFeedingRecordService get;
 
-    public FeedingRecordController(RegisterFeedingRecordService register, ListFeedingRecordsService list) {
-        this.register=register; this.list=list;
+    public FeedingRecordController(RegisterFeedingRecordService register, ListFeedingRecordsService list,
+            GetFeedingRecordService get) {
+        this.register=register; this.list=list; this.get=get;
     }
 
     @PostMapping
@@ -29,6 +32,9 @@ public class FeedingRecordController {
         return ResponseEntity.created(URI.create("/api/v1/feeding-records/" + record.id()))
                 .body(FeedingRecordResponse.from(record));
     }
+
+    @GetMapping("/{id}")
+    public FeedingRecordResponse get(@PathVariable Long id) { return FeedingRecordResponse.from(get.get(id)); }
 
     @GetMapping
     public List<FeedingRecordResponse> list(@RequestParam(required=false) Long pondId) {
