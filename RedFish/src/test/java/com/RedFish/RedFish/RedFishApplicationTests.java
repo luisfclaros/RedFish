@@ -14,6 +14,9 @@ import com.RedFish.RedFish.inventory.domain.model.Product;
 import com.RedFish.RedFish.inventory.domain.model.ProductType;
 import com.RedFish.RedFish.orders.application.port.CustomerRepositoryPort;
 import com.RedFish.RedFish.orders.domain.model.Customer;
+import com.RedFish.RedFish.vehicles.application.port.VehicleRepositoryPort;
+import com.RedFish.RedFish.vehicles.domain.model.Vehicle;
+import java.math.BigDecimal;
 
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
@@ -24,6 +27,9 @@ class RedFishApplicationTests {
 
     @Autowired
     private CustomerRepositoryPort customerRepository;
+
+    @Autowired
+    private VehicleRepositoryPort vehicleRepository;
 
     @Test
     void applicationContextLoadsWithMysqlInfrastructure() {
@@ -43,6 +49,17 @@ class RedFishApplicationTests {
             .extracting(Product::code)
             .isEqualTo(code);
         assertThat(productRepository.existsByCode(code)).isTrue();
+    }
+
+    @Test
+    void persistsAndReadsVehicleFromMysql() {
+        String plate = "IT" + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+        Vehicle saved = vehicleRepository.save(
+            new Vehicle(null, plate, "Chevrolet", "NPR", new BigDecimal("3500"), true, "Prueba"));
+
+        assertThat(saved.id()).isNotNull();
+        assertThat(vehicleRepository.findById(saved.id())).get().extracting(Vehicle::plate).isEqualTo(plate);
+        assertThat(vehicleRepository.existsByPlate(plate)).isTrue();
     }
 
     @Test
