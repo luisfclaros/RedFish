@@ -40,6 +40,9 @@ jobs:
       - name: Compile and run automated tests
         working-directory: RedFish
         run: ./gradlew --no-daemon clean test
+      - name: Build Docker image
+        working-directory: RedFish
+        run: docker build --tag redfish:ci .
       - name: Generate JaCoCo coverage report
         if: always()
         working-directory: RedFish
