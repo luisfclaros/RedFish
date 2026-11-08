@@ -10,6 +10,9 @@ import com.RedFish.RedFish.inventory.domain.model.InventoryItem;
 public class JpaInventoryRepository implements InventoryRepositoryPort {
     private final SpringDataInventoryItemJpaRepository repository;
     public JpaInventoryRepository(SpringDataInventoryItemJpaRepository repository) { this.repository=repository; }
+    @Override public Optional<InventoryItem> findById(Long id) {
+        return repository.findById(id).map(InventoryItemJpaEntity::toDomain);
+    }
     @Override public Optional<InventoryItem> findByProductId(Long productId) {
         return repository.findByProductId(productId).map(InventoryItemJpaEntity::toDomain);
     }
