@@ -36,7 +36,8 @@ public class SecurityConfiguration {
             .addFilterAfter((request, response, chain) -> {
                 CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
                 if (csrfToken != null) {
-                    csrfToken.getToken();
+                    csrfTokenRepository.saveToken(csrfToken, (HttpServletRequest) request,
+                            (HttpServletResponse) response);
                 }
                 chain.doFilter(request, response);
             }, CsrfFilter.class)
