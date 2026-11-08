@@ -1,7 +1,9 @@
 package com.RedFish.RedFish.shared.config;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -66,6 +69,7 @@ class SecurityConfigurationTests {
     @WithMockUser(username = "operator", roles = "OPERATOR")
     void preventsOperatorsFromCreatingUsers() throws Exception {
         mockMvc.perform(post("/api/v1/users")
+                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}"))
             .andExpect(status().isForbidden());
@@ -73,11 +77,28 @@ class SecurityConfigurationTests {
 
     @Test
     @WithMockUser(username = "operator", roles = "OPERATOR")
-    void disablesCsrfForProductCreation() throws Exception {
+    void rejectsProductCreationWithoutCsrfToken() throws Exception {
+        mockMvc.perform(post("/api/products")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "code": "PROD-SEC-01",
+                      "name": "Tilapia Roja",
+                      "unitOfMeasure": "kg",
+                      "type": "PRODUCT"
+                    }
+                    """))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "operator", roles = "OPERATOR")
+    void permitsProductCreationWithCsrfToken() throws Exception {
         Product created = new Product(1L, "PROD-SEC-01", "Tilapia Roja", "kg", ProductType.PRODUCT, true);
         when(createProductService.create(any(Product.class))).thenReturn(created);
 
         mockMvc.perform(post("/api/products")
+                .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                     {
@@ -90,5 +111,14 @@ class SecurityConfigurationTests {
             .andExpect(status().isCreated())
             .andExpect(header().string("Location", "/api/v1/products/1"))
             .andExpect(jsonPath("$.code").value("PROD-SEC-01"));
+    }
+
+    @Test
+    void issuesReadableCsrfCookieOnApiRequest() throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(get("/api/products"))
+            .andReturn().getResponse();
+
+        assertThat(response.getCookie("XSRF-TOKEN")).isNotNull();
+        assertThat(response.getCookie("XSRF-TOKEN").isHttpOnly()).isFalse();
     }
 }
