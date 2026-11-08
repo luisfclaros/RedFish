@@ -54,8 +54,11 @@ public class Order {
     }
 
     public void cancel() {
-        if (status == OrderStatus.DISPATCHED || status == OrderStatus.CANCELLED) {
-            throw new IllegalStateException("dispatched or cancelled orders cannot be cancelled");
+        if (status == OrderStatus.DISPATCHED) {
+            throw new IllegalStateException("dispatched orders cannot be cancelled");
+        }
+        if (status == OrderStatus.CANCELLED) {
+            throw new IllegalStateException("cancelled orders cannot be cancelled");
         }
         this.status = OrderStatus.CANCELLED;
     }
