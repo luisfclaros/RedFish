@@ -22,6 +22,12 @@ import com.RedFish.RedFish.production.domain.model.Pond;
 import com.RedFish.RedFish.production.domain.model.FeedingRecord;
 import java.time.LocalDate;
 import java.math.BigDecimal;
+import com.RedFish.RedFish.inventory.application.port.InventoryRepositoryPort;
+import com.RedFish.RedFish.inventory.domain.model.InventoryItem;
+import com.RedFish.RedFish.orders.application.port.OrderRepositoryPort;
+import com.RedFish.RedFish.orders.application.service.CreateOrderService;
+import com.RedFish.RedFish.orders.domain.model.Order;
+import com.RedFish.RedFish.orders.domain.model.OrderItem;
 
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
@@ -41,6 +47,15 @@ class RedFishApplicationTests {
 
     @Autowired
     private FeedingRecordRepositoryPort feedingRecordRepository;
+
+    @Autowired
+    private InventoryRepositoryPort inventoryRepository;
+
+    @Autowired
+    private OrderRepositoryPort orderRepository;
+
+    @Autowired
+    private CreateOrderService createOrderService;
 
     @Test
     void applicationContextLoadsWithMysqlInfrastructure() {
@@ -93,6 +108,25 @@ class RedFishApplicationTests {
         assertThat(saved.id()).isNotNull();
         assertThat(feedingRecordRepository.findByPondId(pond.id())).hasSize(1)
                 .first().extracting(FeedingRecord::foodType).isEqualTo("Concentrado");
+    }
+
+    @Test
+    void createsOrderAndReservesInventoryInMysql() {
+        String productCode = "ORD-" + UUID.randomUUID().toString().substring(0, 8);
+        Product product = productRepository.save(new Product(null, productCode, "Tilapia Roja", "kg", ProductType.PRODUCT, true));
+        inventoryRepository.save(new InventoryItem(null, product.id(), new BigDecimal("10"), new BigDecimal("2")));
+        String email = UUID.randomUUID() + "@orders.redfish.test";
+        Customer customer = customerRepository.save(new Customer(null, "Cliente pedido", "3001234567", "Neiva", email, true));
+
+        Order created = createOrderService.create(new Order(null, customer, LocalDate.now(),
+                java.util.List.of(new OrderItem(product.id(), product.name(), new BigDecimal("3"), new BigDecimal("12000"))),
+                "Pedido integración"));
+
+        assertThat(created.id()).isNotNull();
+        assertThat(created.total()).isEqualByComparingTo("36000");
+        assertThat(orderRepository.findById(created.id())).get().extracting(Order::status).isEqualTo(created.status());
+        assertThat(inventoryRepository.findByProductId(product.id())).get()
+                .extracting(InventoryItem::quantity).isEqualTo(new BigDecimal("7"));
     }
 
     @Test
