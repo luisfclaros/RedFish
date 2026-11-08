@@ -184,12 +184,12 @@ class RedFishApplicationTests {
         Order order = createOrderService.create(new Order(null, customer, LocalDate.now(),
                 java.util.List.of(new OrderItem(product.id(), product.name(), new BigDecimal("4"), new BigDecimal("10000"))), null));
         assertThat(inventoryRepository.findByProductId(product.id())).get()
-                .extracting(InventoryItem::quantity).isEqualTo(new BigDecimal("6"));
+                .extracting(InventoryItem::quantity).isEqualByComparingTo("6");
 
         updateOrderStatusService.cancel(order.id());
 
         assertThat(inventoryRepository.findByProductId(product.id())).get()
-                .extracting(InventoryItem::quantity).isEqualTo(new BigDecimal("10"));
+                .extracting(InventoryItem::quantity).isEqualByComparingTo("10");
     }
 
     @Test
