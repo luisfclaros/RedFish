@@ -194,6 +194,17 @@ paths:
                 capacity: { type: number, minimum: 0 }
       responses:
         "201": { description: Estanque creado }
+  /api/v1/feeding-records/{id}:
+    get:
+      tags: [Production]
+      summary: Consultar un registro de alimentación
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        "200": { description: Registro encontrado }
   /api/v1/feeding-records:
     get:
       tags: [Production]
@@ -225,6 +236,17 @@ paths:
       summary: Consultar existencias
       responses:
         "200": { description: Existencias por producto }
+  /api/v1/inventory/{id}:
+    get:
+      tags: [Inventory]
+      summary: Consultar una existencia por identificador
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        "200": { description: Existencia encontrada }
   /api/v1/inventory/stock:
     post:
       tags: [Inventory]
