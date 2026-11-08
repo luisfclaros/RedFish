@@ -5,7 +5,7 @@ import com.RedFish.RedFish.inventory.domain.model.InventoryItem;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="inventario", uniqueConstraints=@UniqueConstraint(columnNames="productId"))
+@Table(name="inventario")
 public class InventoryItemJpaEntity {
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY) private Long id;
     @Column(nullable=false, unique=true) private Long productId;
