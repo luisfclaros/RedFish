@@ -147,6 +147,143 @@ paths:
                 $ref: "#/components/schemas/CustomerResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
+  /api/v1/vehicles:
+    get:
+      tags: [Vehicles]
+      summary: Listar vehículos
+      responses:
+        "200": { description: Vehículos registrados }
+    post:
+      tags: [Vehicles]
+      summary: Registrar vehículo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [plate, brand, model, loadCapacity]
+              properties:
+                plate: { type: string }
+                brand: { type: string }
+                model: { type: string }
+                loadCapacity: { type: number, minimum: 0 }
+                observations: { type: [string, "null"] }
+      responses:
+        "201": { description: Vehículo creado }
+  /api/v1/ponds:
+    get:
+      tags: [Production]
+      summary: Listar estanques
+      responses:
+        "200": { description: Estanques registrados }
+    post:
+      tags: [Production]
+      summary: Registrar estanque
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code, name, location, capacity]
+              properties:
+                code: { type: string }
+                name: { type: string }
+                location: { type: string }
+                capacity: { type: number, minimum: 0 }
+      responses:
+        "201": { description: Estanque creado }
+  /api/v1/feeding-records:
+    get:
+      tags: [Production]
+      summary: Consultar registros de alimentación
+      responses:
+        "200": { description: Registros de alimentación }
+    post:
+      tags: [Production]
+      summary: Registrar alimentación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [pondId, date, foodType, quantity, registeredBy]
+              properties:
+                pondId: { type: integer, format: int64 }
+                date: { type: string, format: date }
+                foodType: { type: string }
+                quantity: { type: number, exclusiveMinimum: 0 }
+                registeredBy: { type: integer, format: int64 }
+                observations: { type: [string, "null"] }
+      responses:
+        "201": { description: Registro creado }
+  /api/v1/inventory:
+    get:
+      tags: [Inventory]
+      summary: Consultar existencias
+      responses:
+        "200": { description: Existencias por producto }
+  /api/v1/inventory/stock:
+    post:
+      tags: [Inventory]
+      summary: Registrar existencias iniciales
+      responses:
+        "201": { description: Existencias creadas }
+  /api/v1/inventory/entries:
+    post:
+      tags: [Inventory]
+      summary: Registrar entrada de inventario
+      responses:
+        "204": { description: Entrada aplicada }
+  /api/v1/inventory/exits:
+    post:
+      tags: [Inventory]
+      summary: Registrar salida de inventario
+      responses:
+        "204": { description: Salida aplicada }
+  /api/v1/inventory/movements:
+    get:
+      tags: [Inventory]
+      summary: Consultar movimientos de inventario
+      responses:
+        "200": { description: Historial de movimientos }
+  /api/v1/orders:
+    get:
+      tags: [Orders]
+      summary: Listar pedidos
+      responses:
+        "200": { description: Pedidos registrados }
+    post:
+      tags: [Orders]
+      summary: Crear pedido y reservar existencias
+      responses:
+        "201": { description: Pedido creado }
+  /api/v1/dispatches:
+    get:
+      tags: [Dispatches]
+      summary: Listar despachos
+      responses:
+        "200": { description: Despachos registrados }
+    post:
+      tags: [Dispatches]
+      summary: Programar despacho de pedido en preparación y vehículo activo
+      responses:
+        "201": { description: Despacho programado }
+  /api/v1/auth/me:
+    get:
+      tags: [Security]
+      summary: Consultar usuario autenticado
+      responses:
+        "200": { description: Usuario actual }
+  /api/v1/users:
+    post:
+      tags: [Security]
+      summary: Crear usuario (solo ADMIN)
+      responses:
+        "201": { description: Usuario creado }
+        "403": { description: Rol insuficiente }
 components:
   securitySchemes:
     basicAuth:
