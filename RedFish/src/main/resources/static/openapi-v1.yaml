@@ -220,9 +220,10 @@ paths:
           application/json:
             schema:
               type: object
-              required: [pondId, date, foodType, quantity, registeredBy]
+              required: [pondId, productId, date, foodType, quantity, registeredBy]
               properties:
                 pondId: { type: integer, format: int64 }
+                productId: { type: integer, format: int64 }
                 date: { type: string, format: date }
                 foodType: { type: string }
                 quantity: { type: number, exclusiveMinimum: 0 }
