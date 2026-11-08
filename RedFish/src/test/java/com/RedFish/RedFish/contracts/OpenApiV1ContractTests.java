@@ -24,6 +24,13 @@ class OpenApiV1ContractTests {
 			assertThat(openApi.path("paths").has("/api/v1/products/{id}")).isTrue();
 			assertThat(openApi.path("paths").has("/api/v1/customers")).isTrue();
 			assertThat(openApi.path("paths").has("/api/v1/customers/{id}")).isTrue();
+			assertThat(openApi.path("paths").has("/api/v1/vehicles")).isTrue();
+			assertThat(openApi.path("paths").has("/api/v1/ponds")).isTrue();
+			assertThat(openApi.path("paths").has("/api/v1/feeding-records")).isTrue();
+			assertThat(openApi.path("paths").has("/api/v1/inventory")).isTrue();
+			assertThat(openApi.path("paths").has("/api/v1/orders")).isTrue();
+			assertThat(openApi.path("paths").has("/api/v1/dispatches")).isTrue();
+			assertThat(openApi.path("components").path("securitySchemes").has("basicAuth")).isTrue();
 			assertThat(openApi.path("components").path("schemas").has("ApiErrorResponse")).isTrue();
 		}
 	}
