@@ -28,6 +28,10 @@ import com.RedFish.RedFish.orders.application.port.OrderRepositoryPort;
 import com.RedFish.RedFish.orders.application.service.CreateOrderService;
 import com.RedFish.RedFish.orders.domain.model.Order;
 import com.RedFish.RedFish.orders.domain.model.OrderItem;
+import com.RedFish.RedFish.dispatches.application.port.DispatchRepositoryPort;
+import com.RedFish.RedFish.dispatches.application.service.ScheduleDispatchService;
+import com.RedFish.RedFish.dispatches.application.service.UpdateDispatchStatusService;
+import com.RedFish.RedFish.dispatches.domain.model.DispatchStatus;
 
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
@@ -56,6 +60,15 @@ class RedFishApplicationTests {
 
     @Autowired
     private CreateOrderService createOrderService;
+
+    @Autowired
+    private DispatchRepositoryPort dispatchRepository;
+
+    @Autowired
+    private ScheduleDispatchService scheduleDispatchService;
+
+    @Autowired
+    private UpdateDispatchStatusService updateDispatchStatusService;
 
     @Test
     void applicationContextLoadsWithMysqlInfrastructure() {
@@ -127,6 +140,30 @@ class RedFishApplicationTests {
         assertThat(orderRepository.findById(created.id())).get().extracting(Order::status).isEqualTo(created.status());
         assertThat(inventoryRepository.findByProductId(product.id())).get()
                 .extracting(InventoryItem::quantity).isEqualTo(new BigDecimal("7"));
+    }
+
+    @Test
+    void schedulesDispatchAndSynchronizesOrderLifecycleInMysql() {
+        String code = "DSP-" + UUID.randomUUID().toString().substring(0, 8);
+        Product product = productRepository.save(new Product(null, code, "Tilapia despacho", "kg", ProductType.PRODUCT, true));
+        inventoryRepository.save(new InventoryItem(null, product.id(), new BigDecimal("20"), new BigDecimal("2")));
+        Customer customer = customerRepository.save(new Customer(null, "Cliente despacho", "3001234567",
+                "Neiva", UUID.randomUUID()+"@dispatch.redfish.test", true));
+        Order order = createOrderService.create(new Order(null, customer, LocalDate.now(),
+                java.util.List.of(new OrderItem(product.id(), product.name(), new BigDecimal("2"), new BigDecimal("10000"))), null));
+        order.markInPreparation();
+        orderRepository.save(order);
+        Vehicle vehicle = vehicleRepository.save(new Vehicle(null,
+                "D"+UUID.randomUUID().toString().substring(0, 5).toUpperCase(), "Chevrolet", "NPR",
+                new BigDecimal("3500"), true, null));
+
+        var dispatch = scheduleDispatchService.schedule(order.id(), vehicle.id(), LocalDate.now(), "Bodega principal");
+        assertThat(dispatchRepository.findById(dispatch.id())).isPresent();
+        var inTransit = updateDispatchStatusService.markInTransit(dispatch.id());
+
+        assertThat(inTransit.status()).isEqualTo(DispatchStatus.IN_TRANSIT);
+        assertThat(orderRepository.findById(order.id())).get().extracting(Order::status)
+                .isEqualTo(com.RedFish.RedFish.orders.domain.model.OrderStatus.DISPATCHED);
     }
 
     @Test
