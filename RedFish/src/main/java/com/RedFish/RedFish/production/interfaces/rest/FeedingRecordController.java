@@ -27,7 +27,7 @@ public class FeedingRecordController {
 
     @PostMapping
     public ResponseEntity<FeedingRecordResponse> register(@Valid @RequestBody FeedingRecordRequest request) {
-        FeedingRecord record = register.register(new FeedingRecord(null, request.pondId(), request.date(),
+        FeedingRecord record = register.register(new FeedingRecord(null, request.pondId(), request.productId(), request.date(),
                 request.foodType(), request.quantity(), request.registeredBy(), request.observations()));
         return ResponseEntity.created(URI.create("/api/v1/feeding-records/" + record.id()))
                 .body(FeedingRecordResponse.from(record));
