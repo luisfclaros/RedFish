@@ -2,51 +2,52 @@
 
 ## Scope and safety
 
-- Working branch: `integration/redfish-final-2026-11-08`
-- Branch base: `Develop` (commit `e8f416cfe5428d79280efaa466d525a7ab51b7ab`)
-- Protected working areas: `main`, `Develop`, `Qa`, the first-cut local project, and the existing Docker volume are not modified by this audit.
-- The legacy database backup was exported from container `redfish-mysql-1` to `C:\Users\LUIS FERNANDO\redfish-backup-20261108.sql` (3,196 bytes, as confirmed by the user).
+- Working branch: `integration/redfish-final-2026-11-08`, created from `Develop`.
+- Protected branches `main`, `Develop`, and `Qa` have not been modified directly.
+- The user's existing first-cut project and Docker database volume are to be preserved until the new release is locally verified.
+- The previously confirmed SQL backup is `C:\Users\LUIS FERNANDO\redfish-backup-20261108.sql`.
 
-## Repository findings
+## Implemented in this integration branch
 
-### Implemented HTTP + persistence paths found
+### API and persistence
 
-- Inventory/products: REST controller with create/list/get; application services; JPA entity, Spring Data repository and adapter.
-- Customers: REST controller with create/list/get; application services; JPA entity, Spring Data repository and adapter.
-- Health/info and OpenAPI contract endpoints are configured.
+- Products and customers: existing REST create/list/get endpoints with JPA persistence.
+- Vehicles: create/list/get REST API, unique plate validation, JPA persistence, and vehicle-active validation before dispatch.
+- Production: ponds create/list/get and feeding-record create/list endpoints, with MySQL JPA persistence.
+- Inventory: initial stock registration, current-stock listing, stock entries/exits and movement history, with MySQL persistence.
+- Orders: create/list/get, line items and totals, lifecycle transitions, JPA persistence, and transactional stock reservation. Cancelling an order restores its reserved quantities.
+- Dispatches: schedule/list/get and lifecycle endpoints. Scheduling validates that the order is in preparation and the vehicle is active. Moving a dispatch into transit synchronizes the order to DISPATCHED.
+- Security: users stored in MySQL, BCrypt password hashes, HTTP Basic authentication, ADMIN/OPERATOR roles, and bootstrap administrator configured through environment variables.
+- Browser UI: responsive static dashboard served by Spring Boot at `/`, with forms and tables for products, customers, vehicles, ponds, feeding, inventory, orders and dispatches.
+- OpenAPI YAML expanded to document the operational modules and HTTP Basic security.
 
-### Partial domain foundations (not end-to-end features yet)
+### Build and deployment
 
-- Production: pond and feeding-record domain models plus an inventory port; no REST controller or persistence adapter found.
-- Dispatches: dispatch domain model, status transitions, scheduling service and repository/vehicle ports; no REST controller or persistence adapter found.
-- Vehicles: a first REST/JPA vertical slice has now been added on the integration branch (create/list/get, unique plate check, MySQL entity/adapter, and vehicle-availability adapter for dispatch scheduling). This new slice is not yet validated by the latest CI run and does not yet include update/deactivate operations.
-- Security/users: user and role domain models and repository port; no user persistence, login endpoint, token/session flow or role enforcement found.
-- Orders: order/customer domain models and a create-order service/ports exist, but no order REST controller or order JPA persistence path found.
-- Reporting: product-created event consumer and persistence components exist; reporting HTTP endpoints/UI not found.
+- Java 17 / Gradle / Spring Boot.
+- Dockerfile runs the application as a non-root user and installs curl for the health check.
+- GitHub Actions CI includes Gradle tests, JaCoCo report generation, Docker image build, CodeQL analysis and Trivy filesystem scanning.
+- Compose environment examples include bootstrap admin variables. Replace every example password before use.
 
-### UI and security
+## Important limitations still open
 
-- No frontend application or browser-facing HTML/JS application was found in the repository tree. Current code is a Spring Boot backend/API.
-- `SecurityConfiguration` currently permits every request via `.anyRequest().permitAll()`. This is not authentication or authorization and must not be described as secure user management.
+- Feeding records currently track food type and quantity but do not automatically deduct an inventory product; the UI states this limitation. The data model must link a feeding record to an inventory product before consumption can be applied safely.
+- Vehicles and ponds currently support create/list/get; edit/deactivate workflows are not complete.
+- Users can be created by an ADMIN through the API, but there is no user-administration screen in the UI.
+- Reporting has event-consumer/persistence foundations but no dedicated reporting dashboard or endpoints.
+- HTTP Basic is suitable for this academic MVP only when used over HTTPS outside localhost. It is not a substitute for a production identity provider.
+- No final downloadable release archive has been prepared yet.
 
-### Branch and CI status
+## Validation status
 
-- `Develop` latest commit: `e8f416cfe5428d79280efaa466d525a7ab51b7ab` (2026-11-03).
-- `Qa` latest commit: `04977c76287668b8796cad1333d6d795eacdc674` (2026-09-27); it is divergent from `Develop`.
-- `main` latest commit: `612a373a438f2102793d63f4fec2708c3f9e1ac7` (2026-11-03); it is divergent from `Develop`.
-- Existing PR #36 from `Develop` to `main` was previously observed as non-mergeable/conflicted. Do not force-merge it.
-- The latest observed GitHub Actions runs on `Develop` were green contract-test runs. These do not prove all domain modules or a full database-backed application are functional.
+- An earlier CI run on the integration branch passed Gradle tests, Docker image build, CodeQL and Trivy before the later module additions.
+- The current integration branch has database-backed tests for MySQL persistence, stock reservation/restoration, dispatch/order lifecycle, dashboard delivery and authentication. The latest CI run must finish successfully before these new tests are considered verified.
+- A green contract-test run alone does not prove the full application is deployable; the full RedFish CI workflow and local Docker Compose smoke test are required.
 
-## Completion plan
+## Release plan
 
-1. Review and preserve existing API contracts and data mappings.
-2. Implement missing persistence, application services and REST endpoints for production/feeding, orders, dispatches, vehicles and users.
-3. Add database-backed integration tests and API tests for each feature, including lifecycle and validation cases.
-4. Implement an actual browser UI and connect it to the API, or explicitly document if the delivery is API-only.
-5. Replace blanket `permitAll` with a tested authentication/authorization design before claiming user security.
-6. Validate the full Docker Compose stack locally and through CI; record test evidence and exact startup instructions.
-7. Only after validation, prepare a downloadable release archive. Do not delete the user's existing local project or database volume until the new release is verified.
-
-## Current acceptance status
-
-The repository is not yet a complete, fully integrated, browser-usable RedFish application. Products and customers have existing REST/JPA paths. A vehicle create/list/get path has been added on the integration branch and awaits CI verification. Production/feeding, order management, dispatch persistence/API and user authentication remain partial foundations and require implementation and tests.
+1. Finish and repair any failures from the latest CI run.
+2. Verify the current branch's database-backed tests and complete Docker image build.
+3. Review the API/UI workflows, especially authentication, stock movement, order cancellation and dispatch transitions.
+4. Prepare a clean release archive and exact Windows startup instructions.
+5. Have the user run the new copy on port 8080 and confirm it works before considering replacement of the old project.
+6. Do not merge this draft PR or delete the old project/database volume until the user has verified the new version.
