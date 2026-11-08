@@ -17,7 +17,21 @@ servers:
           - "8081"
           - "8082"
         description: Develop, QA o produccion local
+security:
+  - basicAuth: []
 tags:
+  - name: Vehicles
+    description: Flota para los despachos
+  - name: Production
+    description: Estanques y alimentación
+  - name: Inventory
+    description: Existencias y movimientos
+  - name: Orders
+    description: Pedidos y reserva de inventario
+  - name: Dispatches
+    description: Programación y seguimiento de despachos
+  - name: Security
+    description: Identidad y administración de usuarios
   - name: Products
     description: Operaciones del modulo Inventario
   - name: Customers
@@ -134,6 +148,10 @@ paths:
         "400":
           $ref: "#/components/responses/BadRequest"
 components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
   parameters:
     EntityId:
       name: id
