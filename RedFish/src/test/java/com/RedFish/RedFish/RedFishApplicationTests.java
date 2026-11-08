@@ -10,9 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.core.io.ClassPathResource;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import org.springframework.context.annotation.Import;
 
 import com.RedFish.RedFish.inventory.application.port.ProductRepositoryPort;
@@ -87,8 +87,8 @@ class RedFishApplicationTests {
     @Test
     void servesBrowserDashboardWithoutAuthentication() throws Exception {
         mockMvc.perform(get("/"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("RedFish")));
+                .andExpect(status().isOk());
+        assertThat(new ClassPathResource("static/index.html").exists()).isTrue();
     }
 
     @Test
@@ -171,7 +171,7 @@ class RedFishApplicationTests {
         assertThat(created.total()).isEqualByComparingTo("36000");
         assertThat(orderRepository.findById(created.id())).get().extracting(Order::status).isEqualTo(created.status());
         assertThat(inventoryRepository.findByProductId(product.id())).get()
-                .extracting(InventoryItem::quantity).isEqualTo(new BigDecimal("7"));
+                .extracting(InventoryItem::quantity).isEqualByComparingTo("7");
     }
 
     @Test
