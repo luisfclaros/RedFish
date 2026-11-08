@@ -18,35 +18,38 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @Configuration
 public class SecurityConfiguration {
-
     @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
         csrfTokenRepository.setCookiePath("/");
-
         return http
-            .csrf(csrf -> csrf
-                .csrfTokenRepository(csrfTokenRepository)
+            .csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository)
                 .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
             .addFilterAfter((request, response, chain) -> {
                 CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
-                if (csrfToken != null) {
-                    csrfTokenRepository.saveToken(csrfToken, (HttpServletRequest) request,
-                            (HttpServletResponse) response);
-                }
+                if (csrfToken != null) csrfTokenRepository.saveToken(csrfToken,
+                        (HttpServletRequest) request, (HttpServletResponse) response);
                 chain.doFilter(request, response);
             }, CsrfFilter.class)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/", "/index.html", "/favicon.ico", "/actuator/health",
-                        "/openapi-v1.yaml", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
-                    .permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/v1/users").hasRole("ADMIN")
+                        "/openapi-v1.yaml", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                .requestMatchers("/api/v1/auth/me").hasAnyRole("ADMIN", "PRODUCTION", "OPERATIONS", "COMMERCIAL", "OPERATOR")
+                .requestMatchers("/api/v1/users/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/v1/products/**", "/api/products/**")
+                    .hasAnyRole("ADMIN", "PRODUCTION", "OPERATIONS", "COMMERCIAL")
+                .requestMatchers("/api/v1/products/**", "/api/products/**")
+                    .hasAnyRole("ADMIN", "PRODUCTION")
+                .requestMatchers("/api/v1/ponds/**", "/api/v1/feeding-records/**")
+                    .hasAnyRole("ADMIN", "PRODUCTION")
+                .requestMatchers("/api/v1/inventory/**", "/api/v1/vehicles/**", "/api/v1/dispatches/**")
+                    .hasAnyRole("ADMIN", "OPERATIONS")
+                .requestMatchers("/api/v1/customers/**", "/api/customers/**", "/api/v1/orders/**")
+                    .hasAnyRole("ADMIN", "COMMERCIAL")
                 .anyRequest().authenticated())
             .httpBasic(Customizer.withDefaults())
             .build();
