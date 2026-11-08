@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 
 import com.RedFish.RedFish.inventory.application.service.CreateProductService;
 import com.RedFish.RedFish.inventory.application.service.GetProductService;
@@ -52,6 +53,22 @@ class SecurityConfigurationTests {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").isArray())
             .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    @WithAnonymousUser
+    void rejectsUnauthenticatedApiRequests() throws Exception {
+        mockMvc.perform(get("/api/products"))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(username = "operator", roles = "OPERATOR")
+    void preventsOperatorsFromCreatingUsers() throws Exception {
+        mockMvc.perform(post("/api/v1/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
+            .andExpect(status().isForbidden());
     }
 
     @Test
