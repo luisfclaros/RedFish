@@ -9,81 +9,73 @@ import java.util.Collections;
 import java.util.List;
 
 public class Order {
+    private final Long id;
+    private final Long customerId;
+    private final LocalDate date;
+    private final List<OrderItem> items;
+    private OrderStatus status;
+    private String observations;
 
-	private final Long id;
-	private final Long customerId;
-	private final LocalDate date;
-	private final List<OrderItem> items;
-	private OrderStatus status;
-	private String observations;
+    public Order(Long id, Customer customer, LocalDate date, List<OrderItem> items, String observations) {
+        requireNonNull(customer, "customer").ensureCanPlaceOrders();
+        this.id = id;
+        this.customerId = customer.id();
+        this.date = requireNonNull(date, "order date");
+        this.items = new ArrayList<>(requireNonNull(items, "order items"));
+        this.observations = observations;
+        this.status = OrderStatus.PENDING;
+        ensureHasItems();
+    }
 
-	public Order(Long id, Customer customer, LocalDate date, List<OrderItem> items, String observations) {
-		requireNonNull(customer, "customer").ensureCanPlaceOrders();
-		this.id = id;
-		this.customerId = customer.id();
-		this.date = requireNonNull(date, "order date");
-		this.items = new ArrayList<>(requireNonNull(items, "order items"));
-		this.observations = observations;
-		this.status = OrderStatus.PENDING;
-		ensureHasItems();
-	}
+    private Order(Long id, Long customerId, LocalDate date, List<OrderItem> items,
+            String observations, OrderStatus status) {
+        this.id=id;
+        this.customerId=requireNonNull(customerId, "customer id");
+        this.date=requireNonNull(date, "order date");
+        this.items=new ArrayList<>(requireNonNull(items, "order items"));
+        this.observations=observations;
+        this.status=requireNonNull(status, "order status");
+        ensureHasItems();
+    }
 
-	public void markInPreparation() {
-		ensureStatus(OrderStatus.PENDING);
-		this.status = OrderStatus.IN_PREPARATION;
-	}
+    public static Order restore(Long id, Long customerId, LocalDate date, List<OrderItem> items,
+            String observations, OrderStatus status) {
+        return new Order(id, customerId, date, items, observations, status);
+    }
 
-	public void markDispatched() {
-		ensureStatus(OrderStatus.IN_PREPARATION);
-		this.status = OrderStatus.DISPATCHED;
-	}
+    public void markInPreparation() {
+        ensureStatus(OrderStatus.PENDING);
+        this.status = OrderStatus.IN_PREPARATION;
+    }
 
-	public void cancel() {
-		if (status == OrderStatus.DISPATCHED) {
-			throw new IllegalStateException("dispatched orders cannot be cancelled");
-		}
-		this.status = OrderStatus.CANCELLED;
-	}
+    public void markDispatched() {
+        ensureStatus(OrderStatus.IN_PREPARATION);
+        this.status = OrderStatus.DISPATCHED;
+    }
 
-	public BigDecimal total() {
-		return items.stream()
-			.map(OrderItem::subtotal)
-			.reduce(BigDecimal.ZERO, BigDecimal::add);
-	}
+    public void cancel() {
+        if (status == OrderStatus.DISPATCHED || status == OrderStatus.CANCELLED) {
+            throw new IllegalStateException("dispatched or cancelled orders cannot be cancelled");
+        }
+        this.status = OrderStatus.CANCELLED;
+    }
 
-	private void ensureHasItems() {
-		if (items.isEmpty()) {
-			throw new IllegalArgumentException("orders must have at least one item");
-		}
-	}
+    public BigDecimal total() {
+        return items.stream().map(OrderItem::subtotal).reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 
-	private void ensureStatus(OrderStatus expectedStatus) {
-		if (status != expectedStatus) {
-			throw new IllegalStateException("invalid order status transition");
-		}
-	}
+    private void ensureHasItems() {
+        if (items.isEmpty()) throw new IllegalArgumentException("orders must have at least one item");
+    }
 
-	public Long id() {
-		return id;
-	}
+    private void ensureStatus(OrderStatus expectedStatus) {
+        if (status != expectedStatus) throw new IllegalStateException("invalid order status transition");
+    }
 
-	public Long customerId() {
-		return customerId;
-	}
-
-	public LocalDate date() {
-		return date;
-	}
-
-	public List<OrderItem> items() {
-		return Collections.unmodifiableList(items);
-	}
-
-	public OrderStatus status() {
-		return status;
-	}
-
-	public String observations() {
-		return observations;
-	}
+    public Long id() { return id; }
+    public Long customerId() { return customerId; }
+    public LocalDate date() { return date; }
+    public List<OrderItem> items() { return Collections.unmodifiableList(items); }
+    public OrderStatus status() { return status; }
+    public String observations() { return observations; }
 }
