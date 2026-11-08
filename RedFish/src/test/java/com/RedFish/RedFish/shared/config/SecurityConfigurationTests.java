@@ -76,6 +76,43 @@ class SecurityConfigurationTests {
     }
 
     @Test
+    @WithMockUser(username = "commercial", roles = "COMMERCIAL")
+    void preventsCommercialUsersFromCreatingProducts() throws Exception {
+        mockMvc.perform(post("/api/v1/products")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "code": "PROD-COM-01",
+                      "name": "Tilapia Roja",
+                      "unitOfMeasure": "kg",
+                      "type": "PRODUCT"
+                    }
+                    """))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "production", roles = "PRODUCTION")
+    void allowsProductionUsersToCreateProducts() throws Exception {
+        Product created = new Product(2L, "PROD-PROD-01", "Concentrado", "kg", ProductType.INPUT, true);
+        when(createProductService.create(any(Product.class))).thenReturn(created);
+
+        mockMvc.perform(post("/api/v1/products")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "code": "PROD-PROD-01",
+                      "name": "Concentrado",
+                      "unitOfMeasure": "kg",
+                      "type": "INPUT"
+                    }
+                    """))
+            .andExpect(status().isCreated());
+    }
+
+    @Test
     @WithMockUser(username = "operator", roles = "OPERATOR")
     void rejectsProductCreationWithoutCsrfToken() throws Exception {
         mockMvc.perform(post("/api/products")
