@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import com.RedFish.RedFish.orders.application.port.CustomerRepositoryPort;
 import com.RedFish.RedFish.orders.application.service.CreateOrderService;
 import com.RedFish.RedFish.orders.application.service.GetOrderService;
+import com.RedFish.RedFish.orders.application.service.ListOrdersService;
 import com.RedFish.RedFish.orders.application.service.UpdateOrderStatusService;
 import com.RedFish.RedFish.orders.domain.model.Order;
 import com.RedFish.RedFish.orders.domain.model.OrderItem;
@@ -16,12 +17,13 @@ import jakarta.validation.Valid;
 public class OrderController {
     private final CreateOrderService create;
     private final GetOrderService get;
+    private final ListOrdersService list;
     private final UpdateOrderStatusService update;
     private final CustomerRepositoryPort customers;
 
-    public OrderController(CreateOrderService create, GetOrderService get,
+    public OrderController(CreateOrderService create, GetOrderService get, ListOrdersService list,
             UpdateOrderStatusService update, CustomerRepositoryPort customers) {
-        this.create=create; this.get=get; this.update=update; this.customers=customers;
+        this.create=create; this.get=get; this.list=list; this.update=update; this.customers=customers;
     }
 
     @PostMapping
@@ -32,6 +34,11 @@ public class OrderController {
                 i.quantity(), i.unitPrice())).toList();
         Order order=create.create(new Order(null, customer, request.date(), items, request.observations()));
         return ResponseEntity.created(URI.create("/api/v1/orders/"+order.id())).body(OrderResponse.from(order));
+    }
+
+    @GetMapping
+    public java.util.List<OrderResponse> list() {
+        return list.list().stream().map(OrderResponse::from).toList();
     }
 
     @GetMapping("/{id}")
