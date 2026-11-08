@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,6 +40,13 @@ public class ProductController {
 				new Product(null, request.code(), request.name(), request.unitOfMeasure(), request.type(), true));
 		return ResponseEntity.created(URI.create("/api/v1/products/" + product.id()))
 			.body(ProductResponse.from(product));
+	}
+
+	@PutMapping("/{id}")
+	public ProductResponse update(@PathVariable Long id, @Valid @RequestBody ProductRequest request) {
+		Product product = createProductService.update(id,
+				new Product(id, request.code(), request.name(), request.unitOfMeasure(), request.type(), true));
+		return ProductResponse.from(product);
 	}
 
 	@GetMapping
