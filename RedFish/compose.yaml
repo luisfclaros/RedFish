@@ -11,6 +11,9 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO:?Define SPRING_JPA_HIBERNATE_DDL_AUTO in the environment file}
       SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:?Define SPRING_JPA_SHOW_SQL in the environment file}
       LOG_LEVEL: ${LOG_LEVEL:?Define LOG_LEVEL in the environment file}
+      REDFISH_BOOTSTRAP_ADMIN_USERNAME: ${REDFISH_BOOTSTRAP_ADMIN_USERNAME:-}
+      REDFISH_BOOTSTRAP_ADMIN_PASSWORD: ${REDFISH_BOOTSTRAP_ADMIN_PASSWORD:-}
+      REDFISH_BOOTSTRAP_ADMIN_NAME: ${REDFISH_BOOTSTRAP_ADMIN_NAME:-Administrador RedFish}
     depends_on:
       mysql:
         condition: service_healthy
