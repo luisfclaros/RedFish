@@ -15,6 +15,7 @@ main{padding:28px;min-width:0}.top{display:flex;justify-content:space-between;al
 .view{display:none}.view.active{display:block}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}.card,.panel{background:#fff;border:1px solid #e2eaf0;border-radius:14px;padding:18px;box-shadow:0 2px 8px #153d5210}.card span{display:block;color:#6a8293;font-size:13px}.card strong{display:block;font-size:28px;margin-top:8px}.panel{margin-bottom:18px}.panel h2{font-size:17px;margin:0 0 14px}.gridform{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.field{display:grid;gap:6px}.field label{font-size:12px;color:#5c7486;font-weight:700}.field input,.field select,.field textarea{width:100%;padding:10px 11px;border:1px solid #d4e0e8;border-radius:8px;font:inherit;font-size:14px;background:#fff;color:#17324d}.field input:focus,.field select:focus{outline:2px solid #8bd5d1;border-color:#20a6a1}
 .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:14px}.btn{border:0;border-radius:8px;padding:10px 14px;background:#168f8b;color:#fff;font-weight:700;cursor:pointer}.btn:hover{background:#117b77}.btn.secondary{background:#e7eff4;color:#294b61}.btn.danger{background:#b84c4c}.btn.small{padding:6px 9px;font-size:12px}.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;padding:11px 10px;border-bottom:1px solid #edf1f4;white-space:nowrap}th{color:#637c8e;font-size:11px;text-transform:uppercase;letter-spacing:.4px;background:#f8fafb}td .btn{margin:2px}.empty{color:#8296a4;padding:18px;text-align:center}.notice{padding:12px 14px;border-radius:9px;margin-bottom:16px;display:none}.notice.show{display:block}.notice.ok{background:#e6f6ef;color:#176b49}.notice.err{background:#fff0ef;color:#a33a35}.hint{font-size:12px;color:#758b99;margin-top:8px}.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:1000px){.layout{grid-template-columns:210px 1fr}.cards{grid-template-columns:repeat(2,1fr)}.gridform{grid-template-columns:repeat(2,1fr)}}
+dialog{border:0;border-radius:14px;padding:24px;width:min(420px,calc(100% - 28px));box-shadow:0 20px 60px #09283d55;color:#17324d}dialog::backdrop{background:#0b2638aa}.auth-form{display:grid;gap:12px}.auth-form h2{margin:0}.auth-form p{margin:0;color:#6a8293;font-size:13px}.auth-form input{padding:11px;border:1px solid #d4e0e8;border-radius:8px;font:inherit}
 @media(max-width:700px){.layout{display:block}aside{padding:12px;gap:10px}.brand{padding:4px}nav{display:flex;overflow:auto}nav button{white-space:nowrap;padding:9px 11px}.foot{display:none}main{padding:16px}.top h1{font-size:21px}.cards{grid-template-columns:repeat(2,1fr)}.gridform,.two{grid-template-columns:1fr}}
 </style>
 </head>
@@ -155,6 +156,7 @@ main{padding:28px;min-width:0}.top{display:flex;justify-content:space-between;al
     <div class="panel"><h2>Despachos programados</h2><div id="dispatches-table" class="tablewrap"></div></div>
   </section>
 </main>
+<dialog id="auth-dialog"><form id="auth-form" class="auth-form"><h2>Ingresar a RedFish</h2><p>Autentícate para consultar y modificar la información del sistema.</p><div class="field"><label>Usuario</label><input name="username" autocomplete="username" required></div><div class="field"><label>Contraseña</label><input name="password" type="password" autocomplete="current-password" required></div><div class="actions"><button class="btn" type="submit">Ingresar</button><button class="btn secondary" type="button" id="auth-cancel">Cancelar</button></div></form></dialog>
 </div>
 <script>
 const $=(s)=>document.querySelector(s);
@@ -163,7 +165,26 @@ document.querySelectorAll('input[type=date]').forEach(i=>i.value=today);
 const titles={dashboard:'Resumen general',products:'Productos',customers:'Clientes',vehicles:'Vehículos',ponds:'Estanques',feeding:'Alimentación',inventory:'Inventario',orders:'Pedidos',dispatches:'Despachos'};
 const endpoints={products:'/api/v1/products',customers:'/api/v1/customers',vehicles:'/api/v1/vehicles',ponds:'/api/v1/ponds',feeding:'/api/v1/feeding-records',inventory:'/api/v1/inventory',movements:'/api/v1/inventory/movements',orders:'/api/v1/orders',dispatches:'/api/v1/dispatches'};
 function notice(message,error=false){const n=$('#notice');n.textContent=message;n.className='notice show '+(error?'err':'ok');window.clearTimeout(notice.timer);notice.timer=window.setTimeout(()=>n.className='notice',6000)}
-let authHeader=null;\nasync function api(url,options={},retried=false){const headers={'Content-Type':'application/json',...(authHeader?{Authorization:authHeader}:{}),...(options.headers||{})};let r=await fetch(url,{...options,headers});if(r.status===401&&!retried){const username=window.prompt('RedFish requiere autenticación. Usuario:');if(!username)throw new Error('Autenticación cancelada');const password=window.prompt('Contraseña:');if(password===null)throw new Error('Autenticación cancelada');authHeader='Basic '+btoa(unescape(encodeURIComponent(username+':'+password)));return api(url,options,true)}if(!r.ok){let m='Error '+r.status;try{const j=await r.json();m=j.error?.message||j.message||m;if(j.error?.details)m+=' — '+Object.values(j.error.details).join(', ')}catch{}throw new Error(m)}if(r.status===204)return null;return r.json()}
+let authHeader=null;
+function requestCredentials(){
+  return new Promise(resolve=>{
+    const dialog=$('#auth-dialog'),form=$('#auth-form');let settled=false;
+    const finish=value=>{if(settled)return;settled=true;dialog.close();resolve(value)};
+    form.onsubmit=e=>{e.preventDefault();const d=formData(form);authHeader='Basic '+btoa(unescape(encodeURIComponent(d.username+':'+d.password)));form.reset();finish(true)};
+    $('#auth-cancel').onclick=()=>finish(false);
+    dialog.addEventListener('cancel',e=>{e.preventDefault();finish(false)},{once:true});
+    dialog.showModal();
+  });
+}
+async function api(url,options={},retried=false){
+  const headers={'Content-Type':'application/json',...(authHeader?{Authorization:authHeader}:{}),...(options.headers||{})};
+  const r=await fetch(url,{...options,headers});
+  if(r.status===401&&!retried){if(!await requestCredentials())throw new Error('Autenticación cancelada');return api(url,options,true)}
+  if(r.status===401&&retried)authHeader=null;
+  if(!r.ok){let m='Error '+r.status;try{const j=await r.json();m=j.error?.message||j.message||m;if(j.error?.details)m+=' — '+Object.values(j.error.details).join(', ')}catch{}throw new Error(m)}
+  if(r.status===204)return null;
+  return r.json();
+}
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function table(target,headers,rows){const el=$(target);if(!rows.length){el.innerHTML='<div class="empty">No hay registros para mostrar.</div>';return}el.innerHTML='<table><thead><tr>'+headers.map(h=>'<th>'+esc(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(v=>'<td>'+v+'</td>').join('')+'</tr>').join('')+'</tbody></table>'}
 function val(v){return esc(v)}
