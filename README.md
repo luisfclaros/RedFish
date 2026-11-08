@@ -352,3 +352,26 @@ Las decisiones arquitectónicas, requisitos y módulos serán refinados y docume
 **LUIS FERNANDO CLAROS RAMOS**
 
 Proyecto académico — Sistemas Distribuidos.
+
+
+## Ejecución local del MVP
+
+1. Entra a la carpeta `RedFish`.
+2. Copia `.env.example` como `.env`.
+3. Cambia las contraseñas de MySQL y del administrador inicial en `.env`. La contraseña del administrador debe tener al menos 10 caracteres.
+4. Ejecuta `docker compose up --build -d`.
+5. Abre `http://localhost:8080`. La primera petición a la API solicitará usuario y contraseña HTTP Basic. Usa los datos configurados en `REDFISH_BOOTSTRAP_ADMIN_USERNAME` y `REDFISH_BOOTSTRAP_ADMIN_PASSWORD`.
+
+La interfaz estática se sirve desde Spring Boot. La API usa autenticación HTTP Basic sin estado; las rutas de negocio requieren usuario autenticado. El alta de usuarios requiere rol ADMIN. En despliegues reales, usa HTTPS y contraseñas únicas, y configura secretos fuera del repositorio.
+
+### Endpoints implementados en la rama de integración
+
+- `/api/v1/products`, `/api/v1/customers`
+- `/api/v1/vehicles`
+- `/api/v1/ponds`, `/api/v1/feeding-records`
+- `/api/v1/inventory`, `/api/v1/inventory/entries`, `/api/v1/inventory/exits`, `/api/v1/inventory/movements`
+- `/api/v1/orders` y sus transiciones de estado
+- `/api/v1/dispatches` y sus transiciones de estado
+- `/api/v1/auth/me`, `/api/v1/users` (solo ADMIN para crear usuarios)
+
+Esta rama de integración sigue en validación; no se debe fusionar a `Develop`, `Qa` o `main` hasta que los checks y las pruebas funcionales estén aprobados.
