@@ -26,6 +26,7 @@ import com.RedFish.RedFish.inventory.application.port.InventoryRepositoryPort;
 import com.RedFish.RedFish.inventory.domain.model.InventoryItem;
 import com.RedFish.RedFish.orders.application.port.OrderRepositoryPort;
 import com.RedFish.RedFish.orders.application.service.CreateOrderService;
+import com.RedFish.RedFish.orders.application.service.UpdateOrderStatusService;
 import com.RedFish.RedFish.orders.domain.model.Order;
 import com.RedFish.RedFish.orders.domain.model.OrderItem;
 import com.RedFish.RedFish.dispatches.application.port.DispatchRepositoryPort;
@@ -60,6 +61,9 @@ class RedFishApplicationTests {
 
     @Autowired
     private CreateOrderService createOrderService;
+
+    @Autowired
+    private UpdateOrderStatusService updateOrderStatusService;
 
     @Autowired
     private DispatchRepositoryPort dispatchRepository;
@@ -140,6 +144,24 @@ class RedFishApplicationTests {
         assertThat(orderRepository.findById(created.id())).get().extracting(Order::status).isEqualTo(created.status());
         assertThat(inventoryRepository.findByProductId(product.id())).get()
                 .extracting(InventoryItem::quantity).isEqualTo(new BigDecimal("7"));
+    }
+
+    @Test
+    void cancellingOrderRestoresReservedInventoryInMysql() {
+        String code = "CAN-" + UUID.randomUUID().toString().substring(0, 8);
+        Product product = productRepository.save(new Product(null, code, "Tilapia cancelación", "kg", ProductType.PRODUCT, true));
+        inventoryRepository.save(new InventoryItem(null, product.id(), new BigDecimal("10"), new BigDecimal("1")));
+        Customer customer = customerRepository.save(new Customer(null, "Cliente cancelación", "3001234567",
+                "Neiva", UUID.randomUUID()+"@cancel.redfish.test", true));
+        Order order = createOrderService.create(new Order(null, customer, LocalDate.now(),
+                java.util.List.of(new OrderItem(product.id(), product.name(), new BigDecimal("4"), new BigDecimal("10000"))), null));
+        assertThat(inventoryRepository.findByProductId(product.id())).get()
+                .extracting(InventoryItem::quantity).isEqualTo(new BigDecimal("6"));
+
+        updateOrderStatusService.cancel(order.id());
+
+        assertThat(inventoryRepository.findByProductId(product.id())).get()
+                .extracting(InventoryItem::quantity).isEqualTo(new BigDecimal("10"));
     }
 
     @Test
