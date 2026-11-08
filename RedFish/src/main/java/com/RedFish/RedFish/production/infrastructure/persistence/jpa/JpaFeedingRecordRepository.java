@@ -16,6 +16,9 @@ public class JpaFeedingRecordRepository implements FeedingRecordRepositoryPort {
     @Override public FeedingRecord save(FeedingRecord record) {
         return repository.save(FeedingRecordJpaEntity.fromDomain(record)).toDomain();
     }
+    @Override public java.util.Optional<FeedingRecord> findById(Long id) {
+        return repository.findById(id).map(FeedingRecordJpaEntity::toDomain);
+    }
     @Override public List<FeedingRecord> findAll() {
         return repository.findAll().stream().map(FeedingRecordJpaEntity::toDomain).toList();
     }
