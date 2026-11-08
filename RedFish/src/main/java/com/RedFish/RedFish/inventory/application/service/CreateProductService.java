@@ -36,6 +36,14 @@ public class CreateProductService {
 				requestedProduct.unitOfMeasure(), requestedProduct.type(), existingProduct.active()));
 	}
 
+    @Transactional
+    public Product deactivate(Long id) {
+        Product existing = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("product not found"));
+        return productRepository.save(new Product(id, existing.code(), existing.name(),
+                existing.unitOfMeasure(), existing.type(), false));
+    }
+
 	@Transactional
 	public Product create(Product product) {
 		Product requestedProduct = requireNonNull(product, "product");
