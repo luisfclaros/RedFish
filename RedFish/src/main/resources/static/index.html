@@ -66,35 +66,35 @@ dialog{border:0;border-radius:14px;padding:24px;width:min(420px,calc(100% - 28px
   </section>
 
   <section class="view" id="view-customers">
-    <div class="panel"><h2>Registrar cliente</h2><form id="customer-form" class="gridform">
+    <div class="panel"><h2 id="customer-form-title">Registrar cliente</h2><form id="customer-form" class="gridform">
       <div class="field"><label>Nombre</label><input name="name" required maxlength="100"></div>
       <div class="field"><label>Teléfono</label><input name="phone" required maxlength="30"></div>
       <div class="field"><label>Dirección</label><input name="address" required maxlength="150"></div>
       <div class="field"><label>Correo electrónico</label><input name="email" type="email" maxlength="120"></div>
-      <div class="actions"><button class="btn">Guardar cliente</button></div>
+      <div class="actions"><button class="btn" id="customer-submit">Guardar cliente</button><button class="btn secondary" type="button" id="cancel-customer-edit" style="display:none">Cancelar edición</button></div>
     </form></div>
     <div class="panel"><h2>Clientes registrados</h2><div id="customers-table" class="tablewrap"></div></div>
   </section>
 
   <section class="view" id="view-vehicles">
-    <div class="panel"><h2>Registrar vehículo</h2><form id="vehicle-form" class="gridform">
+    <div class="panel"><h2 id="vehicle-form-title">Registrar vehículo</h2><form id="vehicle-form" class="gridform">
       <div class="field"><label>Placa</label><input name="plate" required maxlength="10"></div>
       <div class="field"><label>Marca</label><input name="brand" required maxlength="60"></div>
       <div class="field"><label>Modelo</label><input name="model" required maxlength="60"></div>
       <div class="field"><label>Capacidad de carga (kg)</label><input name="loadCapacity" type="number" min="0" step=".01" required></div>
       <div class="field"><label>Observaciones</label><input name="observations" maxlength="500"></div>
-      <div class="actions"><button class="btn">Guardar vehículo</button></div>
+      <div class="actions"><button class="btn" id="vehicle-submit">Guardar vehículo</button><button class="btn secondary" type="button" id="cancel-vehicle-edit" style="display:none">Cancelar edición</button></div>
     </form></div>
     <div class="panel"><h2>Vehículos</h2><div id="vehicles-table" class="tablewrap"></div></div>
   </section>
 
   <section class="view" id="view-ponds">
-    <div class="panel"><h2>Registrar estanque</h2><form id="pond-form" class="gridform">
+    <div class="panel"><h2 id="pond-form-title">Registrar estanque</h2><form id="pond-form" class="gridform">
       <div class="field"><label>Código</label><input name="code" required maxlength="30"></div>
       <div class="field"><label>Nombre</label><input name="name" required maxlength="100"></div>
       <div class="field"><label>Ubicación</label><input name="location" required maxlength="150"></div>
       <div class="field"><label>Capacidad</label><input name="capacity" type="number" min="0" step=".01" required></div>
-      <div class="actions"><button class="btn">Guardar estanque</button></div>
+      <div class="actions"><button class="btn" id="pond-submit">Guardar estanque</button><button class="btn secondary" type="button" id="cancel-pond-edit" style="display:none">Cancelar edición</button></div>
     </form></div>
     <div class="panel"><h2>Estanques</h2><div id="ponds-table" class="tablewrap"></div></div>
   </section>
@@ -199,9 +199,9 @@ function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 function table(target,headers,rows){const el=$(target);if(!rows.length){el.innerHTML='<div class="empty">No hay registros para mostrar.</div>';return}el.innerHTML='<table><thead><tr>'+headers.map(h=>'<th>'+esc(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(v=>'<td>'+v+'</td>').join('')+'</tr>').join('')+'</tbody></table>'}
 function val(v){return esc(v)}
 async function loadProducts(){const a=await api(endpoints.products);table('#products-table',['ID','Código','Nombre','Unidad','Tipo','Estado','Acciones'],a.map(x=>[val(x.id),val(x.code),val(x.name),val(x.unitOfMeasure),val(x.type),x.active?'Activo':'Inactivo','<button class="btn small secondary" data-product-edit="'+x.id+'">Editar</button>']));$('#count-products').textContent=a.length}
-async function loadCustomers(){const a=await api(endpoints.customers);table('#customers-table',['ID','Nombre','Teléfono','Dirección','Correo','Estado'],a.map(x=>[val(x.id),val(x.name),val(x.phone),val(x.address),val(x.email),x.active?'Activo':'Inactivo']));$('#count-customers').textContent=a.length}
-async function loadVehicles(){const a=await api(endpoints.vehicles);table('#vehicles-table',['ID','Placa','Marca','Modelo','Capacidad','Estado'],a.map(x=>[val(x.id),val(x.plate),val(x.brand),val(x.model),val(x.loadCapacity)+' kg',x.active?'Activo':'Inactivo']));$('#count-vehicles').textContent=a.length}
-async function loadPonds(){const a=await api(endpoints.ponds);table('#ponds-table',['ID','Código','Nombre','Ubicación','Capacidad','Estado'],a.map(x=>[val(x.id),val(x.code),val(x.name),val(x.location),val(x.capacity),x.active?'Activo':'Inactivo']));$('#count-ponds').textContent=a.length}
+async function loadCustomers(){const a=await api(endpoints.customers);table('#customers-table',['ID','Nombre','Teléfono','Dirección','Correo','Estado','Acciones'],a.map(x=>[val(x.id),val(x.name),val(x.phone),val(x.address),val(x.email),x.active?'Activo':'Inactivo','<button class="btn small secondary" data-edit-customer="'+x.id+'">Editar</button>'+(x.active?'<button class="btn small danger" data-deactivate="customers" data-id="'+x.id+'">Desactivar</button>':'Inactivo')]));$('#count-customers').textContent=a.length}
+async function loadVehicles(){const a=await api(endpoints.vehicles);table('#vehicles-table',['ID','Placa','Marca','Modelo','Capacidad','Estado','Acciones'],a.map(x=>[val(x.id),val(x.plate),val(x.brand),val(x.model),val(x.loadCapacity)+' kg',x.active?'Activo':'Inactivo','<button class="btn small secondary" data-edit-vehicle="'+x.id+'">Editar</button>'+(x.active?'<button class="btn small danger" data-deactivate="vehicles" data-id="'+x.id+'">Desactivar</button>':'Inactivo')]));$('#count-vehicles').textContent=a.length}
+async function loadPonds(){const a=await api(endpoints.ponds);table('#ponds-table',['ID','Código','Nombre','Ubicación','Capacidad','Estado','Acciones'],a.map(x=>[val(x.id),val(x.code),val(x.name),val(x.location),val(x.capacity),x.active?'Activo':'Inactivo','<button class="btn small secondary" data-edit-pond="'+x.id+'">Editar</button>'+(x.active?'<button class="btn small danger" data-deactivate="ponds" data-id="'+x.id+'">Desactivar</button>':'Inactivo')]));$('#count-ponds').textContent=a.length}
 async function loadFeeding(){const a=await api(endpoints.feeding);table('#feeding-table',['ID','Estanque','Insumo','Fecha','Alimento','Cantidad','Responsable','Observaciones'],a.map(x=>[val(x.id),val(x.pondId),val(x.productId),val(x.date),val(x.foodType),val(x.quantity),val(x.registeredBy),val(x.observations)]))}
 async function loadInventory(){const a=await api(endpoints.inventory);table('#inventory-table',['ID','Producto','Existencia','Mínimo','Alerta'],a.map(x=>[val(x.id),val(x.productId),val(x.quantity),val(x.minimumStock),x.belowMinimumStock?'<b style="color:#b84c4c">Bajo mínimo</b>':'Normal']));$('#stock-summary').textContent=a.length+' referencias de inventario registradas; '+a.filter(x=>x.belowMinimumStock).length+' requieren reposición.'}
 async function loadMovements(){const a=await api(endpoints.movements);table('#movements-table',['ID','Inventario','Tipo','Cantidad','Fecha','Responsable','Observaciones'],a.map(x=>[val(x.id),val(x.inventoryId),val(x.type),val(x.quantity),val(x.date),val(x.registeredBy),val(x.observations)]))}
@@ -221,9 +221,24 @@ function resetProductEditor(){editingProductId=null;productForm.reset();productF
 productForm.addEventListener('submit',async e=>{e.preventDefault();const button=$('#product-submit');button.disabled=true;try{const payload=formData(productForm);const editing=editingProductId!==null;await api(editing?endpoints.products+'/'+editingProductId:endpoints.products,{method:editing?'PUT':'POST',body:JSON.stringify(payload)});notice(editing?'Producto actualizado correctamente.':'Producto registrado correctamente.');resetProductEditor();await loadProducts()}catch(err){notice(err.message,true)}finally{button.disabled=false}});
 $('#cancel-product-edit').addEventListener('click',resetProductEditor);
 document.addEventListener('click',async e=>{const button=e.target.closest('[data-product-edit]');if(!button)return;try{const product=await api(endpoints.products+'/'+button.dataset.productEdit);editingProductId=product.id;productForm.elements.code.value=product.code;productForm.elements.name.value=product.name;productForm.elements.unitOfMeasure.value=product.unitOfMeasure;productForm.elements.type.value=product.type;$('#product-form-title').textContent='Editar producto #'+product.id;$('#product-submit').textContent='Guardar cambios';$('#cancel-product-edit').style.display='inline-block';productForm.scrollIntoView({behavior:'smooth',block:'center'})}catch(err){notice(err.message,true)}});
-submit('#customer-form',endpoints.customers,x=>x,loadCustomers);
-submit('#vehicle-form',endpoints.vehicles,x=>numberFields(x,['loadCapacity']),loadVehicles);
-submit('#pond-form',endpoints.ponds,x=>numberFields(x,['capacity']),loadPonds);
+// Formularios de clientes, vehículos y estanques con edición y desactivación segura.
+
+
+const editors={
+ customers:{form:'#customer-form',title:'#customer-form-title',submit:'#customer-submit',cancel:'#cancel-customer-edit',url:endpoints.customers,fields:['name','phone','address','email'],label:'cliente',load:loadCustomers},
+ vehicles:{form:'#vehicle-form',title:'#vehicle-form-title',submit:'#vehicle-submit',cancel:'#cancel-vehicle-edit',url:endpoints.vehicles,fields:['plate','brand','model','loadCapacity','observations'],label:'vehículo',load:loadVehicles},
+ ponds:{form:'#pond-form',title:'#pond-form-title',submit:'#pond-submit',cancel:'#cancel-pond-edit',url:endpoints.ponds,fields:['code','name','location','capacity'],label:'estanque',load:loadPonds}
+};
+const editIds={customers:'data-edit-customer',vehicles:'data-edit-vehicle',ponds:'data-edit-pond'};
+for(const [key,cfg] of Object.entries(editors)){
+ let editing=null;const form=$(cfg.form);
+ const reset=()=>{editing=null;form.reset();$(cfg.title).textContent='Registrar '+cfg.label;$(cfg.submit).textContent='Guardar '+cfg.label;$(cfg.cancel).style.display='none'};
+ $(cfg.cancel).addEventListener('click',reset);
+ form.addEventListener('submit',async e=>{e.preventDefault();const b=$(cfg.submit);b.disabled=true;try{const data=formData(form);if(key==='vehicles')numberFields(data,['loadCapacity']);if(key==='ponds')numberFields(data,['capacity']);await api(editing?cfg.url+'/'+editing:cfg.url,{method:editing?'PUT':'POST',body:JSON.stringify(data)});notice(editing?'Registro actualizado.':'Registro guardado.');reset();await cfg.load()}catch(err){notice(err.message,true)}finally{b.disabled=false}});
+ document.addEventListener('click',async e=>{const b=e.target.closest('['+editIds[key]+']');if(!b)return;try{const record=await api(cfg.url+'/'+b.getAttribute(editIds[key]));editing=record.id;cfg.fields.forEach(field=>form.elements[field].value=record[field]??'');$(cfg.title).textContent='Editar '+cfg.label+' #'+editing;$(cfg.submit).textContent='Guardar cambios';$(cfg.cancel).style.display='inline-block';form.scrollIntoView({behavior:'smooth',block:'center'})}catch(err){notice(err.message,true)}});
+}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-deactivate]');if(!b)return;const module=b.dataset.deactivate,id=b.dataset.id;if(!confirm('¿Desactivar este registro? Se conservará el historial y no podrá usarse en nuevas operaciones.'))return;try{await api(editors[module].url+'/'+id,{method:'DELETE'});notice('Registro desactivado.');await editors[module].load()}catch(err){notice(err.message,true)}});
+
 submit('#feeding-form',endpoints.feeding,x=>numberFields(x,['pondId','productId','quantity','registeredBy']),loadFeeding);
 submit('#stock-form',endpoints.inventory+'/stock',x=>numberFields(x,['productId','initialQuantity','minimumStock']),loadInventory);
 submit('#entry-form',endpoints.inventory+'/entries',x=>numberFields(x,['productId','quantity','registeredBy']),async()=>{await loadInventory();await loadMovements()});
