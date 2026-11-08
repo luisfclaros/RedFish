@@ -102,13 +102,14 @@ dialog{border:0;border-radius:14px;padding:24px;width:min(420px,calc(100% - 28px
   <section class="view" id="view-feeding">
     <div class="panel"><h2>Registrar alimentación</h2><form id="feeding-form" class="gridform">
       <div class="field"><label>ID del estanque</label><input name="pondId" type="number" min="1" required></div>
+      <div class="field"><label>ID del insumo de alimento</label><input name="productId" type="number" min="1" required></div>
       <div class="field"><label>Fecha</label><input name="date" type="date" required></div>
       <div class="field"><label>Tipo de alimento</label><input name="foodType" required maxlength="100"></div>
       <div class="field"><label>Cantidad (kg)</label><input name="quantity" type="number" min=".001" step=".001" required></div>
       <div class="field"><label>ID responsable</label><input name="registeredBy" type="number" min="1" required></div>
       <div class="field"><label>Observaciones</label><input name="observations" maxlength="500"></div>
       <div class="actions"><button class="btn">Registrar alimentación</button></div>
-    </form><p class="hint">El registro valida que el estanque exista y esté activo. La salida automática del alimento del inventario requiere asociar el alimento a un producto del catálogo.</p></div>
+    </form><p class="hint">Selecciona un producto de tipo INSUMO. El sistema descuenta automáticamente la cantidad del inventario y registra el movimiento de salida.</p></div>
     <div class="panel"><h2>Registros de alimentación</h2><div id="feeding-table" class="tablewrap"></div></div>
   </section>
 
@@ -192,7 +193,7 @@ async function loadProducts(){const a=await api(endpoints.products);table('#prod
 async function loadCustomers(){const a=await api(endpoints.customers);table('#customers-table',['ID','Nombre','Teléfono','Dirección','Correo','Estado'],a.map(x=>[val(x.id),val(x.name),val(x.phone),val(x.address),val(x.email),x.active?'Activo':'Inactivo']));$('#count-customers').textContent=a.length}
 async function loadVehicles(){const a=await api(endpoints.vehicles);table('#vehicles-table',['ID','Placa','Marca','Modelo','Capacidad','Estado'],a.map(x=>[val(x.id),val(x.plate),val(x.brand),val(x.model),val(x.loadCapacity)+' kg',x.active?'Activo':'Inactivo']));$('#count-vehicles').textContent=a.length}
 async function loadPonds(){const a=await api(endpoints.ponds);table('#ponds-table',['ID','Código','Nombre','Ubicación','Capacidad','Estado'],a.map(x=>[val(x.id),val(x.code),val(x.name),val(x.location),val(x.capacity),x.active?'Activo':'Inactivo']));$('#count-ponds').textContent=a.length}
-async function loadFeeding(){const a=await api(endpoints.feeding);table('#feeding-table',['ID','Estanque','Fecha','Alimento','Cantidad','Responsable','Observaciones'],a.map(x=>[val(x.id),val(x.pondId),val(x.date),val(x.foodType),val(x.quantity),val(x.registeredBy),val(x.observations)]))}
+async function loadFeeding(){const a=await api(endpoints.feeding);table('#feeding-table',['ID','Estanque','Insumo','Fecha','Alimento','Cantidad','Responsable','Observaciones'],a.map(x=>[val(x.id),val(x.pondId),val(x.productId),val(x.date),val(x.foodType),val(x.quantity),val(x.registeredBy),val(x.observations)]))}
 async function loadInventory(){const a=await api(endpoints.inventory);table('#inventory-table',['ID','Producto','Existencia','Mínimo','Alerta'],a.map(x=>[val(x.id),val(x.productId),val(x.quantity),val(x.minimumStock),x.belowMinimumStock?'<b style="color:#b84c4c">Bajo mínimo</b>':'Normal']));$('#stock-summary').textContent=a.length+' referencias de inventario registradas; '+a.filter(x=>x.belowMinimumStock).length+' requieren reposición.'}
 async function loadMovements(){const a=await api(endpoints.movements);table('#movements-table',['ID','Inventario','Tipo','Cantidad','Fecha','Responsable','Observaciones'],a.map(x=>[val(x.id),val(x.inventoryId),val(x.type),val(x.quantity),val(x.date),val(x.registeredBy),val(x.observations)]))}
 async function loadOrders(){const a=await api(endpoints.orders);table('#orders-table',['ID','Cliente','Fecha','Total','Estado','Acciones'],a.map(x=>[val(x.id),val(x.customerId),val(x.date),new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(x.total),val(x.status),'<button class="btn small secondary" data-order-action="in-preparation" data-id="'+x.id+'">Preparar</button><button class="btn small" data-order-action="dispatched" data-id="'+x.id+'">Despachar</button><button class="btn small danger" data-order-action="cancel" data-id="'+x.id+'">Cancelar</button>']));$('#activity-summary').textContent=a.length+' pedidos registrados.'}
@@ -209,7 +210,7 @@ submit('#product-form',endpoints.products,x=>x,loadProducts);
 submit('#customer-form',endpoints.customers,x=>x,loadCustomers);
 submit('#vehicle-form',endpoints.vehicles,x=>numberFields(x,['loadCapacity']),loadVehicles);
 submit('#pond-form',endpoints.ponds,x=>numberFields(x,['capacity']),loadPonds);
-submit('#feeding-form',endpoints.feeding,x=>numberFields(x,['pondId','quantity','registeredBy']),loadFeeding);
+submit('#feeding-form',endpoints.feeding,x=>numberFields(x,['pondId','productId','quantity','registeredBy']),loadFeeding);
 submit('#stock-form',endpoints.inventory+'/stock',x=>numberFields(x,['productId','initialQuantity','minimumStock']),loadInventory);
 submit('#entry-form',endpoints.inventory+'/entries',x=>numberFields(x,['productId','quantity','registeredBy']),async()=>{await loadInventory();await loadMovements()});
 submit('#exit-form',endpoints.inventory+'/exits',x=>numberFields(x,['productId','quantity','registeredBy']),async()=>{await loadInventory();await loadMovements()});
