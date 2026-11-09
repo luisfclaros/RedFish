@@ -17,22 +17,42 @@ main{padding:28px;min-width:0}.top{display:flex;justify-content:space-between;al
 @media(max-width:1000px){.layout{grid-template-columns:210px 1fr}.cards{grid-template-columns:repeat(2,1fr)}.gridform{grid-template-columns:repeat(2,1fr)}}
 dialog{border:0;border-radius:14px;padding:24px;width:min(420px,calc(100% - 28px));box-shadow:0 20px 60px #09283d55;color:#17324d}dialog::backdrop{background:#0b2638aa}.auth-form{display:grid;gap:12px}.auth-form h2{margin:0}.auth-form p{margin:0;color:#6a8293;font-size:13px}.auth-form input{padding:11px;border:1px solid #d4e0e8;border-radius:8px;font:inherit}
 @media(max-width:700px){.layout{display:block}aside{padding:12px;gap:10px}.brand{padding:4px}nav{display:flex;overflow:auto}nav button{white-space:nowrap;padding:9px 11px}.foot{display:none}main{padding:16px}.top h1{font-size:21px}.cards{grid-template-columns:repeat(2,1fr)}.gridform,.two{grid-template-columns:1fr}}
-.landing{min-height:100vh;background:linear-gradient(135deg,#0b3045,#14536a);padding:48px 22px;display:grid;place-items:center;color:#17324d}.landing-inner{width:min(1080px,100%);text-align:center}.landing-brand{color:#fff;margin-bottom:34px}.landing-logo{width:66px;height:66px;border-radius:19px;background:#20a6a1;display:grid;place-items:center;margin:0 auto 14px;font-size:28px;font-weight:900}.landing-brand h1{font-size:36px;margin:0}.landing-brand p{color:#c2dce3;margin:9px 0 0}.landing-inner h2{color:#fff;font-size:22px;margin:0 0 22px}.profile-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}.profile-card{border:1px solid #dce8ed;border-radius:16px;background:#fff;padding:24px 18px;text-align:left;cursor:pointer;min-height:190px;box-shadow:0 12px 35px #071e2c35;transition:transform .15s,border-color .15s}.profile-card:hover{transform:translateY(-4px);border-color:#20a6a1}.profile-icon{width:44px;height:44px;border-radius:12px;background:#e2f4f2;color:#147d79;display:grid;place-items:center;font-size:22px;margin-bottom:18px}.profile-card strong{display:block;font-size:17px}.profile-card span{display:block;color:#6a8293;font-size:13px;line-height:1.5;margin-top:8px}.landing-foot{color:#b6d3dc;font-size:12px;margin-top:24px}.hidden{display:none!important}.user-chip{display:flex;align-items:center;gap:10px}.user-chip button{border:0;border-radius:8px;padding:8px 11px;cursor:pointer;background:#e7eff4;color:#294b61;font-weight:700}@media(max-width:850px){.profile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){.profile-grid{grid-template-columns:1fr}.landing{padding:28px 16px}.profile-card{min-height:0}}
+.login-landing{min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr;position:relative;overflow:hidden;background:linear-gradient(135deg,#062943,#0b4164 55%,#062943);color:#17324d}
+.login-brand-panel{display:flex;flex-direction:column;justify-content:flex-start;padding:54px 64px 0;color:#fff;position:relative;overflow:hidden;min-height:100vh;z-index:1}
+.login-brand-panel:before{content:"○   ○      ○  ○          ○       ○";position:absolute;left:10%;bottom:18%;color:rgba(255,255,255,.22);font-size:28px;letter-spacing:18px;white-space:nowrap;animation:bubbles 9s linear infinite;pointer-events:none;z-index:3}
+.login-brand-panel:after{content:"";position:absolute;width:520px;height:520px;border-radius:50%;border:1px solid rgba(255,255,255,.08);right:-180px;bottom:-240px;box-shadow:0 0 0 70px rgba(255,255,255,.025),0 0 0 140px rgba(255,255,255,.02);pointer-events:none}
+.brand-copy{position:relative;z-index:4;max-width:650px}.brand-logo{display:inline-flex;align-items:center;gap:12px;font-size:28px;font-weight:800}.brand-fish{display:grid;place-items:center;width:46px;height:46px;background:#e53945;border-radius:50%;font-size:25px;box-shadow:0 8px 20px #e5394547}
+.brand-copy h1{margin:46px 0 12px;font-size:clamp(34px,5vw,62px);line-height:1.02}.brand-copy p{max-width:600px;color:#d8e6f3;font-size:18px;line-height:1.6}
+.underwater-scene{position:absolute;left:0;right:0;bottom:0;height:47%;z-index:2;overflow:hidden;mask-image:linear-gradient(to bottom,transparent 0%,black 28%)}.underwater-scene img{width:100%;height:100%;display:block;object-fit:cover;object-position:center 58%;filter:saturate(1.12) contrast(1.04) brightness(.78)}.underwater-scene:after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,#05263d 0%,rgba(5,38,61,.28) 30%,rgba(5,38,61,.08) 100%)}
+@keyframes bubbles{0%{transform:translateY(0);opacity:0}15%{opacity:1}80%{opacity:.6}100%{transform:translateY(-700px);opacity:0}}
+.login-panel{display:flex;align-items:center;justify-content:center;padding:32px;background:rgba(2,22,39,.18);position:relative;z-index:5}.login-card{width:min(460px,100%);background:rgba(255,255,255,.97);border-radius:24px;padding:38px;box-shadow:0 30px 80px #0005,0 0 0 1px #ffffff40;backdrop-filter:blur(12px);animation:loginIn .7s ease}.login-card h2{margin:0 0 8px;font-size:28px}.login-card>p{margin:0 0 24px;color:#718096}.login-card .field{margin-bottom:17px}.login-card .field label{display:block;font-size:14px;font-weight:700;margin-bottom:8px;color:#18324b}.login-card .field input,.login-card .field select{width:100%;border:1px solid #dfe7ef;border-radius:12px;padding:13px 14px;outline:none;font:inherit;background:#fff}.login-card .field input:focus,.login-card .field select:focus{border-color:#2f80ed;box-shadow:0 0 0 4px #2f80ed1a}.login-submit{width:100%;border:0;border-radius:12px;padding:14px 18px;color:#fff;background:#e53945;font-weight:800;cursor:pointer;transition:.2s}.login-submit:hover{background:#c92b36;transform:translateY(-1px)}.login-submit:disabled{opacity:.65;cursor:wait;transform:none}.login-error{background:#fff1f2;border:1px solid #fecdd3;color:#b4232f;border-radius:10px;padding:10px 12px;margin-bottom:16px;font-size:14px}.login-foot{margin-top:20px;text-align:center;color:#718096;font-size:12px}
+@keyframes loginIn{from{opacity:0;transform:translateY(25px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.hidden{display:none!important}.user-chip{display:flex;align-items:center;gap:10px}.user-chip button{border:0;border-radius:8px;padding:8px 11px;cursor:pointer;background:#e7eff4;color:#294b61;font-weight:700}
+@media(max-width:900px){.login-landing{grid-template-columns:1fr}.login-brand-panel{min-height:420px;padding:32px 28px 0}.brand-copy h1{margin-top:32px;font-size:42px}.brand-copy p{font-size:16px}.underwater-scene{height:52%}.login-panel{padding:24px}.login-card{max-width:520px}}
+@media(max-width:520px){.login-brand-panel{min-height:340px;padding:25px 22px 0}.brand-copy h1{font-size:36px}.brand-copy p{font-size:14px}.underwater-scene{height:48%}.login-panel{padding:18px}.login-card{padding:26px 22px}.cards{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
-<section id="landing" class="landing">
- <div class="landing-inner">
-  <div class="landing-brand"><div class="landing-logo">RF</div><h1>RedFish</h1><p>Sistema integral de gestión piscícola</p></div>
-  <h2>Selecciona tu área para ingresar</h2>
-  <div class="profile-grid">
-   <button class="profile-card" data-profile="PRODUCTION"><div class="profile-icon">♧</div><strong>Producción</strong><span>Estanques, alimentación y control de producción.</span></button>
-   <button class="profile-card" data-profile="OPERATIONS"><div class="profile-icon">▥</div><strong>Operaciones</strong><span>Inventario, vehículos y gestión de despachos.</span></button>
-   <button class="profile-card" data-profile="COMMERCIAL"><div class="profile-icon">♙</div><strong>Comercial</strong><span>Clientes, pedidos y seguimiento comercial.</span></button>
-   <button class="profile-card" data-profile="ADMIN"><div class="profile-icon">⚙</div><strong>Administración</strong><span>Administración general y acceso a todos los módulos.</span></button>
+<section id="landing" class="login-landing">
+ <div class="login-brand-panel">
+  <div class="brand-copy">
+   <div class="brand-logo"><span class="brand-fish">🐟</span><span>RedFish</span></div>
+   <h1>Gestión acuícola<br>simple y organizada.</h1>
+   <p>Administra producción, alimentación, inventario, pedidos, clientes, despachos y vehículos desde una sola interfaz.</p>
   </div>
-  <div class="landing-foot">Acceso seguro · Cada área requiere su propia cuenta y contraseña</div>
+  <div class="underwater-scene"><img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1800&q=90" alt="Buceador bajo el agua entre peces"></div>
  </div>
+ <div class="login-panel"><div class="login-card">
+  <h2>Bienvenido 👋</h2><p>Ingresa con tu cuenta de RedFish.</p>
+  <div id="login-page-error" class="login-error hidden" role="alert"></div>
+  <form id="login-page-form">
+   <div class="field"><label for="login-profile">Área de acceso</label><select id="login-profile" name="profile" required><option value="">Selecciona tu área</option><option value="ADMIN">Administración</option><option value="PRODUCTION">Producción</option><option value="OPERATIONS">Operaciones</option><option value="COMMERCIAL">Comercial</option></select></div>
+   <div class="field"><label for="login-username">Usuario</label><input id="login-username" name="username" autocomplete="username" placeholder="Tu usuario" required></div>
+   <div class="field"><label for="login-password">Contraseña</label><input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Tu contraseña" required></div>
+   <button class="login-submit" id="login-submit" type="submit">Iniciar sesión</button>
+  </form>
+  <div class="login-foot">Acceso seguro · Cada área utiliza sus credenciales asignadas</div>
+ </div></div>
 </section>
 <div class="layout hidden" id="app-layout">
 <aside>
@@ -202,8 +222,28 @@ function applyProfile(){
  document.querySelectorAll('nav [data-view]').forEach(b=>b.classList.toggle('hidden',!allowed.has(b.dataset.view)));
  document.querySelectorAll('[data-go]').forEach(b=>b.classList.toggle('hidden',!allowed.has(b.dataset.go)));
 }
-document.querySelectorAll('[data-profile]').forEach(b=>b.addEventListener('click',()=>enterProfile(b.dataset.profile)));
-$('#logout').addEventListener('click',()=>{authHeader=null;currentUser=null;currentProfile=null;$('#app-layout').classList.add('hidden');$('#landing').classList.remove('hidden');document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$('#notice').className='notice';});
+$('#login-page-form').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const form=e.currentTarget,button=$('#login-submit'),error=$('#login-page-error');
+ const values=formData(form),role=values.profile;
+ const candidate='Basic '+btoa(unescape(encodeURIComponent(values.username.trim()+':'+values.password)));
+ button.disabled=true;button.textContent='Validando acceso…';error.classList.add('hidden');error.textContent='';
+ try{
+  const response=await fetch('/api/v1/auth/me',{headers:{Authorization:candidate}});
+  if(!response.ok)throw new Error(response.status===401?'Usuario o contraseña incorrectos.':'No fue posible validar el acceso. Intenta nuevamente.');
+  const user=await response.json();
+  if(user.role!==role)throw new Error('La cuenta ingresada no corresponde al área seleccionada.');
+  authHeader=candidate;currentProfile=role;currentUser=user;
+  $('#landing').classList.add('hidden');$('#app-layout').classList.remove('hidden');
+  $('#current-user').textContent=(user.name||user.username)+' · '+profileNames[role];
+  applyProfile();
+  if(role==='ADMIN'||role==='COMMERCIAL')await loadOrderReferences();
+  if(role==='ADMIN'||role==='OPERATIONS')await loadDispatchReferences();
+  await refreshAll();show('dashboard');
+ }catch(err){error.textContent=err.message;error.classList.remove('hidden')}
+ finally{button.disabled=false;button.textContent='Iniciar sesión'}
+});
+$('#logout').addEventListener('click',()=>{authHeader=null;currentUser=null;currentProfile=null;$('#app-layout').classList.add('hidden');$('#landing').classList.remove('hidden');$('#login-page-form').reset();document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$('#notice').className='notice';$('#login-username').focus();});
 function csrfCookie(){
   const entry=document.cookie.split('; ').find(value=>value.startsWith('XSRF-TOKEN='));
   return entry?decodeURIComponent(entry.substring('XSRF-TOKEN='.length)):null;
