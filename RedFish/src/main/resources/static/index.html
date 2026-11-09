@@ -226,7 +226,9 @@ $('#login-page-form').addEventListener('submit',async e=>{
  e.preventDefault();
  const form=e.currentTarget,button=$('#login-submit'),error=$('#login-page-error');
  const values=formData(form),role=values.profile;
- const candidate='Basic '+btoa(unescape(encodeURIComponent(values.username.trim()+':'+values.password)));
+ const enteredUsername=values.username.trim().toLowerCase();
+ const backendUsername=role==='PRODUCTION'&&enteredUsername==='produccion'?'production':role==='OPERATIONS'&&enteredUsername==='operaciones'?'operations':enteredUsername;
+ const candidate='Basic '+btoa(unescape(encodeURIComponent(backendUsername+':'+values.password)));
  button.disabled=true;button.textContent='Validando acceso…';error.classList.add('hidden');error.textContent='';
  try{
   const response=await fetch('/api/v1/auth/me',{headers:{Authorization:candidate}});
