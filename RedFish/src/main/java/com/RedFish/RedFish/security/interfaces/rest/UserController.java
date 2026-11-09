@@ -20,6 +20,15 @@ public class UserController {
         var user=register.register(request.name(), request.username(), request.password(), request.role());
         return ResponseEntity.status(201).body(UserResponse.from(user));
     }
+    public record ChangePasswordRequest(String password) {}
+
+    @PutMapping("/users/{username}/password")
+    public ResponseEntity<UserResponse> changePassword(
+            @PathVariable String username, @RequestBody ChangePasswordRequest request) {
+        var user = register.changePassword(username, request.password());
+        return ResponseEntity.ok(UserResponse.from(user));
+    }
+
     @GetMapping("/auth/me")
     public UserResponse me(Authentication authentication) {
         var user=users.findByUsername(authentication.getName())
