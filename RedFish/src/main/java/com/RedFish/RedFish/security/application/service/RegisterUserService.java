@@ -22,6 +22,17 @@ public class RegisterUserService {
     }
 
     @Transactional
+    public User changePassword(String username, String rawPassword) {
+        if (rawPassword == null || rawPassword.length() < 10)
+            throw new IllegalArgumentException("password must contain at least 10 characters");
+        User existing = users.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("user not found"));
+        User updated = new User(existing.id(), existing.name(), existing.username(),
+                encoder.encode(rawPassword), existing.role(), existing.active(), existing.createdAt());
+        return users.save(updated);
+    }
+
+    @Transactional
     public User register(String name, String username, String rawPassword, String roleName) {
         if (rawPassword == null || rawPassword.length() < 10)
             throw new IllegalArgumentException("password must contain at least 10 characters");
