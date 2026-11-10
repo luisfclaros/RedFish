@@ -276,9 +276,10 @@ La estructura podrá evolucionar de acuerdo con las necesidades del proyecto.
 El backend y MySQL pueden iniciarse como un sistema completo:
 
 ```powershell
-cd D:\descargas\pago\RedFish\RedFish
+cd RedFish
 Copy-Item .env.example .env
-docker compose up --build
+# Reemplaza los valores change_me_* por contraseñas únicas antes del primer inicio.
+docker compose up --build -d
 ```
 
 El archivo `.env` contiene la configuracion local y no se almacena en Git.
