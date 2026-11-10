@@ -102,6 +102,8 @@ jobs:
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Scan all Git branches and commit history for secrets
+        run: gitleaks git . --log-opts="--all" --redact --exit-code 1
       - name: Scan repository with Trivy
         uses: aquasecurity/trivy-action@v0.36.0
         with:
