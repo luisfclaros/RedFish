@@ -92,6 +92,29 @@ paths:
                 $ref: "#/components/schemas/ProductResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
+    put:
+      tags: [Products]
+      operationId: updateProductV1
+      summary: Actualizar un producto
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductRequest"
+      responses:
+        "200": { description: Producto actualizado }
+        "400": { $ref: "#/components/responses/BadRequest" }
+    delete:
+      tags: [Products]
+      operationId: deactivateProductV1
+      summary: Desactivar un producto
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "204": { description: Producto desactivado }
   /api/v1/customers:
     post:
       tags: [Customers]
@@ -147,6 +170,29 @@ paths:
                 $ref: "#/components/schemas/CustomerResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
+    put:
+      tags: [Customers]
+      operationId: updateCustomerV1
+      summary: Actualizar un cliente
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerRequest"
+      responses:
+        "200": { description: Cliente actualizado }
+        "400": { $ref: "#/components/responses/BadRequest" }
+    delete:
+      tags: [Customers]
+      operationId: deactivateCustomerV1
+      summary: Desactivar un cliente
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "204": { description: Cliente desactivado }
   /api/v1/vehicles:
     get:
       tags: [Vehicles]
@@ -171,6 +217,27 @@ paths:
                 observations: { type: [string, "null"] }
       responses:
         "201": { description: Vehículo creado }
+  /api/v1/vehicles/{id}:
+    put:
+      tags: [Vehicles]
+      summary: Actualizar vehículo
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VehicleRequest"
+      responses:
+        "200": { description: Vehículo actualizado }
+    delete:
+      tags: [Vehicles]
+      summary: Desactivar vehículo
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "204": { description: Vehículo desactivado }
   /api/v1/ponds:
     get:
       tags: [Production]
@@ -194,6 +261,27 @@ paths:
                 capacity: { type: number, minimum: 0 }
       responses:
         "201": { description: Estanque creado }
+  /api/v1/ponds/{id}:
+    put:
+      tags: [Production]
+      summary: Actualizar estanque
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PondRequest"
+      responses:
+        "200": { description: Estanque actualizado }
+    delete:
+      tags: [Production]
+      summary: Desactivar estanque
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "204": { description: Estanque desactivado }
   /api/v1/feeding-records/{id}:
     get:
       tags: [Production]
@@ -252,6 +340,12 @@ paths:
     post:
       tags: [Inventory]
       summary: Registrar existencias iniciales
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InventoryStockRequest"
       responses:
         "201": { description: Existencias creadas }
   /api/v1/inventory/entries:
@@ -289,6 +383,22 @@ paths:
               $ref: "#/components/schemas/OrderRequest"
       responses:
         "201": { description: Pedido creado }
+  /api/v1/orders/{id}/in-preparation:
+    post:
+      tags: [Orders]
+      summary: Marcar pedido en preparación
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "200": { description: Pedido actualizado }
+  /api/v1/orders/{id}/cancel:
+    post:
+      tags: [Orders]
+      summary: Cancelar pedido y liberar inventario reservado
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "200": { description: Pedido cancelado }
   /api/v1/dispatches/{id}:
     get:
       tags: [Dispatches]
