@@ -32,6 +32,27 @@ class OpenApiV1ContractTests {
 			assertThat(openApi.path("paths").has("/api/v1/dispatches")).isTrue();
 			assertThat(openApi.path("components").path("securitySchemes").has("basicAuth")).isTrue();
 			assertThat(openApi.path("components").path("schemas").has("ApiErrorResponse")).isTrue();
+
+            // Keep the published API description aligned with implemented lifecycle operations.
+            assertThat(openApi.path("paths").path("/api/v1/products/{id}").has("put")).isTrue();
+            assertThat(openApi.path("paths").path("/api/v1/products/{id}").has("delete")).isTrue();
+            assertThat(openApi.path("paths").path("/api/v1/customers/{id}").has("put")).isTrue();
+            assertThat(openApi.path("paths").path("/api/v1/customers/{id}").has("delete")).isTrue();
+            assertThat(openApi.path("paths").path("/api/v1/vehicles/{id}").has("put")).isTrue();
+            assertThat(openApi.path("paths").path("/api/v1/ponds/{id}").has("put")).isTrue();
+            assertThat(openApi.path("paths").path("/api/v1/orders/{id}/in-preparation").has("post")).isTrue();
+            assertThat(openApi.path("paths").path("/api/v1/orders/{id}/cancel").has("post")).isTrue();
+            assertThat(openApi.path("paths").path("/api/v1/dispatches/{id}/in-transit").has("post")).isTrue();
+            assertThat(openApi.path("paths").path("/api/v1/dispatches/{id}/delivered").has("post")).isTrue();
+            assertThat(openApi.path("paths").path("/api/v1/inventory/stock").path("post")
+                    .path("requestBody").path("content").path("application/json").path("schema")
+                    .path("$ref").asText()).isEqualTo("#/components/schemas/InventoryStockRequest");
+            assertThat(openApi.path("paths").path("/api/v1/orders").path("post")
+                    .path("requestBody").path("content").path("application/json").path("schema")
+                    .path("$ref").asText()).isEqualTo("#/components/schemas/OrderRequest");
+            assertThat(openApi.path("paths").path("/api/v1/dispatches").path("post")
+                    .path("requestBody").path("content").path("application/json").path("schema")
+                    .path("$ref").asText()).isEqualTo("#/components/schemas/ScheduleDispatchRequest");
 		}
 	}
 }
