@@ -79,6 +79,29 @@ docker compose restart app
 curl --retry 12 --retry-delay 5 --retry-connrefused --fail http://localhost:8080/actuator/health
 ```
 
+### PowerShell / Windows commands
+
+For Windows with Docker Desktop, use `curl.exe` explicitly (not the PowerShell `curl` alias). Run these commands only after confirming the active Compose project and `.env` point to a disposable test database:
+
+```powershell
+docker compose ps
+curl.exe --fail http://localhost:8080/actuator/health
+docker compose stop mysql
+
+# During the outage: capture the response and timestamp
+curl.exe --include http://localhost:8080/actuator/health
+
+# Restore MySQL and wait for the application health endpoint
+docker compose start mysql
+docker compose ps
+curl.exe --retry 12 --retry-delay 5 --retry-connrefused --fail http://localhost:8080/actuator/health
+
+# Capture logs before any optional application restart
+docker compose logs --since 10m app mysql
+```
+
+If automatic recovery fails, record the failure and logs first, then use `docker compose restart app` and repeat the health check. Do not use `docker compose down -v` or remove the named volume.
+
 ### Evidence and acceptance
 
 Record:
