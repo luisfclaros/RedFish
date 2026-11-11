@@ -281,8 +281,52 @@ paths:
     post:
       tags: [Orders]
       summary: Crear pedido y reservar existencias
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderRequest"
       responses:
         "201": { description: Pedido creado }
+  /api/v1/dispatches/{id}:
+    get:
+      tags: [Dispatches]
+      summary: Consultar despacho
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "200": { description: Despacho encontrado }
+  /api/v1/dispatches/{id}/in-transit:
+    post:
+      tags: [Dispatches]
+      summary: Marcar despacho en tránsito y sincronizar pedido
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "200": { description: Despacho actualizado }
+  /api/v1/dispatches/{id}/delivered:
+    post:
+      tags: [Dispatches]
+      summary: Registrar entrega
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeliverDispatchRequest"
+      responses:
+        "200": { description: Entrega registrada }
+  /api/v1/dispatches/{id}/cancel:
+    post:
+      tags: [Dispatches]
+      summary: Cancelar despacho
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "200": { description: Despacho cancelado }
   /api/v1/dispatches:
     get:
       tags: [Dispatches]
@@ -292,6 +336,12 @@ paths:
     post:
       tags: [Dispatches]
       summary: Programar despacho de pedido en preparación y vehículo activo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScheduleDispatchRequest"
       responses:
         "201": { description: Despacho programado }
   /api/v1/auth/me:
@@ -427,6 +477,81 @@ components:
         active:
           type: boolean
           example: true
+    VehicleRequest:
+      type: object
+      required: [plate, brand, model, loadCapacity]
+      properties:
+        plate: { type: string, maxLength: 10 }
+        brand: { type: string, maxLength: 60 }
+        model: { type: string, maxLength: 60 }
+        loadCapacity: { type: number, minimum: 0 }
+        observations: { type: string }
+    PondRequest:
+      type: object
+      required: [code, name, location, capacity]
+      properties:
+        code: { type: string, maxLength: 30 }
+        name: { type: string, maxLength: 100 }
+        location: { type: string, maxLength: 150 }
+        capacity: { type: number, minimum: 0 }
+    FeedingRecordRequest:
+      type: object
+      required: [pondId, productId, date, foodType, quantity, registeredBy]
+      properties:
+        pondId: { type: integer, format: int64 }
+        productId: { type: integer, format: int64 }
+        date: { type: string, format: date }
+        foodType: { type: string, maxLength: 100 }
+        quantity: { type: number, exclusiveMinimum: 0 }
+        registeredBy: { type: integer, format: int64 }
+        observations: { type: string, maxLength: 500 }
+    InventoryStockRequest:
+      type: object
+      required: [productId, initialQuantity, minimumStock]
+      properties:
+        productId: { type: integer, format: int64 }
+        initialQuantity: { type: number, minimum: 0 }
+        minimumStock: { type: number, minimum: 0 }
+    InventoryMovementRequest:
+      type: object
+      required: [productId, quantity, registeredBy]
+      properties:
+        productId: { type: integer, format: int64 }
+        quantity: { type: number, exclusiveMinimum: 0 }
+        registeredBy: { type: integer, format: int64 }
+        observations: { type: string }
+    OrderRequest:
+      type: object
+      required: [customerId, date, items]
+      properties:
+        customerId: { type: integer, format: int64 }
+        date: { type: string, format: date }
+        items:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [productId, productName, quantity, unitPrice]
+            properties:
+              productId: { type: integer, format: int64 }
+              productName: { type: string, maxLength: 100 }
+              quantity: { type: number, exclusiveMinimum: 0 }
+              unitPrice: { type: number, exclusiveMinimum: 0 }
+        observations: { type: string, maxLength: 500 }
+    ScheduleDispatchRequest:
+      type: object
+      required: [orderId, vehicleId, dispatchDate, deliveryAddress]
+      properties:
+        orderId: { type: integer, format: int64 }
+        vehicleId: { type: integer, format: int64 }
+        dispatchDate: { type: string, format: date }
+        deliveryAddress: { type: string, maxLength: 250 }
+    DeliverDispatchRequest:
+      type: object
+      required: [deliveryDate, receivedBy]
+      properties:
+        deliveryDate: { type: string, format: date }
+        receivedBy: { type: string, maxLength: 100 }
     ApiErrorResponse:
       type: object
       additionalProperties: false
