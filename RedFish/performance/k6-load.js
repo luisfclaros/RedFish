@@ -1,5 +1,6 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
+import encoding from 'k6/encoding';
 
 const baseUrl = (__ENV.BASE_URL || 'http://localhost:8080').replace(/\/$/, '');
 const username = __ENV.K6_USERNAME || '';
@@ -37,10 +38,9 @@ export default function () {
   });
 
   if (username && password) {
-    const auth = `Basic ${__ENV.K6_BASIC_AUTH || ''}`;
-    const headers = __ENV.K6_BASIC_AUTH
-      ? { Authorization: auth }
-      : { Authorization: `Basic ${encoding.b64encode(`${username}:${password}`)}` };
+    const headers = {
+      Authorization: `Basic ${encoding.b64encode(`${username}:${password}`)}`,
+    };
     const products = http.get(`${baseUrl}/api/v1/products`, {
       headers,
       tags: { endpoint: 'products-list' },
