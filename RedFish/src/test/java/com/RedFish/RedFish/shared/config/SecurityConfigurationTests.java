@@ -13,6 +13,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -20,8 +23,8 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithAnonymousUser;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 import com.RedFish.RedFish.inventory.application.service.CreateProductService;
 import com.RedFish.RedFish.inventory.application.service.GetProductService;
@@ -159,4 +162,58 @@ class SecurityConfigurationTests {
         assertThat(response.getCookie("XSRF-TOKEN")).isNotNull();
         assertThat(response.getCookie("XSRF-TOKEN").isHttpOnly()).isFalse();
     }
+    @ParameterizedTest
+    @ValueSource(strings = {"ADMIN", "PRODUCTION", "OPERATIONS", "COMMERCIAL", "OPERATOR"})
+    void allAreaRolesCanReadVersionedProductCatalog(String role) throws Exception {
+        when(listProductsService.list()).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v1/products").with(user("role-reader").roles(role)))
+            .andExpect(status().isOk());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"OPERATIONS", "COMMERCIAL", "OPERATOR"})
+    void nonProductionRolesCannotCreateVersionedProducts(String role) throws Exception {
+        mockMvc.perform(post("/api/v1/products")
+                .with(user("role-writer").roles(role))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "code": "PROD-DENIED",
+                      "name": "Tilapia",
+                      "unitOfMeasure": "kg",
+                      "type": "PRODUCT"
+                    }
+                    """))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "production", roles = "PRODUCTION")
+    void productionCannotCreateUsersEvenWithCsrf() throws Exception {
+        mockMvc.perform(post("/api/v1/users")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "commercial", roles = "COMMERCIAL")
+    void commercialCannotReadInventory() throws Exception {
+        mockMvc.perform(get("/api/v1/inventory"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "operations", roles = "OPERATIONS")
+    void operationsCannotCreateOrdersEvenWithCsrf() throws Exception {
+        mockMvc.perform(post("/api/v1/orders")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
+            .andExpect(status().isForbidden());
+    }
+
 }
