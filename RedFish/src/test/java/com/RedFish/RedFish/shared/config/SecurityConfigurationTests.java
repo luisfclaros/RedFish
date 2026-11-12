@@ -65,7 +65,9 @@ class SecurityConfigurationTests {
     @WithAnonymousUser
     void rejectsUnauthenticatedApiRequests() throws Exception {
         mockMvc.perform(get("/api/products"))
-            .andExpect(status().isUnauthorized());
+            .andExpect(status().isUnauthorized())
+            .andExpect(header().doesNotExist("WWW-Authenticate"))
+            .andExpect(jsonPath("$.message").value("Autenticación requerida"));
     }
 
     @Test
