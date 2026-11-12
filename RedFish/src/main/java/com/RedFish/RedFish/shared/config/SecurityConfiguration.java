@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -57,7 +57,14 @@ public class SecurityConfiguration {
                 .requestMatchers("/api/v1/customers/**", "/api/customers/**", "/api/v1/orders/**")
                     .hasAnyRole("ADMIN", "COMMERCIAL")
                 .anyRequest().authenticated())
-            .httpBasic(Customizer.withDefaults())
+            // The frontend sends the Basic Authorization header itself. Suppress the
+            // browser's WWW-Authenticate challenge so Chrome does not open a native
+            // credential dialog; the application handles genuine 401 responses.
+            .httpBasic(basic -> basic.authenticationEntryPoint((request, response, authException) -> {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                response.getWriter().write("{\"message\":\"Autenticación requerida\"}");
+            }))
             .build();
     }
 }
