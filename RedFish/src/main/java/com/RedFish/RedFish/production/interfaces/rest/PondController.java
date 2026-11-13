@@ -29,9 +29,11 @@ public class PondController {
     @PutMapping("/{id}")
     public PondResponse update(@PathVariable Long id,@Valid @RequestBody PondRequest request){
         Pond old=get.get(id);
-        boolean duplicate=repository.findAll().stream().anyMatch(p->!p.id().equals(id)&&p.code().equalsIgnoreCase(request.code()));
+        Pond updated=new Pond(id,request.code(),request.name(),request.location(),request.capacity(),old.active());
+        boolean duplicate=repository.findAll().stream()
+                .anyMatch(p->!p.id().equals(id)&&p.code().equalsIgnoreCase(updated.code()));
         if(duplicate)throw new IllegalArgumentException("pond code already exists");
-        return PondResponse.from(repository.save(new Pond(id,request.code(),request.name(),request.location(),request.capacity(),old.active())));
+        return PondResponse.from(repository.save(updated));
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deactivate(@PathVariable Long id){
