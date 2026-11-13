@@ -26,7 +26,7 @@ class DomainModelTests {
 
 		assertThatThrownBy(() -> inventory.decrease(new BigDecimal("6.00")))
 			.isInstanceOf(IllegalStateException.class)
-			.hasMessageContaining("stock cannot be negative");
+			.hasMessage("No hay existencias suficientes. Disponible: 5; solicitado: 6.");
 	}
 
 	@Test
