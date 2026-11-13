@@ -1,9 +1,9 @@
 package com.RedFish.RedFish.orders.infrastructure.persistence.jpa;
 
 import java.math.BigDecimal;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import com.RedFish.RedFish.inventory.application.port.InventoryRepositoryPort;
@@ -28,8 +28,10 @@ public class InventoryReservationAdapter implements InventoryReservationPort {
     @Transactional
     public void reserve(List<OrderItem> items) {
         Map<Long, BigDecimal> requestedByProduct = aggregate(items);
+        Map<Long, InventoryItem> lockedStocks = new TreeMap<>();
 
-        // Validate every product and its total requested quantity before changing stock.
+        // Lock stock rows in product-id order to prevent overselling and reduce deadlock risk.
+        // Validate every line before changing any stock.
         for (Map.Entry<Long, BigDecimal> request : requestedByProduct.entrySet()) {
             Product product = products.findById(request.getKey())
                     .orElseThrow(() -> new IllegalArgumentException("product not found: " + request.getKey()));
@@ -37,17 +39,17 @@ public class InventoryReservationAdapter implements InventoryReservationPort {
             if (product.type() != ProductType.PRODUCT) {
                 throw new IllegalArgumentException("orders can only contain saleable products");
             }
-            InventoryItem stock = inventory.findByProductId(request.getKey())
+            InventoryItem stock = inventory.findByProductIdForUpdate(request.getKey())
                     .orElseThrow(() -> new IllegalStateException(
                             "inventory stock not registered for product: " + request.getKey()));
             if (stock.quantity().compareTo(request.getValue()) < 0) {
                 throw new IllegalStateException("insufficient inventory for product: " + request.getKey());
             }
+            lockedStocks.put(request.getKey(), stock);
         }
 
-        // Decrease once per product using the aggregated quantity.
         for (Map.Entry<Long, BigDecimal> request : requestedByProduct.entrySet()) {
-            InventoryItem stock = inventory.findByProductId(request.getKey()).orElseThrow();
+            InventoryItem stock = lockedStocks.get(request.getKey());
             stock.decrease(request.getValue());
             inventory.save(stock);
         }
@@ -58,7 +60,7 @@ public class InventoryReservationAdapter implements InventoryReservationPort {
     public void release(List<OrderItem> items) {
         Map<Long, BigDecimal> releasedByProduct = aggregate(items);
         for (Map.Entry<Long, BigDecimal> release : releasedByProduct.entrySet()) {
-            InventoryItem stock = inventory.findByProductId(release.getKey())
+            InventoryItem stock = inventory.findByProductIdForUpdate(release.getKey())
                     .orElseThrow(() -> new IllegalStateException(
                             "inventory stock not registered for product: " + release.getKey()));
             stock.increase(release.getValue());
@@ -67,7 +69,7 @@ public class InventoryReservationAdapter implements InventoryReservationPort {
     }
 
     private Map<Long, BigDecimal> aggregate(List<OrderItem> items) {
-        Map<Long, BigDecimal> quantities = new LinkedHashMap<>();
+        Map<Long, BigDecimal> quantities = new TreeMap<>();
         for (OrderItem item : items) {
             quantities.merge(item.productId(), item.quantity(), BigDecimal::add);
         }
