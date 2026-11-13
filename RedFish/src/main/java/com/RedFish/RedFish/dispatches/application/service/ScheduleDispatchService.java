@@ -36,6 +36,9 @@ public class ScheduleDispatchService {
         requireNonNull(vehicleId, "vehicle id");
         requireNonNull(dispatchDate, "dispatch date");
         orderAvailability.ensureOrderCanBeDispatched(orderId);
+        if (dispatchRepository.existsActiveByOrderId(orderId)) {
+            throw new IllegalStateException("order already has an active dispatch");
+        }
         vehicleAvailability.ensureVehicleCanBeAssigned(vehicleId);
         Dispatch dispatch=new Dispatch(null, orderId, vehicleId, dispatchDate,
                 requireText(deliveryAddress, "delivery address"));
