@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +33,7 @@ public class ProductController {
 	private final com.RedFish.RedFish.production.infrastructure.persistence.jpa.SpringDataFeedingRecordJpaRepository feedingJpa;
 	private final com.RedFish.RedFish.orders.infrastructure.persistence.jpa.SpringDataOrderJpaRepository orderJpa;
 
+	@Autowired
 	public ProductController(CreateProductService createProductService, ListProductsService listProductsService,
 			GetProductService getProductService,
 			com.RedFish.RedFish.inventory.infrastructure.persistence.jpa.SpringDataProductJpaRepository productJpa,
@@ -43,6 +45,12 @@ public class ProductController {
 		this.getProductService = getProductService;
 		this.productJpa = productJpa; this.inventoryJpa = inventoryJpa;
 		this.feedingJpa = feedingJpa; this.orderJpa = orderJpa;
+	}
+
+	// Compatibility constructor for isolated controller tests that do not exercise permanent deletion.
+	public ProductController(CreateProductService createProductService, ListProductsService listProductsService,
+			GetProductService getProductService) {
+		this(createProductService, listProductsService, getProductService, null, null, null, null);
 	}
 
 	@PostMapping
