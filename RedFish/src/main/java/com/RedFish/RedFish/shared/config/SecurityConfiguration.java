@@ -29,7 +29,7 @@ public class SecurityConfiguration {
             response.setHeader("WWW-Authenticate", "");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.getWriter().write("{\\"message\\":\\"Autenticación requerida\\"}");
+            response.getWriter().write("{\"message\":\"Autenticación requerida\"}");
         };
         return http
             .csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository)
