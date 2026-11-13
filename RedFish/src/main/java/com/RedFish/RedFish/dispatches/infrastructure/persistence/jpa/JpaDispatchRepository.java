@@ -23,4 +23,8 @@ public class JpaDispatchRepository implements DispatchRepositoryPort {
     @Override public boolean existsActiveByOrderId(Long orderId) {
         return repository.existsByOrderIdAndStatusNot(orderId, DispatchStatus.CANCELLED);
     }
+    @Override public boolean existsActiveByVehicleId(Long vehicleId) {
+        return repository.existsByVehicleIdAndStatusIn(vehicleId,
+                List.of(DispatchStatus.SCHEDULED, DispatchStatus.IN_TRANSIT));
+    }
 }
