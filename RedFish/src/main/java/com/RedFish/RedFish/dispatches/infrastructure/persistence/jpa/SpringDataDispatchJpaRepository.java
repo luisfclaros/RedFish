@@ -4,5 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.RedFish.RedFish.dispatches.domain.model.DispatchStatus;
 
 public interface SpringDataDispatchJpaRepository extends JpaRepository<DispatchJpaEntity, Long> {
+    boolean existsByVehicleId(Long vehicleId);
     boolean existsByOrderIdAndStatusNot(Long orderId, DispatchStatus excludedStatus);
 }
