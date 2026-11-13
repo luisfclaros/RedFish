@@ -27,7 +27,9 @@ public class InventoryItem {
 	public void decrease(BigDecimal amount) {
 		BigDecimal requestedAmount = requirePositive(amount, "decrease amount");
 		if (this.quantity.compareTo(requestedAmount) < 0) {
-			throw new IllegalStateException("inventory stock cannot be negative");
+			throw new IllegalStateException("No hay existencias suficientes. Disponible: "
+				+ this.quantity.stripTrailingZeros().toPlainString() + "; solicitado: "
+				+ requestedAmount.stripTrailingZeros().toPlainString() + ".");
 		}
 		this.quantity = this.quantity.subtract(requestedAmount);
 	}
