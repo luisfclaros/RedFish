@@ -42,6 +42,13 @@ class DomainModelTests {
 	}
 
 	@Test
+	void pondCapacityMustBeGreaterThanZero() {
+		assertThatThrownBy(() -> new Pond(2L, "EST-002", "Estanque prueba", "Zona B", BigDecimal.ZERO, true))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessageContaining("pond capacity must be greater than zero");
+	}
+
+	@Test
 	void inactivePondCannotReceiveFeedingRecord() {
 		Pond pond = new Pond(1L, "EST-001", "Estanque Norte", "Zona A", new BigDecimal("100.00"), false);
 
