@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 import com.RedFish.RedFish.dispatches.application.port.DispatchRepositoryPort;
 import com.RedFish.RedFish.dispatches.domain.model.Dispatch;
+import com.RedFish.RedFish.dispatches.domain.model.DispatchStatus;
 
 @Repository
 public class JpaDispatchRepository implements DispatchRepositoryPort {
@@ -18,5 +19,8 @@ public class JpaDispatchRepository implements DispatchRepositoryPort {
     }
     @Override public List<Dispatch> findAll() {
         return repository.findAll().stream().map(DispatchJpaEntity::toDomain).toList();
+    }
+    @Override public boolean existsActiveByOrderId(Long orderId) {
+        return repository.existsByOrderIdAndStatusNot(orderId, DispatchStatus.CANCELLED);
     }
 }
