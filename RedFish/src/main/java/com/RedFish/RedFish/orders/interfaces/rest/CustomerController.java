@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.RedFish.RedFish.orders.application.port.CustomerRepositoryPort;
 import com.RedFish.RedFish.orders.application.service.CreateCustomerService;
 import com.RedFish.RedFish.orders.application.service.GetCustomerService;
@@ -21,12 +22,19 @@ public class CustomerController {
     private final com.RedFish.RedFish.orders.infrastructure.persistence.jpa.SpringDataCustomerJpaRepository customerJpa;
     private final com.RedFish.RedFish.orders.infrastructure.persistence.jpa.SpringDataOrderJpaRepository orderJpa;
 
+    @Autowired
     public CustomerController(CreateCustomerService create, ListCustomersService list,
             GetCustomerService get, CustomerRepositoryPort repository,
             com.RedFish.RedFish.orders.infrastructure.persistence.jpa.SpringDataCustomerJpaRepository customerJpa,
             com.RedFish.RedFish.orders.infrastructure.persistence.jpa.SpringDataOrderJpaRepository orderJpa) {
         this.create=create; this.list=list; this.get=get; this.repository=repository;
         this.customerJpa=customerJpa; this.orderJpa=orderJpa;
+    }
+
+    // Compatibility constructor for isolated controller tests that do not exercise permanent deletion.
+    public CustomerController(CreateCustomerService create, ListCustomersService list,
+            GetCustomerService get, CustomerRepositoryPort repository) {
+        this(create, list, get, repository, null, null);
     }
 
     @PostMapping
