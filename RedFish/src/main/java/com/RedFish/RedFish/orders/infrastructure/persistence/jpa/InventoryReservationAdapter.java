@@ -60,7 +60,7 @@ public class InventoryReservationAdapter implements InventoryReservationPort {
             stock.decrease(request.getValue());
             inventory.save(stock);
             movements.save(new InventoryMovement(null, stock.id(), MovementType.RESERVATION,
-                    request.getValue(), LocalDateTime.now(), 1L,
+                    request.getValue(), LocalDateTime.now(), 0L,
                     "Reserva automática por pedido"));
         }
     }
