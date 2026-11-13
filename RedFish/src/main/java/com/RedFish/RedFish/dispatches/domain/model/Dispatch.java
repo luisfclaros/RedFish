@@ -50,9 +50,7 @@ public class Dispatch {
     }
 
     public void cancel() {
-        if (status == DispatchStatus.DELIVERED || status == DispatchStatus.CANCELLED) {
-            throw new IllegalStateException("delivered or cancelled dispatches cannot be cancelled");
-        }
+        ensureStatus(DispatchStatus.SCHEDULED);
         this.status = DispatchStatus.CANCELLED;
     }
 
