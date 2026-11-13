@@ -25,6 +25,12 @@ public class SecurityConfiguration {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
         csrfTokenRepository.setCookiePath("/");
+        org.springframework.security.web.AuthenticationEntryPoint jsonUnauthorized = (request, response, authException) -> {
+            response.setHeader("WWW-Authenticate", "");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.getWriter().write("{\\"message\\":\\"Autenticación requerida\\"}");
+        };
         return http
             .csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository)
                 .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
@@ -57,14 +63,10 @@ public class SecurityConfiguration {
                 .requestMatchers("/api/v1/customers/**", "/api/customers/**", "/api/v1/orders/**")
                     .hasAnyRole("ADMIN", "COMMERCIAL")
                 .anyRequest().authenticated())
-            // The frontend sends the Basic Authorization header itself. Suppress the
-            // browser's WWW-Authenticate challenge so Chrome does not open a native
-            // credential dialog; the application handles genuine 401 responses.
-            .httpBasic(basic -> basic.authenticationEntryPoint((request, response, authException) -> {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                response.getWriter().write("{\"message\":\"Autenticación requerida\"}");
-            }))
+            // Apply the same JSON response to authentication and authorization failures.
+            // An HTTP Basic challenge makes browsers display their native credential dialog.
+            .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(jsonUnauthorized))
+            .httpBasic(basic -> basic.authenticationEntryPoint(jsonUnauthorized))
             .build();
     }
 }
