@@ -26,7 +26,6 @@ public class SecurityConfiguration {
         CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
         csrfTokenRepository.setCookiePath("/");
         org.springframework.security.web.AuthenticationEntryPoint jsonUnauthorized = (request, response, authException) -> {
-            response.setHeader("WWW-Authenticate", "");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.getWriter().write("{\"message\":\"Autenticación requerida\"}");
