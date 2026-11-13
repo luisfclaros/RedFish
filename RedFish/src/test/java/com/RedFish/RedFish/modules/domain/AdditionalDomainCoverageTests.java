@@ -43,15 +43,26 @@ class AdditionalDomainCoverageTests {
         assertThat(dispatch.status()).isEqualTo(DispatchStatus.DELIVERED);
         assertThatThrownBy(dispatch::cancel)
             .isInstanceOf(IllegalStateException.class)
-            .hasMessageContaining("cannot be cancelled");
+            .hasMessageContaining("invalid dispatch status transition");
     }
 
     @Test
-    void dispatchCanBeCancelledBeforeDeliveryAndValidatesRequiredFields() {
-        Dispatch dispatch = new Dispatch(1L, 2L, 3L, LocalDate.now(), "Bodega");
-        dispatch.cancel();
-        assertThat(dispatch.status()).isEqualTo(DispatchStatus.CANCELLED);
-        assertThatThrownBy(dispatch::markInTransit).isInstanceOf(IllegalStateException.class);
+    void dispatchCanBeCancelledOnlyBeforeItEntersTransit() {
+        Dispatch scheduled = new Dispatch(1L, 2L, 3L, LocalDate.now(), "Bodega");
+        scheduled.cancel();
+        assertThat(scheduled.status()).isEqualTo(DispatchStatus.CANCELLED);
+        assertThatThrownBy(scheduled::markInTransit).isInstanceOf(IllegalStateException.class);
+
+        Dispatch inTransit = new Dispatch(2L, 3L, 4L, LocalDate.now(), "Cliente");
+        inTransit.markInTransit();
+        assertThatThrownBy(inTransit::cancel)
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("invalid dispatch status transition");
+        assertThat(inTransit.status()).isEqualTo(DispatchStatus.IN_TRANSIT);
+    }
+
+    @Test
+    void dispatchValidatesRequiredFields() {
         assertThatThrownBy(() -> new Dispatch(1L, 2L, 3L, null, "Bodega"))
             .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("dispatch date");
         assertThatThrownBy(() -> new Dispatch(1L, 2L, 3L, LocalDate.now(), " "))
