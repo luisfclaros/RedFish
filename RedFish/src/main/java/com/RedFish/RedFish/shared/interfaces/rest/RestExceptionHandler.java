@@ -34,7 +34,11 @@ public class RestExceptionHandler {
 	@ExceptionHandler(IllegalStateException.class)
 	public ResponseEntity<ApiErrorResponse> handleIllegalState(IllegalStateException exception,
 			HttpServletRequest request) {
-		return response(HttpStatus.CONFLICT, "BUSINESS_STATE_CONFLICT", exception.getMessage(), Map.of(), request);
+		String message = exception.getMessage();
+		if (message != null && message.contains("inventory stock cannot be negative")) {
+			message = "No hay existencias suficientes. Disponible: consulte las existencias actuales antes de registrar la salida.";
+		}
+		return response(HttpStatus.CONFLICT, "BUSINESS_STATE_CONFLICT", message, Map.of(), request);
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
