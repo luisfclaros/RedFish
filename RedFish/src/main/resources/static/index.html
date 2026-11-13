@@ -138,8 +138,8 @@ dialog{border:0;border-radius:14px;padding:24px;width:min(420px,calc(100% - 28px
 
   <section class="view" id="view-feeding">
     <div class="panel"><h2>Registrar alimentación</h2><form id="feeding-form" class="gridform">
-      <div class="field"><label>ID del estanque</label><input name="pondId" type="number" min="1" required></div>
-      <div class="field"><label>ID del insumo de alimento</label><input name="productId" type="number" min="1" required></div>
+      <div class="field"><label>Estanque</label><select name="pondId" required><option value="">Selecciona un estanque</option></select></div>
+      <div class="field"><label>Insumo de alimento</label><select name="productId" required><option value="">Selecciona un insumo</option></select></div>
       <div class="field"><label>Fecha</label><input name="date" type="date" required></div>
       <div class="field"><label>Tipo de alimento</label><input name="foodType" required maxlength="100"></div>
       <div class="field"><label>Cantidad (kg)</label><input name="quantity" type="number" min=".001" step=".001" required></div>
@@ -152,7 +152,7 @@ dialog{border:0;border-radius:14px;padding:24px;width:min(420px,calc(100% - 28px
 
   <section class="view" id="view-inventory">
     <div class="panel"><h2>Crear registro de existencias</h2><form id="stock-form" class="gridform">
-      <div class="field"><label>ID del producto</label><input name="productId" type="number" min="1" required></div>
+      <div class="field"><label>Producto</label><select name="productId" required><option value="">Selecciona un producto</option></select></div>
       <div class="field"><label>Existencia inicial</label><input name="initialQuantity" type="number" min="0" step=".001" required></div>
       <div class="field"><label>Stock mínimo</label><input name="minimumStock" type="number" min="0" step=".001" required></div>
       <div class="actions"><button class="btn">Crear existencias</button></div>
@@ -162,7 +162,7 @@ dialog{border:0;border-radius:14px;padding:24px;width:min(420px,calc(100% - 28px
         <div class="field"><label>Producto</label><select name="productId" required><option value="">Selecciona un producto</option></select></div><div class="field"><label>Cantidad</label><input name="quantity" type="number" min=".001" step=".001" required></div><div class="field"><label>ID responsable</label><input name="registeredBy" type="number" min="1" required></div><div class="field"><label>Observaciones</label><input name="observations"></div><div class="actions"><button class="btn">Registrar entrada</button></div>
       </form></div>
       <div class="panel"><h2>Registrar salida</h2><form id="exit-form" class="gridform">
-        <div class="field"><label>ID producto</label><input name="productId" type="number" min="1" required></div><div class="field"><label>Cantidad</label><input name="quantity" type="number" min=".001" step=".001" required></div><div class="field"><label>ID responsable</label><input name="registeredBy" type="number" min="1" required></div><div class="field"><label>Observaciones</label><input name="observations"></div><div class="actions"><button class="btn">Registrar salida</button></div>
+        <div class="field"><label>Producto</label><select name="productId" required><option value="">Selecciona un producto</option></select></div><div class="field"><label>Cantidad</label><input name="quantity" type="number" min=".001" step=".001" required></div><div class="field"><label>ID responsable</label><input name="registeredBy" type="number" min="1" required></div><div class="field"><label>Observaciones</label><input name="observations"></div><div class="actions"><button class="btn">Registrar salida</button></div>
       </form></div>
     </div>
     <div class="panel"><h2>Existencias actuales</h2><div id="inventory-table" class="tablewrap"></div></div>
@@ -232,6 +232,8 @@ $('#login-page-form').addEventListener('submit',async e=>{
   applyProfile();
   if(role==='ADMIN'||role==='COMMERCIAL')await loadOrderReferences();
   if(role==='ADMIN'||role==='OPERATIONS')await loadDispatchReferences();
+   if(role==='ADMIN'||role==='PRODUCTION')await loadFeedingReferences();
+   if(role==='ADMIN'||role==='OPERATIONS')await loadInventoryReferences();
   await refreshAll();show('dashboard');
  }catch(err){error.textContent=err.message;error.classList.remove('hidden')}
  finally{button.disabled=false;button.textContent='Iniciar sesión'}
@@ -296,7 +298,8 @@ $('#nav').addEventListener('click',e=>{const b=e.target.closest('[data-view]');i
 document.addEventListener('click',e=>{const go=e.target.closest('[data-go]');if(go)show(go.dataset.go)});
 async function fillSelect(selector,url,label,format,filter=()=>true){const select=$(selector);if(!select)return;try{const rows=(await api(url)).filter(filter);select.innerHTML='<option value="">Selecciona '+label+'</option>'+rows.map(x=>'<option value="'+x.id+'">'+esc(format(x))+'</option>').join('')}catch(err){select.innerHTML='<option value="">No fue posible cargar '+label+'</option>';console.warn(err.message)}}
 async function loadOrderReferences(){await Promise.all([fillSelect('#order-form [name="customerId"]',endpoints.customers,'cliente',x=>x.name+' · '+x.phone,x=>x.active),fillSelect('#order-form [name="productId"]',endpoints.products,'producto',x=>x.name+' ('+x.code+')',x=>x.active)])}
-async function loadInventoryReferences(){await fillSelect('#entry-form [name="productId"]',endpoints.products,'producto',x=>x.name+' · '+x.code+' ('+x.type+')',x=>x.active)}
+async function loadInventoryReferences(){await Promise.all([fillSelect('#entry-form [name="productId"]',endpoints.products,'producto',x=>x.name+' · '+x.code+' ('+x.type+')',x=>x.active),fillSelect('#stock-form [name="productId"]',endpoints.products,'producto',x=>x.name+' · '+x.code+' ('+x.type+')',x=>x.active),fillSelect('#exit-form [name="productId"]',endpoints.products,'producto',x=>x.name+' · '+x.code+' ('+x.type+')',x=>x.active)])}
+async function loadFeedingReferences(){await Promise.all([fillSelect('#feeding-form [name="pondId"]',endpoints.ponds,'estanque',x=>x.name+' · '+x.code,x=>x.active),fillSelect('#feeding-form [name="productId"]',endpoints.products,'insumo',x=>x.name+' · '+x.code,x=>x.active&&x.type==='INPUT')])}
 async function loadDispatchReferences(){await Promise.all([fillSelect('#dispatch-form [name="orderId"]',endpoints.orders,'pedido en preparación',x=>'Pedido #'+x.id+' · Cliente '+x.customerId,x=>x.status==='IN_PREPARATION'),fillSelect('#dispatch-form [name="vehicleId"]',endpoints.vehicles,'vehículo activo',x=>x.plate+' · '+x.brand+' '+x.model,x=>x.active)])}
 $('#order-form [name="productId"]').addEventListener('change',async e=>{if(!e.target.value)return;try{const p=await api(endpoints.products+'/'+e.target.value);$('#order-form [name="productName"]').value=p.name}catch(err){notice(err.message,true)}});
 function formData(form){return Object.fromEntries(new FormData(form).entries())}
