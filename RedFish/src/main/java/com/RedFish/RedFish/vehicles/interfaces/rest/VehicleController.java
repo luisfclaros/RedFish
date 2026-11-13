@@ -18,8 +18,13 @@ public class VehicleController {
     private final ListVehiclesService list;
     private final GetVehicleService get;
     private final VehicleRepositoryPort repository;
-    public VehicleController(CreateVehicleService create,ListVehiclesService list,GetVehicleService get,VehicleRepositoryPort repository){
+    private final com.RedFish.RedFish.vehicles.infrastructure.persistence.jpa.SpringDataVehicleJpaRepository vehicleJpa;
+    private final com.RedFish.RedFish.dispatches.infrastructure.persistence.jpa.SpringDataDispatchJpaRepository dispatchJpa;
+    public VehicleController(CreateVehicleService create,ListVehiclesService list,GetVehicleService get,VehicleRepositoryPort repository,
+            com.RedFish.RedFish.vehicles.infrastructure.persistence.jpa.SpringDataVehicleJpaRepository vehicleJpa,
+            com.RedFish.RedFish.dispatches.infrastructure.persistence.jpa.SpringDataDispatchJpaRepository dispatchJpa){
         this.create=create;this.list=list;this.get=get;this.repository=repository;
+        this.vehicleJpa=vehicleJpa;this.dispatchJpa=dispatchJpa;
     }
     @PostMapping
     public ResponseEntity<VehicleResponse> create(@Valid @RequestBody VehicleRequest request){
@@ -36,6 +41,13 @@ public class VehicleController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deactivate(@PathVariable Long id){
         Vehicle v=get.get(id);repository.save(new Vehicle(id,v.plate(),v.brand(),v.model(),v.loadCapacity(),false,v.observations()));
+        return ResponseEntity.noContent().build();
+    }
+    @DeleteMapping("/{id}/permanent")
+    public ResponseEntity<Void> deletePermanently(@PathVariable Long id){
+        get.get(id);
+        if(dispatchJpa.existsByVehicleId(id))throw new IllegalStateException("No se puede eliminar el vehículo porque tiene despachos asociados. Puedes desactivarlo para conservar el historial.");
+        vehicleJpa.deleteById(id);
         return ResponseEntity.noContent().build();
     }
     @GetMapping public List<VehicleResponse> list(){return list.list().stream().map(VehicleResponse::from).toList();}
