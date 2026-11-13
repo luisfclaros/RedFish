@@ -61,6 +61,28 @@ class UpdateOrderStatusServiceTests {
         verify(repository).save(order);
     }
 
+
+    @Test
+    void markingOrderDispatchedIsRejectedWhenNoActiveDispatchExists() {
+        OrderRepositoryPort repository = mock(OrderRepositoryPort.class);
+        InventoryReservationPort inventory = mock(InventoryReservationPort.class);
+        DispatchAvailabilityPort dispatches = mock(DispatchAvailabilityPort.class);
+        Order order = sampleOrder();
+        order.markInPreparation();
+        when(repository.findByIdForUpdate(7L)).thenReturn(Optional.of(order));
+        doThrow(new IllegalStateException("orders cannot be marked dispatched without an active dispatch"))
+                .when(dispatches).ensureHasActiveDispatch(7L);
+
+        UpdateOrderStatusService service = new UpdateOrderStatusService(repository, inventory, dispatches);
+
+        assertThatThrownBy(() -> service.markDispatched(7L))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("without an active dispatch");
+
+        assertThat(order.status()).isEqualTo(OrderStatus.IN_PREPARATION);
+        verify(repository, never()).save(any());
+    }
+
     private static Order sampleOrder() {
         Customer customer = new Customer(2L, "Cliente de prueba", "3001234567",
                 "Neiva", "cliente@example.com", true);
