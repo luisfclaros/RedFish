@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import jakarta.persistence.LockModeType;
 
 public interface SpringDataInventoryItemJpaRepository extends JpaRepository<InventoryItemJpaEntity, Long> {
+    boolean existsByProductId(Long productId);
     Optional<InventoryItemJpaEntity> findByProductId(Long productId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
