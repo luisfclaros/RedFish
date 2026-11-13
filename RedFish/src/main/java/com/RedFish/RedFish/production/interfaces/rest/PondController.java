@@ -18,8 +18,13 @@ public class PondController {
     private final ListPondsService list;
     private final GetPondService get;
     private final PondRepositoryPort repository;
-    public PondController(CreatePondService create,ListPondsService list,GetPondService get,PondRepositoryPort repository){
+    private final com.RedFish.RedFish.production.infrastructure.persistence.jpa.SpringDataPondJpaRepository pondJpa;
+    private final com.RedFish.RedFish.production.infrastructure.persistence.jpa.SpringDataFeedingRecordJpaRepository feedingJpa;
+    public PondController(CreatePondService create,ListPondsService list,GetPondService get,PondRepositoryPort repository,
+            com.RedFish.RedFish.production.infrastructure.persistence.jpa.SpringDataPondJpaRepository pondJpa,
+            com.RedFish.RedFish.production.infrastructure.persistence.jpa.SpringDataFeedingRecordJpaRepository feedingJpa){
         this.create=create;this.list=list;this.get=get;this.repository=repository;
+        this.pondJpa=pondJpa;this.feedingJpa=feedingJpa;
     }
     @PostMapping
     public ResponseEntity<PondResponse> create(@Valid @RequestBody PondRequest request){
@@ -38,6 +43,13 @@ public class PondController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deactivate(@PathVariable Long id){
         Pond p=get.get(id);repository.save(new Pond(id,p.code(),p.name(),p.location(),p.capacity(),false));
+        return ResponseEntity.noContent().build();
+    }
+    @DeleteMapping("/{id}/permanent")
+    public ResponseEntity<Void> deletePermanently(@PathVariable Long id){
+        get.get(id);
+        if(feedingJpa.existsByPondId(id))throw new IllegalStateException("No se puede eliminar el estanque porque tiene registros de alimentación asociados. Puedes desactivarlo para conservar el historial.");
+        pondJpa.deleteById(id);
         return ResponseEntity.noContent().build();
     }
     @GetMapping public List<PondResponse> list(){return list.list().stream().map(PondResponse::from).toList();}
