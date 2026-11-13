@@ -27,7 +27,7 @@ public class JpaInventoryMovementAdapter implements InventoryMovementPort {
         register(productId, quantity, registeredBy, observations, MovementType.EXIT);
     }
     private void register(Long productId, BigDecimal quantity, Long registeredBy, String observations, MovementType type) {
-        InventoryItem item=inventory.findByProductId(productId)
+        InventoryItem item=inventory.findByProductIdForUpdate(productId)
                 .orElseThrow(() -> new IllegalArgumentException("inventory stock not registered for product: " + productId));
         if (type == MovementType.ENTRY) item.increase(quantity); else item.decrease(quantity);
         inventory.save(item);
