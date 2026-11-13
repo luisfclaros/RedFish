@@ -10,4 +10,6 @@ public interface DispatchRepositoryPort {
     default List<Dispatch> findAll() { return List.of(); }
     /** Returns true when an order already has a dispatch that has not been cancelled. */
     default boolean existsActiveByOrderId(Long orderId) { return false; }
+    /** Returns true when a vehicle is assigned to a scheduled or in-transit dispatch. */
+    default boolean existsActiveByVehicleId(Long vehicleId) { return false; }
 }
