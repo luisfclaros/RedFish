@@ -258,8 +258,11 @@ async function api(url,options={},retried=false){
     if(token)headers['X-XSRF-TOKEN']=token;
   }
   const r=await fetch(url,{...options,headers});
-  if(r.status===401&&!retried){if(!await requestCredentials())throw new Error('Autenticación cancelada');return api(url,options,true)}
-  if(r.status===401&&retried)authHeader=null;
+  // Un 401 aislado puede ocurrir durante la primera petición tras el acceso. Reintentar
+  // una sola vez con las mismas credenciales evita interrumpir los formularios con
+  // un segundo diálogo de login. Nunca se considera exitosa una respuesta 401.
+  if(r.status===401&&!retried)return api(url,options,true);
+  if(r.status===401&&retried){authHeader=null;throw new Error('El servidor rechazó la autenticación dos veces. Cierra sesión e inicia nuevamente con la cuenta de tu área.');}
   if(!r.ok){let m='Error '+r.status;try{const j=await r.json();m=j.error?.message||j.message||m;if(j.error?.details)m+=' — '+Object.values(j.error.details).join(', ')}catch{}throw new Error(m)}
   if(r.status===204)return null;
   return r.json();
