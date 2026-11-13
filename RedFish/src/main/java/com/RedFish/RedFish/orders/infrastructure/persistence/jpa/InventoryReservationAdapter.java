@@ -4,6 +4,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.time.LocalDateTime;
+import com.RedFish.RedFish.inventory.application.port.InventoryMovementRepositoryPort;
+import com.RedFish.RedFish.inventory.domain.model.InventoryMovement;
+import com.RedFish.RedFish.inventory.domain.model.MovementType;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import com.RedFish.RedFish.inventory.application.port.InventoryRepositoryPort;
@@ -18,10 +22,13 @@ import com.RedFish.RedFish.orders.domain.model.OrderItem;
 public class InventoryReservationAdapter implements InventoryReservationPort {
     private final InventoryRepositoryPort inventory;
     private final ProductRepositoryPort products;
+    private final InventoryMovementRepositoryPort movements;
 
-    public InventoryReservationAdapter(InventoryRepositoryPort inventory, ProductRepositoryPort products) {
+    public InventoryReservationAdapter(InventoryRepositoryPort inventory, ProductRepositoryPort products,
+            InventoryMovementRepositoryPort movements) {
         this.inventory = inventory;
         this.products = products;
+        this.movements = movements;
     }
 
     @Override
@@ -52,6 +59,9 @@ public class InventoryReservationAdapter implements InventoryReservationPort {
             InventoryItem stock = lockedStocks.get(request.getKey());
             stock.decrease(request.getValue());
             inventory.save(stock);
+            movements.save(new InventoryMovement(null, stock.id(), MovementType.RESERVATION,
+                    request.getValue(), LocalDateTime.now(), 1L,
+                    "Reserva automática por pedido"));
         }
     }
 
@@ -65,6 +75,9 @@ public class InventoryReservationAdapter implements InventoryReservationPort {
                             "inventory stock not registered for product: " + release.getKey()));
             stock.increase(release.getValue());
             inventory.save(stock);
+            movements.save(new InventoryMovement(null, stock.id(), MovementType.RELEASE,
+                    release.getValue(), LocalDateTime.now(), 1L,
+                    "Liberación automática de reserva de pedido"));
         }
     }
 
