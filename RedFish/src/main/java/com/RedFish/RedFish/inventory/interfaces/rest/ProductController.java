@@ -27,12 +27,22 @@ public class ProductController {
 	private final CreateProductService createProductService;
 	private final ListProductsService listProductsService;
 	private final GetProductService getProductService;
+	private final com.RedFish.RedFish.inventory.infrastructure.persistence.jpa.SpringDataProductJpaRepository productJpa;
+	private final com.RedFish.RedFish.inventory.infrastructure.persistence.jpa.SpringDataInventoryItemJpaRepository inventoryJpa;
+	private final com.RedFish.RedFish.production.infrastructure.persistence.jpa.SpringDataFeedingRecordJpaRepository feedingJpa;
+	private final com.RedFish.RedFish.orders.infrastructure.persistence.jpa.SpringDataOrderJpaRepository orderJpa;
 
 	public ProductController(CreateProductService createProductService, ListProductsService listProductsService,
-			GetProductService getProductService) {
+			GetProductService getProductService,
+			com.RedFish.RedFish.inventory.infrastructure.persistence.jpa.SpringDataProductJpaRepository productJpa,
+			com.RedFish.RedFish.inventory.infrastructure.persistence.jpa.SpringDataInventoryItemJpaRepository inventoryJpa,
+			com.RedFish.RedFish.production.infrastructure.persistence.jpa.SpringDataFeedingRecordJpaRepository feedingJpa,
+			com.RedFish.RedFish.orders.infrastructure.persistence.jpa.SpringDataOrderJpaRepository orderJpa) {
 		this.createProductService = createProductService;
 		this.listProductsService = listProductsService;
 		this.getProductService = getProductService;
+		this.productJpa = productJpa; this.inventoryJpa = inventoryJpa;
+		this.feedingJpa = feedingJpa; this.orderJpa = orderJpa;
 	}
 
 	@PostMapping
@@ -55,6 +65,15 @@ public class ProductController {
         createProductService.deactivate(id);
         return ResponseEntity.noContent().build();
     }
+
+	@DeleteMapping("/{id}/permanent")
+	public ResponseEntity<Void> deletePermanently(@PathVariable Long id) {
+		getProductService.get(id);
+		if (inventoryJpa.existsByProductId(id) || feedingJpa.existsByProductId(id) || orderJpa.existsAnyItemForProductId(id))
+			throw new IllegalStateException("No se puede eliminar el producto porque tiene inventario, alimentación o pedidos asociados. Puedes desactivarlo para conservar el historial.");
+		productJpa.deleteById(id);
+		return ResponseEntity.noContent().build();
+	}
 
 	@GetMapping
 	public List<ProductResponse> list() {
