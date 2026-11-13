@@ -27,9 +27,7 @@ public class InventoryItem {
 	public void decrease(BigDecimal amount) {
 		BigDecimal requestedAmount = requirePositive(amount, "decrease amount");
 		if (this.quantity.compareTo(requestedAmount) < 0) {
-			throw new IllegalStateException("No hay existencias suficientes. Disponible: "
-				+ this.quantity.stripTrailingZeros().toPlainString() + "; solicitado: "
-				+ requestedAmount.stripTrailingZeros().toPlainString() + ".");
+			throw new IllegalStateException("inventory stock cannot be negative");
 		}
 		this.quantity = this.quantity.subtract(requestedAmount);
 	}
@@ -38,19 +36,8 @@ public class InventoryItem {
 		return quantity.compareTo(minimumStock) < 0;
 	}
 
-	public Long id() {
-		return id;
-	}
-
-	public Long productId() {
-		return productId;
-	}
-
-	public BigDecimal quantity() {
-		return quantity;
-	}
-
-	public BigDecimal minimumStock() {
-		return minimumStock;
-	}
+	public Long id() { return id; }
+	public Long productId() { return productId; }
+	public BigDecimal quantity() { return quantity; }
+	public BigDecimal minimumStock() { return minimumStock; }
 }
