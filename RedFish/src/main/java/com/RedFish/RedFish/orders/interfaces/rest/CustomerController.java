@@ -18,10 +18,15 @@ public class CustomerController {
     private final ListCustomersService list;
     private final GetCustomerService get;
     private final CustomerRepositoryPort repository;
+    private final com.RedFish.RedFish.orders.infrastructure.persistence.jpa.SpringDataCustomerJpaRepository customerJpa;
+    private final com.RedFish.RedFish.orders.infrastructure.persistence.jpa.SpringDataOrderJpaRepository orderJpa;
 
     public CustomerController(CreateCustomerService create, ListCustomersService list,
-            GetCustomerService get, CustomerRepositoryPort repository) {
+            GetCustomerService get, CustomerRepositoryPort repository,
+            com.RedFish.RedFish.orders.infrastructure.persistence.jpa.SpringDataCustomerJpaRepository customerJpa,
+            com.RedFish.RedFish.orders.infrastructure.persistence.jpa.SpringDataOrderJpaRepository orderJpa) {
         this.create=create; this.list=list; this.get=get; this.repository=repository;
+        this.customerJpa=customerJpa; this.orderJpa=orderJpa;
     }
 
     @PostMapping
@@ -41,6 +46,13 @@ public class CustomerController {
     public ResponseEntity<Void> deactivate(@PathVariable Long id) {
         Customer c=get.get(id);
         repository.save(new Customer(id,c.name(),c.phone(),c.address(),c.email(),false));
+        return ResponseEntity.noContent().build();
+    }
+    @DeleteMapping("/{id}/permanent")
+    public ResponseEntity<Void> deletePermanently(@PathVariable Long id) {
+        get.get(id);
+        if (orderJpa.existsByCustomerId(id)) throw new IllegalStateException("No se puede eliminar el cliente porque tiene pedidos asociados. Puedes desactivarlo para conservar el historial.");
+        customerJpa.deleteById(id);
         return ResponseEntity.noContent().build();
     }
     @GetMapping public List<CustomerResponse> list(){return list.list().stream().map(CustomerResponse::from).toList();}
