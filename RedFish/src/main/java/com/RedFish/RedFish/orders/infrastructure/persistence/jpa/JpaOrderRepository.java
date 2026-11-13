@@ -15,6 +15,10 @@ public class JpaOrderRepository implements OrderRepositoryPort {
     public Order save(Order order) { return repository.save(OrderJpaEntity.fromDomain(order)).toDomain(); }
     @Override @Transactional(readOnly=true)
     public Optional<Order> findById(Long id) { return repository.findById(id).map(OrderJpaEntity::toDomain); }
+    @Override @Transactional
+    public Optional<Order> findByIdForUpdate(Long id) {
+        return repository.findByIdForUpdate(id).map(OrderJpaEntity::toDomain);
+    }
     @Override @Transactional(readOnly=true)
     public List<Order> findAll() { return repository.findAll().stream().map(OrderJpaEntity::toDomain).toList(); }
 }
