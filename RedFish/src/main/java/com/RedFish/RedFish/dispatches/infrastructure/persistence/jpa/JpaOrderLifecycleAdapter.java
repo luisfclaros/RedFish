@@ -14,14 +14,16 @@ public class JpaOrderLifecycleAdapter implements OrderAvailabilityPort, OrderDis
 
     @Override @Transactional
     public void ensureOrderCanBeDispatched(Long orderId) {
-        var order=orders.findByIdForUpdate(orderId).orElseThrow(() -> new IllegalArgumentException("order not found"));
+        var order=orders.findByIdForUpdate(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("order not found"));
         if (order.status() != OrderStatus.IN_PREPARATION)
             throw new IllegalStateException("only orders in preparation can be scheduled for dispatch");
     }
 
     @Override @Transactional
     public void markOrderDispatched(Long orderId) {
-        var order=orders.findById(orderId).orElseThrow(() -> new IllegalArgumentException("order not found"));
+        var order=orders.findByIdForUpdate(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("order not found"));
         order.markDispatched();
         orders.save(order);
     }
