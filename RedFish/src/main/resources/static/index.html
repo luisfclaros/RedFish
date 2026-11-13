@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>RedFish | Gestión piscícola</title>
 <style>
 :root{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#17324d;background:#f3f7fa;font-synthesis:none}
@@ -191,7 +194,7 @@ dialog{border:0;border-radius:14px;padding:24px;width:min(420px,calc(100% - 28px
     <div class="panel"><h2>Despachos programados</h2><div id="dispatches-table" class="tablewrap"></div></div>
   </section>
 </main>
-<dialog id="auth-dialog"><form id="auth-form" class="auth-form"><h2 id="auth-title">Ingresar a RedFish</h2><p id="auth-description">Ingresa con las credenciales asignadas a tu área.</p><p id="auth-error" class="hint" role="alert" style="color:#b84c4c"></p><div class="field"><label>Usuario</label><input name="username" autocomplete="username" required></div><div class="field"><label>Contraseña</label><input name="password" type="password" autocomplete="current-password" required></div><div class="actions"><button class="btn" type="submit">Ingresar</button><button class="btn secondary" type="button" id="auth-cancel">Cancelar</button></div></form></dialog>
+
 </div>
 <script>
 const $=(s)=>document.querySelector(s);
@@ -203,19 +206,7 @@ function notice(message,error=false){const n=$('#notice');n.textContent=message;
 let authHeader=null, currentProfile=null, currentUser=null;
 const profileNames={PRODUCTION:'Producción',OPERATIONS:'Operaciones',COMMERCIAL:'Comercial',ADMIN:'Administración'};
 const profileViews={PRODUCTION:['dashboard','products','ponds','feeding'],OPERATIONS:['dashboard','products','vehicles','inventory','dispatches'],COMMERCIAL:['dashboard','products','customers','orders'],ADMIN:['dashboard','products','customers','vehicles','ponds','feeding','inventory','orders','dispatches']};
-function requestCredentials(){
-  return new Promise(resolve=>{
-    const dialog=$('#auth-dialog'),form=$('#auth-form');let settled=false;
-    const finish=value=>{if(settled)return;settled=true;dialog.close();resolve(value)};
-    form.onsubmit=async e=>{e.preventDefault();const d=formData(form);const enteredUsername=d.username.trim().toLowerCase();const backendUsername=currentProfile==='PRODUCTION'&&enteredUsername==='produccion'?'production':currentProfile==='OPERATIONS'&&enteredUsername==='operaciones'?'operations':enteredUsername;const candidate='Basic '+btoa(unescape(encodeURIComponent(backendUsername+':'+d.password)));const submit=form.querySelector('button[type="submit"]');submit.disabled=true;try{const response=await fetch('/api/v1/auth/me',{headers:{Authorization:candidate}});if(!response.ok)throw new Error(response.status===401?'Usuario o contraseña incorrectos.':'No fue posible validar el acceso.');const user=await response.json();if(user.role!==currentProfile)throw new Error('Esta cuenta no pertenece al área de '+profileNames[currentProfile]+'. Selecciona el área correcta.');authHeader=candidate;currentUser=user;form.reset();finish(true)}catch(err){$('#auth-error').textContent=err.message}finally{submit.disabled=false}};
-    $('#auth-cancel').onclick=()=>finish(false);
-    dialog.addEventListener('cancel',e=>{e.preventDefault();finish(false)},{once:true});
-    dialog.showModal();
-  });
-}
-function enterProfile(role){
- currentProfile=role;$('#auth-title').textContent='Acceso de '+profileNames[role];$('#auth-description').textContent='Ingresa el usuario y contraseña asignados a '+profileNames[role]+'.';$('#auth-error').textContent='';requestCredentials().then(ok=>{if(!ok)return;$('#landing').classList.add('hidden');$('#app-layout').classList.remove('hidden');$('#current-user').textContent=currentUser.name+' · '+profileNames[currentProfile];applyProfile();if(currentProfile==='ADMIN'||currentProfile==='COMMERCIAL')loadOrderReferences();if(currentProfile==='ADMIN'||currentProfile==='OPERATIONS')loadDispatchReferences();refreshAll().catch(err=>notice(err.message,true));show('dashboard')});
-}
+
 function applyProfile(){
  const allowed=new Set(profileViews[currentProfile]||[]);
  $('#product-form').closest('.panel').classList.toggle('hidden',currentProfile!=='ADMIN'&&currentProfile!=='PRODUCTION');
