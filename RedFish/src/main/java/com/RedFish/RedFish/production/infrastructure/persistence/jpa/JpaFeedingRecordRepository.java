@@ -20,7 +20,7 @@ public class JpaFeedingRecordRepository implements FeedingRecordRepositoryPort {
         return repository.findById(id).map(FeedingRecordJpaEntity::toDomain);
     }
     @Override public List<FeedingRecord> findAll() {
-        return repository.findAll().stream().map(FeedingRecordJpaEntity::toDomain).toList();
+        return repository.findAllByOrderByDateDesc().stream().map(FeedingRecordJpaEntity::toDomain).toList();
     }
     @Override public List<FeedingRecord> findByPondId(Long pondId) {
         return repository.findByPondIdOrderByDateDesc(pondId).stream().map(FeedingRecordJpaEntity::toDomain).toList();
