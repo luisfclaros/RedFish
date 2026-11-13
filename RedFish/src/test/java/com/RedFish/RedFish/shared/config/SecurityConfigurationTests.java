@@ -32,6 +32,10 @@ import com.RedFish.RedFish.inventory.application.service.ListProductsService;
 import com.RedFish.RedFish.inventory.domain.model.Product;
 import com.RedFish.RedFish.inventory.domain.model.ProductType;
 import com.RedFish.RedFish.inventory.interfaces.rest.ProductController;
+import com.RedFish.RedFish.inventory.infrastructure.persistence.jpa.SpringDataProductJpaRepository;
+import com.RedFish.RedFish.inventory.infrastructure.persistence.jpa.SpringDataInventoryItemJpaRepository;
+import com.RedFish.RedFish.production.infrastructure.persistence.jpa.SpringDataFeedingRecordJpaRepository;
+import com.RedFish.RedFish.orders.infrastructure.persistence.jpa.SpringDataOrderJpaRepository;
 import com.RedFish.RedFish.shared.interfaces.rest.RestExceptionHandler;
 
 @WebMvcTest(controllers = ProductController.class)
@@ -49,6 +53,19 @@ class SecurityConfigurationTests {
 
     @MockitoBean
     private ListProductsService listProductsService;
+
+    // Dependencies used only by the permanent-delete endpoint; mocked in this MVC slice.
+    @MockitoBean
+    private SpringDataProductJpaRepository productJpa;
+
+    @MockitoBean
+    private SpringDataInventoryItemJpaRepository inventoryJpa;
+
+    @MockitoBean
+    private SpringDataFeedingRecordJpaRepository feedingJpa;
+
+    @MockitoBean
+    private SpringDataOrderJpaRepository orderJpa;
 
     @Test
     @WithMockUser(username = "operator", roles = "OPERATOR")
