@@ -13,6 +13,13 @@ public class JpaOrderDispatchAvailabilityAdapter implements DispatchAvailability
     }
 
     @Override
+    public void ensureHasActiveDispatch(Long orderId) {
+        if (!dispatches.existsActiveByOrderId(orderId)) {
+            throw new IllegalStateException("orders cannot be marked dispatched without an active dispatch");
+        }
+    }
+
+    @Override
     public void ensureNoActiveDispatch(Long orderId) {
         if (dispatches.existsActiveByOrderId(orderId)) {
             throw new IllegalStateException("orders with an active dispatch cannot be cancelled");
