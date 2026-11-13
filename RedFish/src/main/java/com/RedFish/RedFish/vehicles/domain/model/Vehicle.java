@@ -7,40 +7,36 @@ import java.math.BigDecimal;
 
 public class Vehicle {
 
-	private final Long id;
-	private final String plate;
-	private final String brand;
-	private final String model;
-	private final BigDecimal loadCapacity;
-	private boolean active;
-	private final String observations;
+    private final Long id;
+    private final String plate;
+    private final String brand;
+    private final String model;
+    private final BigDecimal loadCapacity;
+    private boolean active;
+    private final String observations;
 
-	public Vehicle(Long id, String plate, String brand, String model, BigDecimal loadCapacity, boolean active,
-			String observations) {
-		this.id = id;
-		this.plate = requireText(plate, "vehicle plate");
-		this.brand = requireText(brand, "vehicle brand");
-		this.model = requireText(model, "vehicle model");
-		this.loadCapacity = requireNonNegative(loadCapacity, "load capacity");
-		this.active = active;
-		this.observations = observations;
-	}
+    public Vehicle(Long id, String plate, String brand, String model, BigDecimal loadCapacity, boolean active,
+            String observations) {
+        this.id = id;
+        this.plate = requireText(plate, "vehicle plate").toUpperCase();
+        this.brand = requireText(brand, "vehicle brand");
+        this.model = requireText(model, "vehicle model");
+        this.loadCapacity = requireNonNegative(loadCapacity, "load capacity");
+        this.active = active;
+        this.observations = observations;
+    }
 
-	public void ensureCanBeAssigned() {
-		if (!active) {
-			throw new IllegalStateException("inactive vehicles cannot be assigned");
-		}
-	}
+    public void ensureCanBeAssigned() {
+        if (!active) {
+            throw new IllegalStateException("inactive vehicles cannot be assigned");
+        }
+    }
 
-	public Long id() {
-		return id;
-	}
-
-	public String plate() {
-		return plate;
-	}
-
-	public boolean active() {
-		return active;
-	}
+    public Long id() { return id; }
+    public String plate() { return plate; }
+    public String brand() { return brand; }
+    public String model() { return model; }
+    public BigDecimal loadCapacity() { return loadCapacity; }
+    public boolean active() { return active; }
+    public String observations() { return observations; }
 }

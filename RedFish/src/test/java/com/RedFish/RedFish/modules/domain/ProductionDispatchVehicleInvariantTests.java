@@ -40,6 +40,17 @@ class ProductionDispatchVehicleInvariantTests {
     }
 
     @Test
+    void dispatchInTransitCannotBeCancelled() {
+        Dispatch dispatch = new Dispatch(1L, 10L, 20L, LocalDate.of(2026, 11, 3), "Farm delivery point");
+        dispatch.markInTransit();
+
+        assertThatThrownBy(dispatch::cancel)
+            .isInstanceOf(IllegalStateException.class)
+            .hasMessageContaining("invalid dispatch status transition");
+        assertThat(dispatch.status()).isEqualTo(DispatchStatus.IN_TRANSIT);
+    }
+
+    @Test
     void deliveredDispatchCannotBeCancelled() {
         Dispatch dispatch = new Dispatch(1L, 10L, 20L, LocalDate.of(2026, 11, 3), "Farm delivery point");
         dispatch.markInTransit();
@@ -47,7 +58,7 @@ class ProductionDispatchVehicleInvariantTests {
 
         assertThatThrownBy(dispatch::cancel)
             .isInstanceOf(IllegalStateException.class)
-            .hasMessageContaining("cannot be cancelled");
+            .hasMessageContaining("invalid dispatch status transition");
         assertThat(dispatch.status()).isEqualTo(DispatchStatus.DELIVERED);
     }
 

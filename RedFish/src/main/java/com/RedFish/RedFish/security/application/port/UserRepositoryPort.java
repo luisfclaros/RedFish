@@ -1,12 +1,10 @@
 package com.RedFish.RedFish.security.application.port;
 
 import java.util.Optional;
-
 import com.RedFish.RedFish.security.domain.model.User;
 
 public interface UserRepositoryPort {
-
-	Optional<User> findByUsername(String username);
-
-	User save(User user);
+    Optional<User> findByUsername(String username);
+    User save(User user);
+    default boolean existsByUsername(String username) { return findByUsername(username).isPresent(); }
 }

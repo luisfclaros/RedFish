@@ -1,6 +1,6 @@
 package com.RedFish.RedFish.production.domain.model;
 
-import static com.RedFish.RedFish.shared.domain.DomainValidation.requireNonNegative;
+import static com.RedFish.RedFish.shared.domain.DomainValidation.requirePositive;
 import static com.RedFish.RedFish.shared.domain.DomainValidation.requireText;
 
 import java.math.BigDecimal;
@@ -19,7 +19,7 @@ public class Pond {
 		this.code = requireText(code, "pond code");
 		this.name = requireText(name, "pond name");
 		this.location = requireText(location, "pond location");
-		this.capacity = requireNonNegative(capacity, "pond capacity");
+		this.capacity = requirePositive(capacity, "pond capacity");
 		this.active = active;
 	}
 

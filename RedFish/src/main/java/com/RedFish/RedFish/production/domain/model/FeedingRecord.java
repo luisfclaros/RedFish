@@ -7,20 +7,32 @@ import static com.RedFish.RedFish.shared.domain.DomainValidation.requireText;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record FeedingRecord(Long id, Long pondId, LocalDate date, String foodType, BigDecimal quantity,
-		Long registeredBy, String observations) {
+public record FeedingRecord(Long id, Long pondId, Long productId, LocalDate date, String foodType,
+        BigDecimal quantity, Long registeredBy, String observations) {
 
-	public FeedingRecord {
-		requireNonNull(pondId, "pond id");
-		requireNonNull(date, "feeding date");
-		foodType = requireText(foodType, "food type");
-		quantity = requirePositive(quantity, "feeding quantity");
-		requireNonNull(registeredBy, "registered by");
-	}
+    public FeedingRecord(Long id, Long pondId, LocalDate date, String foodType, BigDecimal quantity,
+            Long registeredBy, String observations) {
+        this(id, pondId, null, date, foodType, quantity, registeredBy, observations);
+    }
 
-	public static FeedingRecord registerFor(Pond pond, LocalDate date, String foodType, BigDecimal quantity,
-			Long registeredBy, String observations) {
-		requireNonNull(pond, "pond").ensureCanReceiveFeedingRecord();
-		return new FeedingRecord(null, pond.id(), date, foodType, quantity, registeredBy, observations);
-	}
+    public FeedingRecord {
+        requireNonNull(pondId, "pond id");
+        requireNonNull(date, "feeding date");
+        foodType = requireText(foodType, "food type");
+        quantity = requirePositive(quantity, "feeding quantity");
+        requireNonNull(registeredBy, "registered by");
+    }
+
+    public static FeedingRecord registerFor(Pond pond, LocalDate date, String foodType, BigDecimal quantity,
+            Long registeredBy, String observations) {
+        requireNonNull(pond, "pond").ensureCanReceiveFeedingRecord();
+        return new FeedingRecord(null, pond.id(), date, foodType, quantity, registeredBy, observations);
+    }
+
+    public static FeedingRecord registerFor(Pond pond, Long productId, LocalDate date, String foodType,
+            BigDecimal quantity, Long registeredBy, String observations) {
+        requireNonNull(pond, "pond").ensureCanReceiveFeedingRecord();
+        requireNonNull(productId, "food product id");
+        return new FeedingRecord(null, pond.id(), productId, date, foodType, quantity, registeredBy, observations);
+    }
 }
