@@ -34,6 +34,7 @@ public class UpdateOrderStatusService {
 
     @Transactional public Order markDispatched(Long id) {
         Order order = getForUpdate(id);
+        dispatchAvailability.ensureHasActiveDispatch(id);
         order.markDispatched();
         return repository.save(order);
     }
