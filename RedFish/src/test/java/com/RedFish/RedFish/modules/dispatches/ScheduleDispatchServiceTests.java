@@ -58,7 +58,7 @@ class ScheduleDispatchServiceTests {
     }
 
     @Test
-    void rejectsVehicleAlreadyAssignedToAnotherActiveDispatch() {
+    void rejectsVehicleAlreadyAssignedToAnotherActiveDispatchAfterLockingVehicle() {
         DispatchRepositoryPort dispatches = mock(DispatchRepositoryPort.class);
         VehicleAvailabilityPort vehicles = mock(VehicleAvailabilityPort.class);
         OrderAvailabilityPort orders = mock(OrderAvailabilityPort.class);
@@ -72,7 +72,7 @@ class ScheduleDispatchServiceTests {
             .hasMessageContaining("vehicle already has an active dispatch");
 
         verify(orders).ensureOrderCanBeDispatched(15L);
-        verify(vehicles, never()).ensureVehicleCanBeAssigned(7L);
+        verify(vehicles).ensureVehicleCanBeAssigned(7L);
         verify(dispatches, never()).save(any(Dispatch.class));
     }
 
