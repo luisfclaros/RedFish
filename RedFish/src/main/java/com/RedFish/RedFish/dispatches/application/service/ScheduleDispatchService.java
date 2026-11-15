@@ -39,10 +39,14 @@ public class ScheduleDispatchService {
         if (dispatchRepository.existsActiveByOrderId(orderId)) {
             throw new IllegalStateException("order already has an active dispatch");
         }
+
+        // Lock the vehicle row before checking active dispatches. Concurrent schedules
+        // for the same vehicle then serialize, so the second transaction sees the first.
+        vehicleAvailability.ensureVehicleCanBeAssigned(vehicleId);
         if (dispatchRepository.existsActiveByVehicleId(vehicleId)) {
             throw new IllegalStateException("vehicle already has an active dispatch");
         }
-        vehicleAvailability.ensureVehicleCanBeAssigned(vehicleId);
+
         Dispatch dispatch=new Dispatch(null, orderId, vehicleId, dispatchDate,
                 requireText(deliveryAddress, "delivery address"));
         return dispatchRepository.save(dispatch);
