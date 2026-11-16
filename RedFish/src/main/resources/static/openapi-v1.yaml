@@ -17,7 +17,21 @@ servers:
           - "8081"
           - "8082"
         description: Develop, QA o produccion local
+security:
+  - basicAuth: []
 tags:
+  - name: Vehicles
+    description: Flota para los despachos
+  - name: Production
+    description: Estanques y alimentación
+  - name: Inventory
+    description: Existencias y movimientos
+  - name: Orders
+    description: Pedidos y reserva de inventario
+  - name: Dispatches
+    description: Programación y seguimiento de despachos
+  - name: Security
+    description: Identidad y administración de usuarios
   - name: Products
     description: Operaciones del modulo Inventario
   - name: Customers
@@ -78,6 +92,29 @@ paths:
                 $ref: "#/components/schemas/ProductResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
+    put:
+      tags: [Products]
+      operationId: updateProductV1
+      summary: Actualizar un producto
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductRequest"
+      responses:
+        "200": { description: Producto actualizado }
+        "400": { $ref: "#/components/responses/BadRequest" }
+    delete:
+      tags: [Products]
+      operationId: deactivateProductV1
+      summary: Desactivar un producto
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "204": { description: Producto desactivado }
   /api/v1/customers:
     post:
       tags: [Customers]
@@ -133,7 +170,308 @@ paths:
                 $ref: "#/components/schemas/CustomerResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
+    put:
+      tags: [Customers]
+      operationId: updateCustomerV1
+      summary: Actualizar un cliente
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerRequest"
+      responses:
+        "200": { description: Cliente actualizado }
+        "400": { $ref: "#/components/responses/BadRequest" }
+    delete:
+      tags: [Customers]
+      operationId: deactivateCustomerV1
+      summary: Desactivar un cliente
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "204": { description: Cliente desactivado }
+  /api/v1/vehicles:
+    get:
+      tags: [Vehicles]
+      summary: Listar vehículos
+      responses:
+        "200": { description: Vehículos registrados }
+    post:
+      tags: [Vehicles]
+      summary: Registrar vehículo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [plate, brand, model, loadCapacity]
+              properties:
+                plate: { type: string }
+                brand: { type: string }
+                model: { type: string }
+                loadCapacity: { type: number, minimum: 0 }
+                observations: { type: [string, "null"] }
+      responses:
+        "201": { description: Vehículo creado }
+  /api/v1/vehicles/{id}:
+    put:
+      tags: [Vehicles]
+      summary: Actualizar vehículo
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VehicleRequest"
+      responses:
+        "200": { description: Vehículo actualizado }
+    delete:
+      tags: [Vehicles]
+      summary: Desactivar vehículo
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "204": { description: Vehículo desactivado }
+  /api/v1/ponds:
+    get:
+      tags: [Production]
+      summary: Listar estanques
+      responses:
+        "200": { description: Estanques registrados }
+    post:
+      tags: [Production]
+      summary: Registrar estanque
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code, name, location, capacity]
+              properties:
+                code: { type: string }
+                name: { type: string }
+                location: { type: string }
+                capacity: { type: number, minimum: 0 }
+      responses:
+        "201": { description: Estanque creado }
+  /api/v1/ponds/{id}:
+    put:
+      tags: [Production]
+      summary: Actualizar estanque
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PondRequest"
+      responses:
+        "200": { description: Estanque actualizado }
+    delete:
+      tags: [Production]
+      summary: Desactivar estanque
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "204": { description: Estanque desactivado }
+  /api/v1/feeding-records/{id}:
+    get:
+      tags: [Production]
+      summary: Consultar un registro de alimentación
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        "200": { description: Registro encontrado }
+  /api/v1/feeding-records:
+    get:
+      tags: [Production]
+      summary: Consultar registros de alimentación
+      responses:
+        "200": { description: Registros de alimentación }
+    post:
+      tags: [Production]
+      summary: Registrar alimentación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [pondId, productId, date, foodType, quantity, registeredBy]
+              properties:
+                pondId: { type: integer, format: int64 }
+                productId: { type: integer, format: int64 }
+                date: { type: string, format: date }
+                foodType: { type: string }
+                quantity: { type: number, exclusiveMinimum: 0 }
+                registeredBy: { type: integer, format: int64 }
+                observations: { type: [string, "null"] }
+      responses:
+        "201": { description: Registro creado }
+  /api/v1/inventory:
+    get:
+      tags: [Inventory]
+      summary: Consultar existencias
+      responses:
+        "200": { description: Existencias por producto }
+  /api/v1/inventory/{id}:
+    get:
+      tags: [Inventory]
+      summary: Consultar una existencia por identificador
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        "200": { description: Existencia encontrada }
+  /api/v1/inventory/stock:
+    post:
+      tags: [Inventory]
+      summary: Registrar existencias iniciales
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InventoryStockRequest"
+      responses:
+        "201": { description: Existencias creadas }
+  /api/v1/inventory/entries:
+    post:
+      tags: [Inventory]
+      summary: Registrar entrada de inventario
+      responses:
+        "204": { description: Entrada aplicada }
+  /api/v1/inventory/exits:
+    post:
+      tags: [Inventory]
+      summary: Registrar salida de inventario
+      responses:
+        "204": { description: Salida aplicada }
+  /api/v1/inventory/movements:
+    get:
+      tags: [Inventory]
+      summary: Consultar movimientos de inventario
+      responses:
+        "200": { description: Historial de movimientos }
+  /api/v1/orders:
+    get:
+      tags: [Orders]
+      summary: Listar pedidos
+      responses:
+        "200": { description: Pedidos registrados }
+    post:
+      tags: [Orders]
+      summary: Crear pedido y reservar existencias
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderRequest"
+      responses:
+        "201": { description: Pedido creado }
+  /api/v1/orders/{id}/in-preparation:
+    post:
+      tags: [Orders]
+      summary: Marcar pedido en preparación
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "200": { description: Pedido actualizado }
+  /api/v1/orders/{id}/cancel:
+    post:
+      tags: [Orders]
+      summary: Cancelar pedido y liberar inventario reservado
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "200": { description: Pedido cancelado }
+  /api/v1/dispatches/{id}:
+    get:
+      tags: [Dispatches]
+      summary: Consultar despacho
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "200": { description: Despacho encontrado }
+  /api/v1/dispatches/{id}/in-transit:
+    post:
+      tags: [Dispatches]
+      summary: Marcar despacho en tránsito y sincronizar pedido
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "200": { description: Despacho actualizado }
+  /api/v1/dispatches/{id}/delivered:
+    post:
+      tags: [Dispatches]
+      summary: Registrar entrega
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeliverDispatchRequest"
+      responses:
+        "200": { description: Entrega registrada }
+  /api/v1/dispatches/{id}/cancel:
+    post:
+      tags: [Dispatches]
+      summary: Cancelar despacho
+      parameters:
+        - $ref: "#/components/parameters/EntityId"
+      responses:
+        "200": { description: Despacho cancelado }
+  /api/v1/dispatches:
+    get:
+      tags: [Dispatches]
+      summary: Listar despachos
+      responses:
+        "200": { description: Despachos registrados }
+    post:
+      tags: [Dispatches]
+      summary: Programar despacho de pedido en preparación y vehículo activo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScheduleDispatchRequest"
+      responses:
+        "201": { description: Despacho programado }
+  /api/v1/auth/me:
+    get:
+      tags: [Security]
+      summary: Consultar usuario autenticado
+      responses:
+        "200": { description: Usuario actual }
+  /api/v1/users:
+    post:
+      tags: [Security]
+      summary: Crear usuario (solo ADMIN)
+      responses:
+        "201": { description: Usuario creado }
+        "403": { description: Rol insuficiente }
 components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
   parameters:
     EntityId:
       name: id
@@ -249,6 +587,81 @@ components:
         active:
           type: boolean
           example: true
+    VehicleRequest:
+      type: object
+      required: [plate, brand, model, loadCapacity]
+      properties:
+        plate: { type: string, maxLength: 10 }
+        brand: { type: string, maxLength: 60 }
+        model: { type: string, maxLength: 60 }
+        loadCapacity: { type: number, minimum: 0 }
+        observations: { type: string }
+    PondRequest:
+      type: object
+      required: [code, name, location, capacity]
+      properties:
+        code: { type: string, maxLength: 30 }
+        name: { type: string, maxLength: 100 }
+        location: { type: string, maxLength: 150 }
+        capacity: { type: number, minimum: 0 }
+    FeedingRecordRequest:
+      type: object
+      required: [pondId, productId, date, foodType, quantity, registeredBy]
+      properties:
+        pondId: { type: integer, format: int64 }
+        productId: { type: integer, format: int64 }
+        date: { type: string, format: date }
+        foodType: { type: string, maxLength: 100 }
+        quantity: { type: number, exclusiveMinimum: 0 }
+        registeredBy: { type: integer, format: int64 }
+        observations: { type: string, maxLength: 500 }
+    InventoryStockRequest:
+      type: object
+      required: [productId, initialQuantity, minimumStock]
+      properties:
+        productId: { type: integer, format: int64 }
+        initialQuantity: { type: number, minimum: 0 }
+        minimumStock: { type: number, minimum: 0 }
+    InventoryMovementRequest:
+      type: object
+      required: [productId, quantity, registeredBy]
+      properties:
+        productId: { type: integer, format: int64 }
+        quantity: { type: number, exclusiveMinimum: 0 }
+        registeredBy: { type: integer, format: int64 }
+        observations: { type: string }
+    OrderRequest:
+      type: object
+      required: [customerId, date, items]
+      properties:
+        customerId: { type: integer, format: int64 }
+        date: { type: string, format: date }
+        items:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [productId, productName, quantity, unitPrice]
+            properties:
+              productId: { type: integer, format: int64 }
+              productName: { type: string, maxLength: 100 }
+              quantity: { type: number, exclusiveMinimum: 0 }
+              unitPrice: { type: number, exclusiveMinimum: 0 }
+        observations: { type: string, maxLength: 500 }
+    ScheduleDispatchRequest:
+      type: object
+      required: [orderId, vehicleId, dispatchDate, deliveryAddress]
+      properties:
+        orderId: { type: integer, format: int64 }
+        vehicleId: { type: integer, format: int64 }
+        dispatchDate: { type: string, format: date }
+        deliveryAddress: { type: string, maxLength: 250 }
+    DeliverDispatchRequest:
+      type: object
+      required: [deliveryDate, receivedBy]
+      properties:
+        deliveryDate: { type: string, format: date }
+        receivedBy: { type: string, maxLength: 100 }
     ApiErrorResponse:
       type: object
       additionalProperties: false

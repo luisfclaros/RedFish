@@ -22,6 +22,29 @@ public class CreateProductService {
 	}
 
 	@Transactional
+	public Product update(Long id, Product product) {
+		Product existingProduct = productRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("product not found"));
+		Product requestedProduct = requireNonNull(product, "product");
+		boolean duplicateCode = productRepository.findAll().stream()
+				.anyMatch(candidate -> !candidate.id().equals(id)
+						&& candidate.code().equalsIgnoreCase(requestedProduct.code()));
+		if (duplicateCode) {
+			throw new IllegalArgumentException("product code already exists");
+		}
+		return productRepository.save(new Product(id, requestedProduct.code(), requestedProduct.name(),
+				requestedProduct.unitOfMeasure(), requestedProduct.type(), existingProduct.active()));
+	}
+
+    @Transactional
+    public Product deactivate(Long id) {
+        Product existing = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("product not found"));
+        return productRepository.save(new Product(id, existing.code(), existing.name(),
+                existing.unitOfMeasure(), existing.type(), false));
+    }
+
+	@Transactional
 	public Product create(Product product) {
 		Product requestedProduct = requireNonNull(product, "product");
 		if (productRepository.existsByCode(requestedProduct.code())) {

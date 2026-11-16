@@ -3,6 +3,7 @@ package com.RedFish.RedFish.modules.inventory.interfaces;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -65,6 +66,40 @@ class ProductControllerTests {
 		mockMvc.perform(get("/api/v1/products/1"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.code").value("PROD-001"));
+	}
+
+	@Test
+	void updatesExistingProductThroughHttp() throws Exception {
+		String createBody = """
+				{
+				  "code": "PROD-EDIT",
+				  "name": "Tilapia inicial",
+				  "unitOfMeasure": "kg",
+				  "type": "PRODUCT"
+				}
+				""";
+		mockMvc.perform(post("/api/v1/products")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(createBody))
+			.andExpect(status().isCreated());
+
+		String updateBody = """
+				{
+				  "code": "PROD-EDIT-2",
+				  "name": "Tilapia corregida",
+				  "unitOfMeasure": "unidad",
+				  "type": "INPUT"
+				}
+				""";
+		mockMvc.perform(put("/api/v1/products/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(updateBody))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id").value(1))
+			.andExpect(jsonPath("$.code").value("PROD-EDIT-2"))
+			.andExpect(jsonPath("$.name").value("Tilapia corregida"))
+			.andExpect(jsonPath("$.unitOfMeasure").value("unidad"))
+			.andExpect(jsonPath("$.type").value("INPUT"));
 	}
 
 	@Test

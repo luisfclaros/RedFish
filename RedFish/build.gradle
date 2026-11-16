@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.1.1'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
 }
 
 group = 'com.RedFish'
@@ -49,4 +50,14 @@ tasks.named('test') {
 	systemProperty 'pact.rootDir', layout.buildDirectory.dir('pacts').get().asFile
 	systemProperty 'pact.writer.overwrite', 'true'
 	systemProperty 'pact_do_not_track', 'true'
+	finalizedBy tasks.named('jacocoTestReport')
+}
+
+tasks.named('jacocoTestReport') {
+	dependsOn tasks.named('test')
+	reports {
+		xml.required = true
+		html.required = true
+		csv.required = false
+	}
 }

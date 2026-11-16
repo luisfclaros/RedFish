@@ -29,7 +29,7 @@ class CustomerControllerTests {
 	void setUp() {
 		InMemoryCustomerRepository repository = new InMemoryCustomerRepository();
 		CustomerController controller = new CustomerController(new CreateCustomerService(repository),
-				new ListCustomersService(repository), new GetCustomerService(repository));
+				new ListCustomersService(repository), new GetCustomerService(repository), repository);
 		mockMvc = MockMvcBuilders.standaloneSetup(controller)
 			.setControllerAdvice(new RestExceptionHandler())
 			.addFilters(new LegacyApiDeprecationFilter())
