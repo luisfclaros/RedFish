@@ -342,9 +342,9 @@ Repositorio destinado al diseño y documentación de la base de datos de RedFish
 
 # 🚧 Estado del Proyecto
 
-RedFish se encuentra actualmente en etapa de definición y construcción progresiva.
+RedFish cuenta con una implementación integrada en la rama `main` como monolito modular con Spring Boot, Java 17 y MySQL. El pipeline de integración ejecutó correctamente las pruebas automatizadas, la construcción de la imagen Docker, el reporte JaCoCo, los escaneos de secretos y Trivy, y el análisis CodeQL.
 
-Las decisiones arquitectónicas, requisitos y módulos serán refinados y documentados durante las diferentes sesiones de desarrollo.
+El proyecto es un MVP académico. Las pruebas de carga y los ejercicios de recuperación ante fallos deben ejecutarse y documentarse antes de afirmar que esos escenarios están validados. La integración en `main` no equivale a un despliegue productivo.
 
 ---
 
@@ -375,4 +375,4 @@ La interfaz estática se sirve desde Spring Boot. La API usa autenticación HTTP
 - `/api/v1/dispatches` y sus transiciones de estado
 - `/api/v1/auth/me`, `/api/v1/users` (solo ADMIN para crear usuarios)
 
-Esta rama de integración sigue en validación; no se debe fusionar a `Develop`, `Qa` o `main` hasta que los checks y las pruebas funcionales estén aprobados.
+Estos endpoints forman parte de la implementación integrada en `main`. Su presencia en el código no sustituye la validación funcional de cada flujo en el entorno donde se vaya a sustentar.
