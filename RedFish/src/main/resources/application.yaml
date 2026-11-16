@@ -2,16 +2,26 @@ spring:
   application:
     name: RedFish
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3307/redfish}
-    username: ${SPRING_DATASOURCE_USERNAME:myuser}
-    password: ${SPRING_DATASOURCE_PASSWORD:secret}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    hikari:
+      connection-timeout: 5000
+      initialization-fail-timeout: 60000
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
     properties:
       hibernate:
         format_sql: true
-    show-sql: true
+    show-sql: ${SPRING_JPA_SHOW_SQL:false}
+
+server:
+  port: ${SERVER_PORT:8080}
+
+logging:
+  level:
+    root: ${LOG_LEVEL:INFO}
 
 management:
   endpoints:
@@ -22,11 +32,8 @@ management:
     health:
       probes:
         enabled: true
-  info:
-    env:
-      enabled: true
+      show-details: never
 
-info:
-  app:
-    name: RedFish
-    description: Sistema de gestión para empresas piscícolas
+springdoc:
+  swagger-ui:
+    url: /openapi-v1.yaml

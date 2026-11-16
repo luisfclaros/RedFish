@@ -1,0 +1,16 @@
+services:
+  app:
+    ports:
+      - '${APP_PORT:?Define APP_PORT in the QA environment file}:8080'
+    deploy:
+      resources:
+        limits:
+          memory: ${APP_MEMORY_LIMIT:-768M}
+
+  mysql:
+    ports:
+      - '${MYSQL_PORT:-3308}:3306'
+    deploy:
+      resources:
+        limits:
+          memory: ${MYSQL_MEMORY_LIMIT:-768M}

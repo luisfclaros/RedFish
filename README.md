@@ -1,5 +1,6 @@
 # 🐟 RedFish
 
+### Mesa De Trabajo : [Jira](https://corhuila-team-wloxo9pj.atlassian.net/jira/software/projects/RED/boards/2?filter=&groupBy=none)
 
 Sistema de información orientado a la gestión de los procesos operativos de empresas piscícolas.
 
@@ -132,12 +133,19 @@ Qa
 └── hu-002-qa
       └── Pull Request → Qa
 
-Qa
-└── Pull Request → main
-
 ```
 
-Las ramas de ambiente (`Develop` y `Qa`) no deben usarse para desarrollar cambios directamente. La rama `main` recibe cambios promovidos desde `Qa` mediante Pull Request directo.
+El ciclo anterior se repite para cada HU del MVP. Solamente cuando la ultima
+HU del MVP haya sido aprobada en `Qa` se realiza la liberacion:
+
+```text
+Qa
+└── Pull Request de liberacion → main
+```
+
+Las ramas de ambiente (`Develop` y `Qa`) no deben usarse para desarrollar
+cambios directamente. La rama `main` recibe un Pull Request directo desde `Qa`
+solo al finalizar el MVP completo, no despues de cada historia.
 
 ---
 
@@ -171,6 +179,25 @@ La documentación de QA podrá incluir:
 * Registro de defectos.
 * Evidencias.
 * Informe de validación.
+
+---
+
+# Modelo Agile y DevOps
+
+El trabajo de RedFish se organiza mediante historias pequenas, criterios de
+aceptacion verificables, limites de trabajo en curso, Pull Requests y
+retroalimentacion automatizada.
+
+Las reglas de Scrum, responsabilidades, Definition of Ready, Definition of
+Done y metricas de flujo se encuentran en:
+
+```text
+docs/process/agile-devops.md
+```
+
+Una historia queda `Done` despues de superar QA y llegar a `Qa`. Las historias
+se acumulan en esa rama hasta completar el MVP; entonces un unico Pull Request
+directo de `Qa` hacia `main` representa la liberacion.
 
 ---
 
@@ -208,6 +235,8 @@ docs/
 ├── architecture/
 ├── api/
 ├── domain/
+├── planning/
+├── process/
 ├── backlog.md
 ├── Week-01/
 │   ├── session-01/
@@ -218,13 +247,23 @@ docs/
 ├── Week-03/
 │   ├── session-01/
 │   └── session-02/
-└── Week-04/
-    ├── session-01/
-    └── session-02/
-└── Week-05/
-    ├── session-01/
-    └── session-02/
-├── release/
+├── Week-04/
+│   ├── session-01/
+│   └── session-02/
+├── Week-05/
+│   ├── session-01/
+│   └── session-02/
+├── Week-06/
+│   ├── session-01/
+│   └── session-02/
+├── Week-07/
+│   ├── session-01/
+│   └── session-02/
+├── Week-08/
+│   ├── session-01/
+│   └── session-02/
+├── configuration/
+└── release/
 
 ```
 
@@ -232,15 +271,72 @@ La estructura podrá evolucionar de acuerdo con las necesidades del proyecto.
 
 ---
 
+# Ejecucion con Docker Compose
+
+El backend y MySQL pueden iniciarse como un sistema completo:
+
+```powershell
+cd RedFish
+Copy-Item .env.example .env
+# Reemplaza los valores change_me_* por contraseñas únicas antes del primer inicio.
+docker compose up --build -d
+```
+
+El archivo `.env` contiene la configuracion local y no se almacena en Git.
+Los valores requeridos y su formato se documentan en `.env.example`.
+
+Configuraciones alternativas:
+
+```powershell
+# QA: usa una imagen existente, no la reconstruye
+docker compose --env-file .env.qa -f compose.yaml -f compose.qa.yaml up -d
+
+# Produccion: usa la misma imagen aprobada en QA
+docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml up -d
+```
+
+Puertos locales:
+
+| Ambiente | API | MySQL |
+|---|---:|---:|
+| Develop | `8080` | `3307` |
+| QA | `8081` | `3308` |
+| Produccion local | `8082` | `3309` |
+
+Los puertos de MySQL de QA y produccion se publican para inspeccion local. En
+un despliegue productivo real la base de datos debe permanecer en una red
+privada.
+
+La matriz completa se encuentra en
+`docs/configuration/environment-matrix.md`.
+
+## API REST v1
+
+Los endpoints soportados utilizan rutas versionadas:
+
+```text
+/api/v1/products
+/api/v1/customers
+```
+
+El contrato OpenAPI se publica en `/openapi-v1.yaml` y Swagger UI permanece
+disponible en `/swagger-ui.html`. Las rutas originales sin `/v1` son aliases
+temporales deprecados.
+
+Las reglas de compatibilidad se documentan en
+`docs/api/versioning-policy.md`.
+
+---
+
 # 🔗 Recursos Relacionados
 
 ### Mesa de trabajo
 
-Jira del proyecto [RedFish](https://corhuila-team-wloxo9pj.atlassian.net/jira/software/projects/RED/boards/2?filter=&groupBy=none).
+Jira del proyecto RedFish.
 
 ### Base de Datos
 
-Repositorio destinado al diseño y documentación de la base de datos de [RedFish](https://github.com/luisfclaros/BaseDeDatosRedFish.git).
+Repositorio destinado al diseño y documentación de la base de datos de RedFish.
 
 ---
 
@@ -257,3 +353,26 @@ Las decisiones arquitectónicas, requisitos y módulos serán refinados y docume
 **LUIS FERNANDO CLAROS RAMOS**
 
 Proyecto académico — Sistemas Distribuidos.
+
+
+## Ejecución local del MVP
+
+1. Entra a la carpeta `RedFish`.
+2. Copia `.env.example` como `.env`.
+3. Cambia las contraseñas de MySQL y del administrador inicial en `.env`. La contraseña del administrador debe tener al menos 10 caracteres.
+4. Ejecuta `docker compose up --build -d`.
+5. Abre `http://localhost:8080`. La primera petición a la API solicitará usuario y contraseña HTTP Basic. Usa los datos configurados en `REDFISH_BOOTSTRAP_ADMIN_USERNAME` y `REDFISH_BOOTSTRAP_ADMIN_PASSWORD`.
+
+La interfaz estática se sirve desde Spring Boot. La API usa autenticación HTTP Basic sin estado; las rutas de negocio requieren usuario autenticado. El alta de usuarios requiere rol ADMIN. En despliegues reales, usa HTTPS y contraseñas únicas, y configura secretos fuera del repositorio.
+
+### Endpoints implementados en la rama de integración
+
+- `/api/v1/products`, `/api/v1/customers`
+- `/api/v1/vehicles`
+- `/api/v1/ponds`, `/api/v1/feeding-records`
+- `/api/v1/inventory`, `/api/v1/inventory/entries`, `/api/v1/inventory/exits`, `/api/v1/inventory/movements`
+- `/api/v1/orders` y sus transiciones de estado
+- `/api/v1/dispatches` y sus transiciones de estado
+- `/api/v1/auth/me`, `/api/v1/users` (solo ADMIN para crear usuarios)
+
+Esta rama de integración sigue en validación; no se debe fusionar a `Develop`, `Qa` o `main` hasta que los checks y las pruebas funcionales estén aprobados.
