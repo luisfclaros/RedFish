@@ -1,10 +1,16 @@
-# Contrato inicial de API de RedFish
+# Contrato REST v1 de RedFish
 
 ## Base URL
 
 ```text
-http://localhost:8080
+Develop:          http://localhost:8080/api/v1
+QA:               http://localhost:8081/api/v1
+Produccion local: http://localhost:8082/api/v1
 ```
+
+La fuente de verdad legible por herramientas es
+`RedFish/src/main/resources/static/openapi-v1.yaml`. Las reglas de evolucion se
+encuentran en `docs/api/versioning-policy.md`.
 
 ---
 
@@ -13,7 +19,7 @@ http://localhost:8080
 ### Crear producto
 
 ```http
-POST /api/products
+POST /api/v1/products
 Content-Type: application/json
 ```
 
@@ -44,7 +50,7 @@ Response `201 Created`:
 Headers:
 
 ```text
-Location: /api/products/1
+Location: /api/v1/products/1
 ```
 
 Errores:
@@ -58,7 +64,7 @@ Errores:
 ### Listar productos
 
 ```http
-GET /api/products
+GET /api/v1/products
 ```
 
 Response `200 OK`:
@@ -81,7 +87,7 @@ Response `200 OK`:
 ### Consultar producto por ID
 
 ```http
-GET /api/products/1
+GET /api/v1/products/1
 ```
 
 Response `200 OK`:
@@ -132,7 +138,7 @@ La tabla se genera automaticamente durante desarrollo mediante Hibernate
 ### Crear cliente
 
 ```http
-POST /api/customers
+POST /api/v1/customers
 Content-Type: application/json
 ```
 
@@ -163,7 +169,7 @@ Response `201 Created`:
 Headers:
 
 ```text
-Location: /api/customers/1
+Location: /api/v1/customers/1
 ```
 
 Errores:
@@ -177,7 +183,7 @@ Errores:
 ### Listar clientes
 
 ```http
-GET /api/customers
+GET /api/v1/customers
 ```
 
 Response `200 OK`:
@@ -200,7 +206,7 @@ Response `200 OK`:
 ### Consultar cliente por ID
 
 ```http
-GET /api/customers/1
+GET /api/v1/customers/1
 ```
 
 Response `200 OK`:
@@ -231,3 +237,32 @@ Los clientes se almacenan en MySQL usando la tabla:
 ```text
 clientes
 ```
+
+---
+
+## Sobre estandar de error
+
+Todos los errores REST utilizan esta estructura:
+
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "invalid request body",
+    "details": {
+      "code": "must not be blank"
+    },
+    "trace_id": "9e289660-5f90-4c65-9f8f-939c91128295"
+  }
+}
+```
+
+La respuesta tambien incluye `X-Trace-Id` con el mismo identificador.
+
+---
+
+## Rutas deprecadas
+
+Las rutas `/api/products` y `/api/customers` continuan disponibles durante la
+migracion, pero incluyen los encabezados `Deprecation`, `Sunset` y `Link`. No
+deben utilizarse en integraciones nuevas.

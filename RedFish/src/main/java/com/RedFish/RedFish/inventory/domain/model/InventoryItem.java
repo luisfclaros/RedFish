@@ -36,19 +36,8 @@ public class InventoryItem {
 		return quantity.compareTo(minimumStock) < 0;
 	}
 
-	public Long id() {
-		return id;
-	}
-
-	public Long productId() {
-		return productId;
-	}
-
-	public BigDecimal quantity() {
-		return quantity;
-	}
-
-	public BigDecimal minimumStock() {
-		return minimumStock;
-	}
+	public Long id() { return id; }
+	public Long productId() { return productId; }
+	public BigDecimal quantity() { return quantity; }
+	public BigDecimal minimumStock() { return minimumStock; }
 }

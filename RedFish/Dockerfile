@@ -14,7 +14,15 @@ FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
-COPY --from=build /workspace/build/libs/*.jar app.jar
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --system app \
+    && useradd --system --gid app --home-dir /app app
+
+COPY --from=build --chown=app:app /workspace/build/libs/*.jar app.jar
+
+USER app
 
 EXPOSE 8080
 

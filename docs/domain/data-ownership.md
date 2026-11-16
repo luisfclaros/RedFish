@@ -27,6 +27,7 @@ sus datos y proteger sus reglas de negocio.
 | `detalle_pedido` | Pedidos | Pedidos | Inventario, Despachos, Reportes y Consultas |
 | `despachos` | Despachos | Despachos | Pedidos, Vehiculos, Reportes y Consultas |
 | `vehiculos` | Vehiculos | Vehiculos | Despachos, Reportes y Consultas |
+| `eventos_producto_procesados` | Reportes y Consultas | Reportes y Consultas | Reportes y Consultas |
 
 ---
 
@@ -39,7 +40,8 @@ sus datos y proteger sus reglas de negocio.
 - Pedidos es el unico contexto que crea y modifica pedidos y detalles.
 - Despachos es el unico contexto que crea y modifica despachos.
 - Vehiculos es el unico contexto que administra vehiculos.
-- Reportes y Consultas no modifica tablas transaccionales.
+- Reportes y Consultas no modifica tablas transaccionales de otros modulos;
+  administra sus propios registros de deduplicacion y proyecciones de lectura.
 
 ---
 

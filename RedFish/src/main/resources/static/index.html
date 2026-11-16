@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>RedFish | Gestión piscícola</title>
+<style>
+:root{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#17324d;background:#f3f7fa;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}.layout{min-height:100vh;display:grid;grid-template-columns:250px 1fr}
+aside{background:#103b52;color:#fff;padding:24px 16px;display:flex;flex-direction:column;gap:24px}
+.brand{display:flex;align-items:center;gap:12px;padding:4px 8px}.logo{width:42px;height:42px;border-radius:12px;background:#20a6a1;display:grid;place-items:center;font-weight:900;font-size:20px}.brand strong{font-size:20px;letter-spacing:.3px}.brand small{display:block;color:#b6d3dc;margin-top:2px}
+nav{display:grid;gap:6px}nav button{border:0;background:transparent;color:#d7e7ec;text-align:left;padding:12px;border-radius:9px;font-size:14px;cursor:pointer}nav button:hover,nav button.active{background:#1c566e;color:#fff}
+aside .foot{margin-top:auto;color:#a9c8d3;font-size:12px;line-height:1.5}
+main{padding:28px;min-width:0}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;gap:14px}.top h1{margin:0;font-size:26px}.top p{margin:5px 0 0;color:#668095}.pill{background:#e2f4f2;color:#147d79;border-radius:20px;padding:7px 12px;font-size:12px;font-weight:700}
+.view{display:none}.view.active{display:block}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}.card,.panel{background:#fff;border:1px solid #e2eaf0;border-radius:14px;padding:18px;box-shadow:0 2px 8px #153d5210}.card span{display:block;color:#6a8293;font-size:13px}.card strong{display:block;font-size:28px;margin-top:8px}.panel{margin-bottom:18px}.panel h2{font-size:17px;margin:0 0 14px}.gridform{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.field{display:grid;gap:6px}.field label{font-size:12px;color:#5c7486;font-weight:700}.field input,.field select,.field textarea{width:100%;padding:10px 11px;border:1px solid #d4e0e8;border-radius:8px;font:inherit;font-size:14px;background:#fff;color:#17324d}.field input:focus,.field select:focus{outline:2px solid #8bd5d1;border-color:#20a6a1}
+.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:14px}.btn{border:0;border-radius:8px;padding:10px 14px;background:#168f8b;color:#fff;font-weight:700;cursor:pointer}.btn:hover{background:#117b77}.btn.secondary{background:#e7eff4;color:#294b61}.btn.danger{background:#b84c4c}.btn.small{padding:6px 9px;font-size:12px}.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;padding:11px 10px;border-bottom:1px solid #edf1f4;white-space:nowrap}th{color:#637c8e;font-size:11px;text-transform:uppercase;letter-spacing:.4px;background:#f8fafb}td .btn{margin:2px}.empty{color:#8296a4;padding:18px;text-align:center}.notice{padding:12px 14px;border-radius:9px;margin-bottom:16px;display:none}.notice.show{display:block}.notice.ok{background:#e6f6ef;color:#176b49}.notice.err{background:#fff0ef;color:#a33a35}.hint{font-size:12px;color:#758b99;margin-top:8px}.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:1000px){.layout{grid-template-columns:210px 1fr}.cards{grid-template-columns:repeat(2,1fr)}.gridform{grid-template-columns:repeat(2,1fr)}}
+dialog{border:0;border-radius:14px;padding:24px;width:min(420px,calc(100% - 28px));box-shadow:0 20px 60px #09283d55;color:#17324d}dialog::backdrop{background:#0b2638aa}.auth-form{display:grid;gap:12px}.auth-form h2{margin:0}.auth-form p{margin:0;color:#6a8293;font-size:13px}.auth-form input{padding:11px;border:1px solid #d4e0e8;border-radius:8px;font:inherit}
+@media(max-width:700px){.layout{display:block}aside{padding:12px;gap:10px}.brand{padding:4px}nav{display:flex;overflow:auto}nav button{white-space:nowrap;padding:9px 11px}.foot{display:none}main{padding:16px}.top h1{font-size:21px}.cards{grid-template-columns:repeat(2,1fr)}.gridform,.two{grid-template-columns:1fr}}
+.login-landing{min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr;position:relative;overflow:hidden;background:linear-gradient(135deg,#062943,#0b4164 55%,#062943);color:#17324d}
+.login-brand-panel{display:flex;flex-direction:column;justify-content:flex-start;padding:54px 64px 0;color:#fff;position:relative;overflow:hidden;min-height:100vh;z-index:1}
+.login-brand-panel:before{content:"○   ○      ○  ○          ○       ○";position:absolute;left:10%;bottom:18%;color:rgba(255,255,255,.22);font-size:28px;letter-spacing:18px;white-space:nowrap;animation:bubbles 9s linear infinite;pointer-events:none;z-index:3}
+.login-brand-panel:after{content:"";position:absolute;width:520px;height:520px;border-radius:50%;border:1px solid rgba(255,255,255,.08);right:-180px;bottom:-240px;box-shadow:0 0 0 70px rgba(255,255,255,.025),0 0 0 140px rgba(255,255,255,.02);pointer-events:none}
+.brand-copy{position:relative;z-index:4;max-width:650px}.brand-logo{display:inline-flex;align-items:center;gap:12px;font-size:28px;font-weight:800}.brand-fish{display:grid;place-items:center;width:46px;height:46px;background:#e53945;border-radius:50%;font-size:25px;box-shadow:0 8px 20px #e5394547}
+.brand-copy h1{margin:46px 0 12px;font-size:clamp(34px,5vw,62px);line-height:1.02}.brand-copy p{max-width:600px;color:#d8e6f3;font-size:18px;line-height:1.6}
+.underwater-scene{position:absolute;left:0;right:0;bottom:0;height:47%;z-index:2;overflow:hidden;mask-image:linear-gradient(to bottom,transparent 0%,black 28%)}.underwater-scene img{width:100%;height:100%;display:block;object-fit:cover;object-position:center 58%;filter:saturate(1.12) contrast(1.04) brightness(.78)}.underwater-scene:after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,#05263d 0%,rgba(5,38,61,.28) 30%,rgba(5,38,61,.08) 100%)}
+@keyframes bubbles{0%{transform:translateY(0);opacity:0}15%{opacity:1}80%{opacity:.6}100%{transform:translateY(-700px);opacity:0}}
+.login-panel{display:flex;align-items:center;justify-content:center;padding:32px;background:rgba(2,22,39,.18);position:relative;z-index:5}.login-card{width:min(460px,100%);background:rgba(255,255,255,.97);border-radius:24px;padding:38px;box-shadow:0 30px 80px #0005,0 0 0 1px #ffffff40;backdrop-filter:blur(12px);animation:loginIn .7s ease}.login-card h2{margin:0 0 8px;font-size:28px}.login-card>p{margin:0 0 24px;color:#718096}.login-card .field{margin-bottom:17px}.login-card .field label{display:block;font-size:14px;font-weight:700;margin-bottom:8px;color:#18324b}.login-card .field input,.login-card .field select{width:100%;border:1px solid #dfe7ef;border-radius:12px;padding:13px 14px;outline:none;font:inherit;background:#fff}.login-card .field input:focus,.login-card .field select:focus{border-color:#2f80ed;box-shadow:0 0 0 4px #2f80ed1a}.login-submit{width:100%;border:0;border-radius:12px;padding:14px 18px;color:#fff;background:#e53945;font-weight:800;cursor:pointer;transition:.2s}.login-submit:hover{background:#c92b36;transform:translateY(-1px)}.login-submit:disabled{opacity:.65;cursor:wait;transform:none}.login-error{background:#fff1f2;border:1px solid #fecdd3;color:#b4232f;border-radius:10px;padding:10px 12px;margin-bottom:16px;font-size:14px}.login-foot{margin-top:20px;text-align:center;color:#718096;font-size:12px}
+@keyframes loginIn{from{opacity:0;transform:translateY(25px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.hidden{display:none!important}.user-chip{display:flex;align-items:center;gap:10px}.user-chip button{border:0;border-radius:8px;padding:8px 11px;cursor:pointer;background:#e7eff4;color:#294b61;font-weight:700}
+@media(max-width:900px){.login-landing{grid-template-columns:1fr}.login-brand-panel{min-height:420px;padding:32px 28px 0}.brand-copy h1{margin-top:32px;font-size:42px}.brand-copy p{font-size:16px}.underwater-scene{height:52%}.login-panel{padding:24px}.login-card{max-width:520px}}
+@media(max-width:520px){.login-brand-panel{min-height:340px;padding:25px 22px 0}.brand-copy h1{font-size:36px}.brand-copy p{font-size:14px}.underwater-scene{height:48%}.login-panel{padding:18px}.login-card{padding:26px 22px}.cards{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<section id="landing" class="login-landing">
+ <div class="login-brand-panel">
+  <div class="brand-copy">
+   <div class="brand-logo"><span class="brand-fish">🐟</span><span>RedFish</span></div>
+   <h1>Gestión acuícola<br>simple y organizada.</h1>
+   <p>Administra producción, alimentación, inventario, pedidos, clientes, despachos y vehículos desde una sola interfaz.</p>
+  </div>
+  <div class="underwater-scene"><img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1800&q=90" alt="Buceador bajo el agua entre peces"></div>
+ </div>
+ <div class="login-panel"><div class="login-card">
+  <h2>Bienvenido 👋</h2><p>Ingresa con tu cuenta de RedFish.</p>
+  <div id="login-page-error" class="login-error hidden" role="alert"></div>
+  <form id="login-page-form">
+   <div class="field"><label for="login-profile">Área de acceso</label><select id="login-profile" name="profile" required><option value="">Selecciona tu área</option><option value="ADMIN">Administración</option><option value="PRODUCTION">Producción</option><option value="OPERATIONS">Operaciones</option><option value="COMMERCIAL">Comercial</option></select></div>
+   <div class="field"><label for="login-username">Usuario</label><input id="login-username" name="username" autocomplete="username" placeholder="Tu usuario" required></div>
+   <div class="field"><label for="login-password">Contraseña</label><input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Tu contraseña" required></div>
+   <button class="login-submit" id="login-submit" type="submit">Iniciar sesión</button>
+  </form>
+  <div class="login-foot">Acceso seguro · Cada área utiliza sus credenciales asignadas</div>
+ </div></div>
+</section>
+<div class="layout hidden" id="app-layout">
+<aside>
+  <div class="brand"><div class="logo">RF</div><div><strong>RedFish</strong><small>Gestión piscícola</small></div></div>
+  <nav id="nav">
+    <button class="active" data-view="dashboard">▦ &nbsp;Resumen</button>
+    <button data-view="products">▣ &nbsp;Productos</button>
+    <button data-view="customers">♙ &nbsp;Clientes</button>
+    <button data-view="vehicles">▤ &nbsp;Vehículos</button>
+    <button data-view="ponds">◉ &nbsp;Estanques</button>
+    <button data-view="feeding">♧ &nbsp;Alimentación</button>
+    <button data-view="inventory">▥ &nbsp;Inventario</button>
+    <button data-view="orders">▧ &nbsp;Pedidos</button>
+    <button data-view="dispatches">➜ &nbsp;Despachos</button>
+  </nav>
+  <div class="foot">RedFish · Aplicación de gestión<br>Backend Spring Boot · MySQL</div>
+</aside>
+<main>
+  <div class="top"><div><h1 id="title">Resumen general</h1><p>Control centralizado de la operación piscícola</p></div><div class="user-chip"><span class="pill" id="current-user">Sesión activa</span><button id="logout" type="button">Cerrar sesión</button></div></div>
+  <div id="notice" class="notice"></div>
+
+  <section class="view active" id="view-dashboard">
+    <div class="cards">
+      <div class="card"><span>Productos</span><strong id="count-products">—</strong></div>
+      <div class="card"><span>Clientes</span><strong id="count-customers">—</strong></div>
+      <div class="card"><span>Vehículos</span><strong id="count-vehicles">—</strong></div>
+      <div class="card"><span>Estanques</span><strong id="count-ponds">—</strong></div>
+    </div>
+    <div class="two">
+      <div class="panel"><h2>Inventario</h2><p id="stock-summary" class="hint">Cargando existencias…</p></div>
+      <div class="panel"><h2>Actividad</h2><p id="activity-summary" class="hint">Cargando pedidos y despachos…</p></div>
+    </div>
+    <div class="panel"><h2>Accesos rápidos</h2><div class="actions"><button class="btn" data-go="products">Registrar producto</button><button class="btn secondary" data-go="orders">Crear pedido</button><button class="btn secondary" data-go="dispatches">Programar despacho</button></div></div>
+  </section>
+
+  <section class="view" id="view-products">
+    <div class="panel"><h2 id="product-form-title">Registrar producto o insumo</h2><form id="product-form" class="gridform">
+      <div class="field"><label>Código</label><input name="code" required maxlength="20"></div>
+      <div class="field"><label>Nombre</label><input name="name" required maxlength="100"></div>
+      <div class="field"><label>Unidad de medida</label><input name="unitOfMeasure" required value="kg" maxlength="20"></div>
+      <div class="field"><label>Tipo</label><select name="type"><option value="PRODUCT">Producto</option><option value="INPUT">Insumo</option></select></div>
+      <div class="actions"><button class="btn" id="product-submit">Guardar producto</button><button class="btn secondary" type="button" id="cancel-product-edit" style="display:none">Cancelar edición</button></div>
+    </form></div>
+    <div class="panel"><h2>Productos registrados</h2><div id="products-table" class="tablewrap"></div></div>
+  </section>
+
+  <section class="view" id="view-customers">
+    <div class="panel"><h2 id="customer-form-title">Registrar cliente</h2><form id="customer-form" class="gridform">
+      <div class="field"><label>Nombre</label><input name="name" required maxlength="100"></div>
+      <div class="field"><label>Teléfono</label><input name="phone" required maxlength="30"></div>
+      <div class="field"><label>Dirección</label><input name="address" required maxlength="150"></div>
+      <div class="field"><label>Correo electrónico</label><input name="email" type="email" maxlength="120"></div>
+      <div class="actions"><button class="btn" id="customer-submit">Guardar cliente</button><button class="btn secondary" type="button" id="cancel-customer-edit" style="display:none">Cancelar edición</button></div>
+    </form></div>
+    <div class="panel"><h2>Clientes registrados</h2><div id="customers-table" class="tablewrap"></div></div>
+  </section>
+
+  <section class="view" id="view-vehicles">
+    <div class="panel"><h2 id="vehicle-form-title">Registrar vehículo</h2><form id="vehicle-form" class="gridform">
+      <div class="field"><label>Placa</label><input name="plate" required maxlength="10"></div>
+      <div class="field"><label>Marca</label><input name="brand" required maxlength="60"></div>
+      <div class="field"><label>Modelo</label><input name="model" required maxlength="60"></div>
+      <div class="field"><label>Capacidad de carga (kg)</label><input name="loadCapacity" type="number" min="0" step=".01" required></div>
+      <div class="field"><label>Observaciones</label><input name="observations" maxlength="500"></div>
+      <div class="actions"><button class="btn" id="vehicle-submit">Guardar vehículo</button><button class="btn secondary" type="button" id="cancel-vehicle-edit" style="display:none">Cancelar edición</button></div>
+    </form></div>
+    <div class="panel"><h2>Vehículos</h2><div id="vehicles-table" class="tablewrap"></div></div>
+  </section>
+
+  <section class="view" id="view-ponds">
+    <div class="panel"><h2 id="pond-form-title">Registrar estanque</h2><form id="pond-form" class="gridform">
+      <div class="field"><label>Código</label><input name="code" required maxlength="30"></div>
+      <div class="field"><label>Nombre</label><input name="name" required maxlength="100"></div>
+      <div class="field"><label>Ubicación</label><input name="location" required maxlength="150"></div>
+      <div class="field"><label>Capacidad</label><input name="capacity" type="number" min="0.01" step=".01" required></div>
+      <div class="actions"><button class="btn" id="pond-submit">Guardar estanque</button><button class="btn secondary" type="button" id="cancel-pond-edit" style="display:none">Cancelar edición</button></div>
+    </form></div>
+    <div class="panel"><h2>Estanques</h2><div id="ponds-table" class="tablewrap"></div></div>
+  </section>
+
+  <section class="view" id="view-feeding">
+    <div class="panel"><h2>Registrar alimentación</h2><form id="feeding-form" class="gridform">
+      <div class="field"><label>Estanque</label><select name="pondId" required><option value="">Selecciona un estanque</option></select></div>
+      <div class="field"><label>Insumo de alimento</label><select name="productId" required><option value="">Selecciona un insumo</option></select></div>
+      <div class="field"><label>Fecha</label><input name="date" type="date" required></div>
+      <div class="field"><label>Tipo de alimento</label><input name="foodType" required maxlength="100"></div>
+      <div class="field"><label>Cantidad (kg)</label><input name="quantity" type="number" min=".001" step=".001" required></div>
+      <div class="field"><label>ID responsable</label><input name="registeredBy" type="number" min="1" required></div>
+      <div class="field"><label>Observaciones</label><input name="observations" maxlength="500"></div>
+      <div class="actions"><button class="btn">Registrar alimentación</button></div>
+    </form><p class="hint">Selecciona un producto de tipo INSUMO. El sistema descuenta automáticamente la cantidad del inventario y registra el movimiento de salida.</p></div>
+    <div class="panel"><h2>Registros de alimentación</h2><div id="feeding-table" class="tablewrap"></div></div>
+  </section>
+
+  <section class="view" id="view-inventory">
+    <div class="panel"><h2>Crear registro de existencias</h2><form id="stock-form" class="gridform">
+      <div class="field"><label>Producto</label><select name="productId" required><option value="">Selecciona un producto</option></select></div>
+      <div class="field"><label>Existencia inicial</label><input name="initialQuantity" type="number" min="0" step=".001" required></div>
+      <div class="field"><label>Stock mínimo</label><input name="minimumStock" type="number" min="0" step=".001" required></div>
+      <div class="actions"><button class="btn">Crear existencias</button></div>
+    </form></div>
+    <div class="two">
+      <div class="panel"><h2>Registrar entrada</h2><form id="entry-form" class="gridform">
+        <div class="field"><label>Producto</label><select name="productId" required><option value="">Selecciona un producto</option></select></div><div class="field"><label>Cantidad</label><input name="quantity" type="number" min=".001" step=".001" required></div><div class="field"><label>ID responsable</label><input name="registeredBy" type="number" min="1" required></div><div class="field"><label>Observaciones</label><input name="observations"></div><div class="actions"><button class="btn">Registrar entrada</button></div>
+      </form></div>
+      <div class="panel"><h2>Registrar salida</h2><form id="exit-form" class="gridform">
+        <div class="field"><label>Producto</label><select name="productId" required><option value="">Selecciona un producto</option></select></div><div class="field"><label>Cantidad</label><input name="quantity" type="number" min=".001" step=".001" required></div><div class="field"><label>ID responsable</label><input name="registeredBy" type="number" min="1" required></div><div class="field"><label>Observaciones</label><input name="observations"></div><div class="actions"><button class="btn">Registrar salida</button></div>
+      </form></div>
+    </div>
+    <div class="panel"><h2>Existencias actuales</h2><div id="inventory-table" class="tablewrap"></div></div>
+    <div class="panel"><h2>Movimientos de inventario</h2><div id="movements-table" class="tablewrap"></div></div>
+  </section>
+
+  <section class="view" id="view-orders">
+    <div class="panel"><h2>Crear pedido</h2><form id="order-form" class="gridform">
+      <div class="field"><label>Cliente</label><select name="customerId" required><option value="">Selecciona un cliente</option></select></div>
+      <div class="field"><label>Fecha</label><input name="date" type="date" required></div>
+      <div class="field"><label>Producto</label><select name="productId" required><option value="">Selecciona un producto</option></select></div>
+      <div class="field"><label>Nombre producto</label><input name="productName" required maxlength="100" readonly></div>
+      <div class="field"><label>Cantidad</label><input name="quantity" type="number" min=".001" step=".001" required></div>
+      <div class="field"><label>Precio unitario</label><input name="unitPrice" type="number" min=".01" step=".01" required></div>
+      <div class="field"><label>Observaciones</label><input name="observations" maxlength="500"></div>
+      <div class="actions"><button class="btn">Crear pedido y reservar inventario</button></div>
+    </form><p class="hint">La creación descuenta automáticamente las existencias y no permite pedidos sin stock suficiente.</p></div>
+    <div class="panel"><h2>Pedidos</h2><div id="orders-table" class="tablewrap"></div></div>
+  </section>
+
+  <section class="view" id="view-dispatches">
+    <div class="panel"><h2>Programar despacho</h2><form id="dispatch-form" class="gridform">
+      <div class="field"><label>Pedido en preparación</label><select name="orderId" required><option value="">Selecciona un pedido</option></select></div>
+      <div class="field"><label>Vehículo activo</label><select name="vehicleId" required><option value="">Selecciona un vehículo</option></select></div>
+      <div class="field"><label>Fecha de despacho</label><input name="dispatchDate" type="date" required></div>
+      <div class="field"><label>Dirección de entrega</label><input name="deliveryAddress" required maxlength="250"></div>
+      <div class="actions"><button class="btn">Programar despacho</button></div>
+    </form></div>
+    <div class="panel"><h2>Despachos programados</h2><div id="dispatches-table" class="tablewrap"></div></div>
+  </section>
+</main>
+
+</div>
+<script>
+const $=(s)=>document.querySelector(s);
+const today=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
+document.querySelectorAll('input[type=date]').forEach(i=>i.value=today);
+const titles={dashboard:'Resumen general',products:'Productos',customers:'Clientes',vehicles:'Vehículos',ponds:'Estanques',feeding:'Alimentación',inventory:'Inventario',orders:'Pedidos',dispatches:'Despachos'};
+const endpoints={products:'/api/v1/products',customers:'/api/v1/customers',vehicles:'/api/v1/vehicles',ponds:'/api/v1/ponds',feeding:'/api/v1/feeding-records',inventory:'/api/v1/inventory',movements:'/api/v1/inventory/movements',orders:'/api/v1/orders',dispatches:'/api/v1/dispatches'};
+function notice(message,error=false){const n=$('#notice');n.textContent=message;n.className='notice show '+(error?'err':'ok');window.clearTimeout(notice.timer);notice.timer=window.setTimeout(()=>n.className='notice',6000)}
+let authHeader=null, currentProfile=null, currentUser=null;
+const profileNames={PRODUCTION:'Producción',OPERATIONS:'Operaciones',COMMERCIAL:'Comercial',ADMIN:'Administración'};
+const profileViews={PRODUCTION:['dashboard','products','ponds','feeding'],OPERATIONS:['dashboard','products','vehicles','inventory','dispatches'],COMMERCIAL:['dashboard','products','customers','orders'],ADMIN:['dashboard','products','customers','vehicles','ponds','feeding','inventory','orders','dispatches']};
+
+function applyProfile(){
+ const allowed=new Set(profileViews[currentProfile]||[]);
+ $('#product-form').closest('.panel').classList.toggle('hidden',currentProfile!=='ADMIN'&&currentProfile!=='PRODUCTION');
+ document.querySelectorAll('nav [data-view]').forEach(b=>b.classList.toggle('hidden',!allowed.has(b.dataset.view)));
+ document.querySelectorAll('[data-go]').forEach(b=>b.classList.toggle('hidden',!allowed.has(b.dataset.go)));
+}
+$('#login-page-form').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const form=e.currentTarget,button=$('#login-submit'),error=$('#login-page-error');
+ const values=formData(form),role=values.profile;
+ const enteredUsername=values.username.trim().toLowerCase();
+ const backendUsername=role==='PRODUCTION'&&enteredUsername==='produccion'?'production':role==='OPERATIONS'&&enteredUsername==='operaciones'?'operations':enteredUsername;
+ const candidate='Basic '+btoa(unescape(encodeURIComponent(backendUsername+':'+values.password)));
+ button.disabled=true;button.textContent='Validando acceso…';error.classList.add('hidden');error.textContent='';
+ try{
+  const response=await fetch('/api/v1/auth/me',{headers:{Authorization:candidate}});
+  if(!response.ok)throw new Error(response.status===401?'Usuario o contraseña incorrectos.':'No fue posible validar el acceso. Intenta nuevamente.');
+  const user=await response.json();
+  if(user.role!==role)throw new Error('La cuenta ingresada no corresponde al área seleccionada.');
+  authHeader=candidate;currentProfile=role;currentUser=user;
+  $('#landing').classList.add('hidden');$('#app-layout').classList.remove('hidden');
+  $('#current-user').textContent=(user.name||user.username)+' · '+profileNames[role];
+  applyProfile();
+  if(role==='ADMIN'||role==='COMMERCIAL')await loadOrderReferences();
+  if(role==='ADMIN'||role==='OPERATIONS')await loadDispatchReferences();
+   if(role==='ADMIN'||role==='PRODUCTION')await loadFeedingReferences();
+   if(role==='ADMIN'||role==='OPERATIONS')await loadInventoryReferences();
+  await refreshAll();show('dashboard');
+ }catch(err){error.textContent=err.message;error.classList.remove('hidden')}
+ finally{button.disabled=false;button.textContent='Iniciar sesión'}
+});
+$('#logout').addEventListener('click',()=>{authHeader=null;currentUser=null;currentProfile=null;$('#app-layout').classList.add('hidden');$('#landing').classList.remove('hidden');$('#login-page-form').reset();document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));$('#notice').className='notice';$('#login-username').focus();});
+function csrfCookie(){
+  const entry=document.cookie.split('; ').find(value=>value.startsWith('XSRF-TOKEN='));
+  return entry?decodeURIComponent(entry.substring('XSRF-TOKEN='.length)):null;
+}
+async function api(url,options={},retried=false){
+  const method=(options.method||'GET').toUpperCase();
+  const headers={'Content-Type':'application/json',...(authHeader?{Authorization:authHeader}:{}),...(options.headers||{})};
+  if(!['GET','HEAD','OPTIONS','TRACE'].includes(method)){
+    const token=csrfCookie();
+    if(token)headers['X-XSRF-TOKEN']=token;
+  }
+  const r=await fetch(url,{...options,headers});
+  // Un 401 aislado puede ocurrir durante la primera petición tras el acceso. Reintentar
+  // una sola vez con las mismas credenciales evita interrumpir los formularios con
+  // un segundo diálogo de login. Nunca se considera exitosa una respuesta 401.
+  if(r.status===401&&!retried)return api(url,options,true);
+  if(r.status===401&&retried){authHeader=null;throw new Error('El servidor rechazó la autenticación dos veces. Cierra sesión e inicia nuevamente con la cuenta de tu área.');}
+  if(!r.ok){let m='Error '+r.status;try{const j=await r.json();m=j.error?.message||j.message||m;if(j.error?.details)m+=' — '+Object.values(j.error.details).join(', ')}catch{}throw new Error(m)}
+  if(r.status===204)return null;
+  return r.json();
+}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function table(target,headers,rows){const el=$(target);if(!rows.length){el.innerHTML='<div class="empty">No hay registros para mostrar.</div>';return}el.innerHTML='<table><thead><tr>'+headers.map(h=>'<th>'+esc(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(v=>'<td>'+v+'</td>').join('')+'</tr>').join('')+'</tbody></table>'}
+function val(v){return esc(v)}
+async function loadProducts(){const a=await api(endpoints.products);const canManage=currentProfile==='ADMIN'||currentProfile==='PRODUCTION';table('#products-table',canManage?['ID','Código','Nombre','Unidad','Tipo','Estado','Acciones']:['ID','Código','Nombre','Unidad','Tipo','Estado'],a.map(x=>{const row=[val(x.id),val(x.code),val(x.name),val(x.unitOfMeasure),val(x.type),x.active?'Activo':'Inactivo'];if(canManage)row.push('<button class="btn small secondary" data-product-edit="'+x.id+'">Editar</button>'+(x.active?'<button class="btn small danger" data-deactivate="products" data-id="'+x.id+'">Desactivar</button>':'')+'<button class="btn small danger" data-permanent-delete="products" data-id="'+x.id+'">Eliminar</button>');return row}));$('#count-products').textContent=a.length}
+async function loadCustomers(){const a=await api(endpoints.customers);table('#customers-table',['ID','Nombre','Teléfono','Dirección','Correo','Estado','Acciones'],a.map(x=>[val(x.id),val(x.name),val(x.phone),val(x.address),val(x.email),x.active?'Activo':'Inactivo','<button class="btn small secondary" data-edit-customer="'+x.id+'">Editar</button>'+(x.active?'<button class="btn small danger" data-deactivate="customers" data-id="'+x.id+'">Desactivar</button>':'')+'<button class="btn small danger" data-permanent-delete="customers" data-id="'+x.id+'">Eliminar</button>']));$('#count-customers').textContent=a.length}
+async function loadVehicles(){const a=await api(endpoints.vehicles);table('#vehicles-table',['ID','Placa','Marca','Modelo','Capacidad','Estado','Acciones'],a.map(x=>[val(x.id),val(x.plate),val(x.brand),val(x.model),val(x.loadCapacity)+' kg',x.active?'Activo':'Inactivo','<button class="btn small secondary" data-edit-vehicle="'+x.id+'">Editar</button>'+(x.active?'<button class="btn small danger" data-deactivate="vehicles" data-id="'+x.id+'">Desactivar</button>':'')+'<button class="btn small danger" data-permanent-delete="vehicles" data-id="'+x.id+'">Eliminar</button>']));$('#count-vehicles').textContent=a.length}
+async function loadPonds(){const a=await api(endpoints.ponds);table('#ponds-table',['ID','Código','Nombre','Ubicación','Capacidad','Estado','Acciones'],a.map(x=>[val(x.id),val(x.code),val(x.name),val(x.location),val(x.capacity),x.active?'Activo':'Inactivo','<button class="btn small secondary" data-edit-pond="'+x.id+'">Editar</button>'+(x.active?'<button class="btn small danger" data-deactivate="ponds" data-id="'+x.id+'">Desactivar</button>':'')+'<button class="btn small danger" data-permanent-delete="ponds" data-id="'+x.id+'">Eliminar</button>']));$('#count-ponds').textContent=a.length}
+async function loadFeeding(){const [a,ponds,products]=await Promise.all([api(endpoints.feeding),api(endpoints.ponds),api(endpoints.products)]);const pondNames=new Map(ponds.map(p=>[Number(p.id),p.name+' · '+p.code]));const productNames=new Map(products.map(p=>[Number(p.id),p.name+' · '+p.code]));table('#feeding-table',['ID','Estanque','Insumo','Fecha','Alimento','Cantidad','Responsable (ID)','Observaciones'],a.map(x=>[val(x.id),val(pondNames.get(Number(x.pondId))||('Estanque #'+x.pondId)),val(productNames.get(Number(x.productId))||('Insumo #'+x.productId)),val(x.date),val(x.foodType),val(x.quantity),val(Number(x.registeredBy)===0?'Sistema':'ID '+x.registeredBy),val(x.observations)]))}
+function displayDate(v){if(!v)return '—';const s=String(v).replace('T',' ');return s.length>=19?s.slice(0,19):s}
+async function loadInventory(){const [a,products]=await Promise.all([api(endpoints.inventory),api(endpoints.products)]);const names=new Map(products.map(p=>[Number(p.id),p.name]));table('#inventory-table',['ID','Producto','Existencia','Mínimo','Alerta'],a.map(x=>[val(x.id),val(names.get(Number(x.productId))||('Producto #'+x.productId)),val(x.quantity),val(x.minimumStock),x.belowMinimumStock?'<b style="color:#b84c4c">Bajo mínimo</b>':'Normal']));$('#stock-summary').textContent=a.length+' referencias de inventario registradas; '+a.filter(x=>x.belowMinimumStock).length+' requieren reposición.';return {a,products}}
+async function loadMovements(){const [a,inventory,products]=await Promise.all([api(endpoints.movements),api(endpoints.inventory),api(endpoints.products)]);const productById=new Map(products.map(p=>[Number(p.id),p.name]));const inventoryById=new Map(inventory.map(i=>[Number(i.id),i]));table('#movements-table',['ID','Producto','Tipo','Cantidad','Fecha','Responsable','Observaciones'],a.map(x=>{const inv=inventoryById.get(Number(x.inventoryId));const productName=inv?productById.get(Number(inv.productId)):null;return [val(x.id),val(productName||('Inventario #'+x.inventoryId)),val(x.type==='ENTRY'?'Entrada':x.type==='EXIT'?'Salida':x.type==='RESERVATION'?'Reserva de pedido':x.type==='RELEASE'?'Liberación de reserva':x.type),val(x.quantity),val(displayDate(x.date)),val(Number(x.registeredBy)===0?'Sistema':x.registeredBy),val(x.observations)]}))}
+async function loadOrders(){const requests=[api(endpoints.orders),api(endpoints.customers)];if(currentProfile==='ADMIN')requests.push(api(endpoints.dispatches));const [a,customers,dispatches=[]]=await Promise.all(requests);const customerNames=new Map(customers.map(x=>[Number(x.id),x.name]));const dispatchByOrder=new Map(dispatches.map(d=>[Number(d.orderId),d]));const labels={PENDING:'Pendiente',IN_PREPARATION:'En preparación',DISPATCHED:'Despachado',CANCELLED:'Cancelado'};table('#orders-table',['ID','Cliente','Fecha','Productos','Total','Estado','Acciones'],a.map(x=>{const detail=(x.items||[]).map(i=>val(i.productName)+' × '+val(i.quantity)).join('<br>');const linkedDispatch=dispatchByOrder.get(Number(x.id));let statusLabel=labels[x.status]||x.status;if(x.status==='DISPATCHED'&&currentProfile==='ADMIN'&&!linkedDispatch)statusLabel='Despachado · sin registro de despacho';else if(linkedDispatch?.status==='SCHEDULED')statusLabel='Despacho programado';else if(linkedDispatch?.status==='IN_TRANSIT')statusLabel='En tránsito';else if(linkedDispatch?.status==='DELIVERED')statusLabel='Entregado';const actions=x.status==='PENDING'?'<button class="btn small secondary" data-order-action="in-preparation" data-id="'+x.id+'">Preparar</button><button class="btn small danger" data-order-action="cancel" data-id="'+x.id+'">Cancelar</button>':x.status==='IN_PREPARATION'?((currentProfile==='ADMIN'||currentProfile==='OPERATIONS')?'<button class="btn small" data-order-action="schedule-dispatch" data-id="'+x.id+'">Programar despacho</button>':'')+'<button class="btn small danger" data-order-action="cancel" data-id="'+x.id+'">Cancelar</button>':x.status==='DISPATCHED'&&!linkedDispatch&&currentProfile==='ADMIN'?'<span style="color:#a33a35;font-weight:700">Revisar trazabilidad</span>':x.status==='DISPATCHED'?'<span>Ver despacho</span>':x.status==='CANCELLED'?'<span>Cancelado</span>':'—';return [val(x.id),val(customerNames.get(Number(x.customerId))||('Cliente #'+x.customerId)),val(x.date),detail||'—',new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(x.total),val(statusLabel),actions]}));$('#activity-summary').textContent=a.length+' pedidos registrados.'}
+async function loadDispatches(){const [a,vehicles]=await Promise.all([api(endpoints.dispatches),api(endpoints.vehicles)]);const vehicleNames=new Map(vehicles.map(x=>[Number(x.id),x.plate+' · '+x.brand+' '+x.model]));const labels={SCHEDULED:'Programado',IN_TRANSIT:'En tránsito',DELIVERED:'Entregado',CANCELLED:'Cancelado'};table('#dispatches-table',['ID','Pedido','Vehículo','Fecha','Entrega','Estado','Acciones'],a.map(x=>{const actions=x.status==='SCHEDULED'?'<button class="btn small secondary" data-dispatch-action="in-transit" data-id="'+x.id+'">Iniciar tránsito</button><button class="btn small danger" data-dispatch-action="cancel" data-id="'+x.id+'">Cancelar</button>':x.status==='IN_TRANSIT'?'<button class="btn small" data-dispatch-action="delivered" data-id="'+x.id+'">Marcar entregado</button>':'—';return [val(x.id),'Pedido #'+val(x.orderId),val(vehicleNames.get(Number(x.vehicleId))||('Vehículo #'+x.vehicleId)),val(x.dispatchDate),val(x.deliveryAddress),val(labels[x.status]||x.status),actions]}));}
+const loaders={products:loadProducts,customers:loadCustomers,vehicles:loadVehicles,ponds:loadPonds,feeding:loadFeeding,inventory:async()=>{await Promise.all([loadInventory(),loadMovements(),loadInventoryReferences()])},orders:loadOrders,dispatches:loadDispatches};
+async function refreshAll(){
+ const allowed=new Set(profileViews[currentProfile]||[]);
+ $('#stock-summary').textContent=allowed.has('inventory')?'Cargando existencias…':'Consulta disponible en Operaciones y Administración.';
+ $('#activity-summary').textContent=(allowed.has('orders')||allowed.has('dispatches'))?'Cargando actividad…':'Consulta disponible en Comercial, Operaciones y Administración.';
+ for(const k of Object.keys(loaders)){
+  if(!allowed.has(k))continue;
+  try{await loaders[k]()}catch(e){
+   console.warn(k,e.message);
+   if(k==='inventory')$('#stock-summary').textContent='No fue posible consultar las existencias.';
+   if(k==='orders')$('#activity-summary').textContent='No fue posible consultar los pedidos.';
+  }
+ }
+ if(allowed.has('dispatches')){
+  try{
+   const a=await api(endpoints.dispatches);
+   const prefix=allowed.has('orders')?$('#activity-summary').textContent+' ':'';
+   $('#activity-summary').textContent=prefix+a.length+' despachos registrados.';
+  }catch(e){console.warn('dispatches',e.message);if(!allowed.has('orders'))$('#activity-summary').textContent='No fue posible consultar los despachos.'}
+ }
+}
+function show(view){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+view));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.view===view));$('#title').textContent=titles[view]||titles.dashboard;if(loaders[view])loaders[view]().catch(e=>notice(e.message,true))}
+$('#nav').addEventListener('click',e=>{const b=e.target.closest('[data-view]');if(b)show(b.dataset.view)});
+document.addEventListener('click',e=>{const go=e.target.closest('[data-go]');if(go)show(go.dataset.go)});
+async function fillSelect(selector,url,label,format,filter=()=>true){const select=$(selector);if(!select)return;try{const rows=(await api(url)).filter(filter);select.innerHTML='<option value="">Selecciona '+label+'</option>'+rows.map(x=>'<option value="'+x.id+'">'+esc(format(x))+'</option>').join('')}catch(err){select.innerHTML='<option value="">No fue posible cargar '+label+'</option>';console.warn(err.message)}}
+async function loadOrderReferences(){await Promise.all([fillSelect('#order-form [name="customerId"]',endpoints.customers,'cliente',x=>x.name+' · '+x.phone,x=>x.active),fillSelect('#order-form [name="productId"]',endpoints.products,'producto',x=>x.name+' ('+x.code+')',x=>x.active&&x.type==='PRODUCT')])}
+async function loadInventoryReferences(){await Promise.all([fillSelect('#entry-form [name="productId"]',endpoints.products,'producto',x=>x.name+' · '+x.code+' ('+x.type+')',x=>x.active),fillSelect('#stock-form [name="productId"]',endpoints.products,'producto',x=>x.name+' · '+x.code+' ('+x.type+')',x=>x.active),fillSelect('#exit-form [name="productId"]',endpoints.products,'producto',x=>x.name+' · '+x.code+' ('+x.type+')',x=>x.active)])}
+async function loadFeedingReferences(){await Promise.all([fillSelect('#feeding-form [name="pondId"]',endpoints.ponds,'estanque',x=>x.name+' · '+x.code,x=>x.active),fillSelect('#feeding-form [name="productId"]',endpoints.products,'insumo',x=>x.name+' · '+x.code,x=>x.active&&x.type==='INPUT')])}
+async function loadDispatchReferences(){await Promise.all([fillSelect('#dispatch-form [name="orderId"]',endpoints.orders,'pedido en preparación',x=>'Pedido #'+x.id+' · Cliente '+x.customerId,x=>x.status==='IN_PREPARATION'),fillSelect('#dispatch-form [name="vehicleId"]',endpoints.vehicles,'vehículo activo',x=>x.plate+' · '+x.brand+' '+x.model,x=>x.active)])}
+$('#order-form [name="productId"]').addEventListener('change',async e=>{if(!e.target.value)return;try{const p=await api(endpoints.products+'/'+e.target.value);$('#order-form [name="productName"]').value=p.name}catch(err){notice(err.message,true)}});
+function formData(form){return Object.fromEntries(new FormData(form).entries())}
+function numberFields(obj,keys){keys.forEach(k=>{if(obj[k]!==''&&obj[k]!==undefined)obj[k]=Number(obj[k])});return obj}
+async function submit(id,url,transform=x=>x,after){const f=$(id);f.addEventListener('submit',async e=>{e.preventDefault();const b=f.querySelector('button[type=submit],button:not([type])');b.disabled=true;try{await api(url,{method:'POST',body:JSON.stringify(transform(formData(f)))});notice('Registro guardado correctamente.');f.reset();f.querySelectorAll('input[type=date]').forEach(i=>i.value=today);await after()}catch(err){notice(err.message,true)}finally{b.disabled=false}})}
+let editingProductId=null;
+const productForm=$('#product-form');
+function resetProductEditor(){editingProductId=null;productForm.reset();productForm.querySelector('[name="unitOfMeasure"]').value='kg';$('#product-form-title').textContent='Registrar producto o insumo';$('#product-submit').textContent='Guardar producto';$('#cancel-product-edit').style.display='none'}
+productForm.addEventListener('submit',async e=>{e.preventDefault();const button=$('#product-submit');button.disabled=true;try{const payload=formData(productForm);const editing=editingProductId!==null;await api(editing?endpoints.products+'/'+editingProductId:endpoints.products,{method:editing?'PUT':'POST',body:JSON.stringify(payload)});notice(editing?'Producto actualizado correctamente.':'Producto registrado correctamente.');resetProductEditor();await loadProducts()}catch(err){notice(err.message,true)}finally{button.disabled=false}});
+$('#cancel-product-edit').addEventListener('click',resetProductEditor);
+document.addEventListener('click',async e=>{const button=e.target.closest('[data-product-edit]');if(!button)return;try{const product=await api(endpoints.products+'/'+button.dataset.productEdit);editingProductId=product.id;productForm.elements.code.value=product.code;productForm.elements.name.value=product.name;productForm.elements.unitOfMeasure.value=product.unitOfMeasure;productForm.elements.type.value=product.type;$('#product-form-title').textContent='Editar producto #'+product.id;$('#product-submit').textContent='Guardar cambios';$('#cancel-product-edit').style.display='inline-block';productForm.scrollIntoView({behavior:'smooth',block:'center'})}catch(err){notice(err.message,true)}});
+// Formularios de clientes, vehículos y estanques con edición y desactivación segura.
+
+
+const editors={
+ customers:{form:'#customer-form',title:'#customer-form-title',submit:'#customer-submit',cancel:'#cancel-customer-edit',url:endpoints.customers,fields:['name','phone','address','email'],label:'cliente',load:loadCustomers},
+ vehicles:{form:'#vehicle-form',title:'#vehicle-form-title',submit:'#vehicle-submit',cancel:'#cancel-vehicle-edit',url:endpoints.vehicles,fields:['plate','brand','model','loadCapacity','observations'],label:'vehículo',load:loadVehicles},
+ ponds:{form:'#pond-form',title:'#pond-form-title',submit:'#pond-submit',cancel:'#cancel-pond-edit',url:endpoints.ponds,fields:['code','name','location','capacity'],label:'estanque',load:loadPonds}
+};
+const editIds={customers:'data-edit-customer',vehicles:'data-edit-vehicle',ponds:'data-edit-pond'};
+for(const [key,cfg] of Object.entries(editors)){
+ let editing=null;const form=$(cfg.form);
+ const reset=()=>{editing=null;form.reset();$(cfg.title).textContent='Registrar '+cfg.label;$(cfg.submit).textContent='Guardar '+cfg.label;$(cfg.cancel).style.display='none'};
+ $(cfg.cancel).addEventListener('click',reset);
+ form.addEventListener('submit',async e=>{e.preventDefault();const b=$(cfg.submit);b.disabled=true;try{const data=formData(form);if(key==='vehicles')numberFields(data,['loadCapacity']);if(key==='ponds')numberFields(data,['capacity']);await api(editing?cfg.url+'/'+editing:cfg.url,{method:editing?'PUT':'POST',body:JSON.stringify(data)});notice(editing?'Registro actualizado.':'Registro guardado.');reset();await cfg.load()}catch(err){notice(err.message,true)}finally{b.disabled=false}});
+ document.addEventListener('click',async e=>{const b=e.target.closest('['+editIds[key]+']');if(!b)return;try{const record=await api(cfg.url+'/'+b.getAttribute(editIds[key]));editing=record.id;cfg.fields.forEach(field=>form.elements[field].value=record[field]??'');$(cfg.title).textContent='Editar '+cfg.label+' #'+editing;$(cfg.submit).textContent='Guardar cambios';$(cfg.cancel).style.display='inline-block';form.scrollIntoView({behavior:'smooth',block:'center'})}catch(err){notice(err.message,true)}});
+}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-deactivate]');if(!b)return;const module=b.dataset.deactivate,id=b.dataset.id;if(!confirm('¿Desactivar este registro? Se conservará el historial y no podrá usarse en nuevas operaciones.'))return;try{await api(endpoints[module]+'/'+id,{method:'DELETE'});notice('Registro desactivado.');await ({products:loadProducts,customers:loadCustomers,vehicles:loadVehicles,ponds:loadPonds})[module]()}catch(err){notice(err.message,true)}});
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-permanent-delete]');if(!b)return;const module=b.dataset.permanentDelete,id=b.dataset.id;if(!confirm('¿Eliminar definitivamente este registro? Esta acción no se puede deshacer. Si tiene información relacionada, el sistema impedirá el borrado.'))return;try{await api(endpoints[module]+'/'+id+'/permanent',{method:'DELETE'});notice('Registro eliminado definitivamente.');await ({products:loadProducts,customers:loadCustomers,vehicles:loadVehicles,ponds:loadPonds})[module]()}catch(err){notice(err.message,true)}});
+
+submit('#feeding-form',endpoints.feeding,x=>numberFields(x,['pondId','productId','quantity','registeredBy']),loadFeeding);
+submit('#stock-form',endpoints.inventory+'/stock',x=>numberFields(x,['productId','initialQuantity','minimumStock']),loadInventory);
+submit('#entry-form',endpoints.inventory+'/entries',x=>numberFields(x,['productId','quantity','registeredBy']),async()=>{await loadInventory();await loadMovements()});
+submit('#exit-form',endpoints.inventory+'/exits',x=>numberFields(x,['productId','quantity','registeredBy']),async()=>{await loadInventory();await loadMovements()});
+submit('#order-form',endpoints.orders,x=>({customerId:Number(x.customerId),date:x.date,items:[{productId:Number(x.productId),productName:x.productName,quantity:Number(x.quantity),unitPrice:Number(x.unitPrice)}],observations:x.observations}),async()=>{await loadOrders();await loadInventory()});
+submit('#dispatch-form',endpoints.dispatches,x=>numberFields(x,['orderId','vehicleId']),async()=>{await loadDispatches();await loadOrders()});
+document.addEventListener('click',async e=>{const o=e.target.closest('[data-order-action]');if(o){if(o.dataset.orderAction==='schedule-dispatch'){const orderField=$('#dispatch-form [name="orderId"]');orderField.value=o.dataset.id;show('dispatches');orderField.focus();notice('Pedido '+o.dataset.id+' seleccionado. Completa el vehículo, la fecha y la dirección para programar el despacho.');return}try{await api('/api/v1/orders/'+o.dataset.id+'/'+o.dataset.orderAction,{method:'POST',body:'{}'});notice('Estado del pedido actualizado.');await loadOrders();if(o.dataset.orderAction==='in-preparation')await loadDispatchReferences()}catch(err){notice(err.message,true)}}const d=e.target.closest('[data-dispatch-action]');if(d){try{let url='/api/v1/dispatches/'+d.dataset.id+'/'+d.dataset.dispatchAction,opts={method:'POST',body:'{}'};if(d.dataset.dispatchAction==='delivered'){const receivedBy=prompt('Nombre de quien recibe:');if(!receivedBy||!receivedBy.trim()){notice('Indica quién recibe el pedido para registrar la entrega.',true);return}opts.body=JSON.stringify({deliveryDate:today,receivedBy:receivedBy.trim()})}await api(url,opts);notice('Estado del despacho actualizado.');await loadDispatches()}catch(err){notice(err.message,true)}}});
+// La carga de datos se inicia únicamente después de autenticar el perfil seleccionado.
+</script>
+</body>
+</html>
